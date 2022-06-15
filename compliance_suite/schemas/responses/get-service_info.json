@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "$ref": "#/definitions/GetServiceInfo",
+  "definitions": {
+    "GetServiceInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "object",
+          "properties": {
+            "group": {
+              "type": "string"
+            },
+            "artifact": {
+              "type": "string",
+              "enum": [
+                "tes"
+              ]
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "group",
+            "artifact",
+            "version"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "organization": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "url"
+          ]
+        },
+        "contactUrl": {
+          "type": "string"
+        },
+        "documentationUrl": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "storage": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "organization",
+        "version"
+      ]
+    }
+  }
+}
