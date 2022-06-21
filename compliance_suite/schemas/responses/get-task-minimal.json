@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "$ref": "#/definitions/GetTaskMinimal",
+  "definitions": {
+    "GetTaskMinimal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "UNKNOWN",
+            "QUEUED",
+            "INITIALIZING",
+            "RUNNING",
+            "PAUSED",
+            "COMPLETE",
+            "EXECUTOR_ERROR",
+            "SYSTEM_ERROR",
+            "CANCELED"
+          ]
+        }
+      }
+    }
+  }
+}

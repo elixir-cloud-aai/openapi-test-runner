@@ -1,0 +1,295 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "$ref": "#/definitions/GetListTasksFull",
+  "definitions": {
+    "GetListTasksFull": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "UNKNOWN",
+                    "QUEUED",
+                    "INITIALIZING",
+                    "RUNNING",
+                    "PAUSED",
+                    "COMPLETE",
+                    "EXECUTOR_ERROR",
+                    "SYSTEM_ERROR",
+                    "CANCELED"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "inputs": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "FILE",
+                            "DIRECTORY"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "path",
+                        "type"
+                      ]
+                    }
+                  ]
+                },
+                "outputs": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "FILE",
+                            "DIRECTORY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "url",
+                        "path",
+                        "type"
+                      ]
+                    }
+                  ]
+                },
+                "resources": {
+                  "type": "object",
+                  "properties": {
+                    "cpu_cores": {
+                      "type": "integer"
+                    },
+                    "preemptible": {
+                      "type": "boolean"
+                    },
+                    "ram_gb": {
+                      "type": "number"
+                    },
+                    "disk_gb": {
+                      "type": "number"
+                    },
+                    "zones": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "executors": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "image": {
+                          "type": "string"
+                        },
+                        "command": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "workdir": {
+                          "type": "string"
+                        },
+                        "stdin": {
+                          "type": "string"
+                        },
+                        "stdout": {
+                          "type": "string"
+                        },
+                        "stderr": {
+                          "type": "string"
+                        },
+                        "env": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "image",
+                        "command"
+                      ]
+                    }
+                  ]
+                },
+                "volumes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "tags": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "logs": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "logs": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "start_time": {
+                                  "type": "string"
+                                },
+                                "end_time": {
+                                  "type": "string"
+                                },
+                                "stdout": {
+                                  "type": "string"
+                                },
+                                "stderr": {
+                                  "type": "string"
+                                },
+                                "exit_code": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "exit_code"
+                              ]
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "start_time": {
+                          "type": "string"
+                        },
+                        "end_time": {
+                          "type": "string"
+                        },
+                        "outputs": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "url": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "size_bytes": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "url",
+                                "path",
+                                "size_bytes"
+                              ]
+                            }
+                          ]
+                        },
+                        "system_logs": {
+                          "type": "array",
+                          "items": [
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "logs",
+                        "outputs"
+                      ]
+                    }
+                  ]
+                },
+                "creation_time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "executors"
+              ]
+            }
+          ]
+        },
+        "next_page_token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tasks"
+      ]
+    }
+  }
+}

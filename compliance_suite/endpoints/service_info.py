@@ -15,16 +15,17 @@ def get_service_info(server_url):
     response = requests.get(base_url, headers=REQUEST_HEADERS)
     response_json = response.json()
     print(f"Response - {response.status_code} | {response_json} ")
-    with open("schemas/responses/get-service_info.json") as file:
-        schema_json = json.load(file)
 
     if response.status_code == 200:
         print(f"Successful request")
     else:
         print("Request Failed. Incorrect Response Status Code.")
 
+    with open("schemas/responses/get-service_info.json") as file:
+        schema_json = json.load(file)
     try:
         jsonschema.validate(response_json, schema_json)
+        print(f"Successful Response Schema Validation")
     except jsonschema.ValidationError as err:
         print(err.message)
 
