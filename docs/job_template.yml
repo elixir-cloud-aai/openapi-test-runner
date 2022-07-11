@@ -1,0 +1,13 @@
+name: <Job Name>
+description: <Job Description>
+version:
+  - <API Spec version>
+server: <server url to run the tests>
+jobs:
+  - name: <job to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
+    description: <individual job description>
+    endpoint: <API endpoint>
+    operation: <HTTP operation>
+    response:
+      <response status>: |
+        <data to be matched against the response>
