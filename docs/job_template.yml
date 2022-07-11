@@ -8,6 +8,10 @@ jobs:
     description: <individual job description>
     endpoint: <API endpoint>
     operation: <HTTP operation>
+    query_parameters:
+      <Query Param name> : <value>
+    request_body: |
+      <request body to be sent in request>
     response:
       <response status>: |
         <data to be matched against the response>

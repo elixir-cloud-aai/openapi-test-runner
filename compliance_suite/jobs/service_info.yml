@@ -11,5 +11,5 @@ jobs:
     response:
       200: |
         {
-          "id": "org.ga4gh.myservice",
+          "id": "uk.ac.ebi.tsc.tesk"
         }
