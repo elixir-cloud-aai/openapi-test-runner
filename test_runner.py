@@ -10,6 +10,7 @@ class TestRunner():
         self.server = server
         self.version = VERSION_INFO[version]
         self.job_data = None
+        self.auxiliary_space = {}
 
     def validate_response(self, response):
 
@@ -35,14 +36,23 @@ class TestRunner():
 
             ENDPOINT_TO_MODEL[endpoint_model](**response_json)
             print(f'Schema validation successful for {self.job_data["endpoint"]}')
+
+            self.auxiliary_space[self.job_data["name"]] = response_json
+            # print(self.auxiliary_space)
         except ValidationError as err:
             print(err)
 
 
-    def run_tests(self, job_data, auxiliary_space):
+    def run_tests(self, job_data):
 
         # print(job_data)
         self.job_data = job_data
-        response = send_request(self.server, self.version, job_data["endpoint"], job_data["operation"])
+
+        id_uri_param = None
+        if job_data["name"] in ["get_task", "cancel_task"]:
+            id_uri_param = self.auxiliary_space["list_tasks"]["tasks"][0]["id"]
+            print(id_uri_param)
+
+        response = send_request(self.server, self.version, job_data["endpoint"], id_uri_param, job_data["operation"])
         self.validate_response(response)
 

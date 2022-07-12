@@ -329,8 +329,8 @@ class TesTask(BaseModel):
         ],
     )
     resources: Optional[TesResources] = None
-    executors: List[TesExecutor] = Field(
-        ...,
+    executors: Optional[List[TesExecutor]] = Field(         #Make Optional as its not TES compliant. Remove when TES Specs are updated
+        None,
         description='An array of executors to be run. Each of the executors will run one\nat a time sequentially. Each executor is a different command that\nwill be run, and each can utilize a different docker image. But each of\nthe executors will see the same mapped inputs and volumes that are declared\nin the parent CreateTask message.\n\nExecution stops on the first error.',
     )
     volumes: Optional[List[str]] = Field(

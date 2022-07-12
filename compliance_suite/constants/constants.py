@@ -11,7 +11,12 @@ VERSION_INFO = {
 
 ENDPOINT_TO_MODEL = {
     'service_info': TesServiceInfo,
-    'list_tasks_MINIMAL': TesListTasksResponseMinimal
+    'list_tasks_MINIMAL': TesListTasksResponseMinimal,
+    'list_tasks_BASIC': TesListTasksResponse,
+    'list_tasks_FULL': TesListTasksResponse,
+    'get_task_MINIMAL': TesTaskMinimal,
+    'get_task_BASIC': TesTask,
+    'get_task_FULL': TesTask
 }
 
 REQUEST_HEADERS = {

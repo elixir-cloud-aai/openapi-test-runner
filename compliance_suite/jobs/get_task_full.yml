@@ -1,0 +1,32 @@
+name: List Tasks Job
+description: Job to retrieve the list of tasks
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+jobs:
+  - name: list_tasks
+    description: Retrieve the list of tasks tracked by the TES server
+    endpoint: /tasks
+    operation: GET
+    query_parameters:
+      - view: MINIMAL
+    response:
+      200: |
+        {
+          "tasks": [
+            {
+              "state": "COMPLETE"
+            }
+          ]
+        }
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: FULL
+    response:
+      200: |
+        {
+          "state": "COMPLETE"
+        }
