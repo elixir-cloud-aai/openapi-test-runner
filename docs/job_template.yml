@@ -4,9 +4,20 @@ version:
   - <API Spec version>
 server: <server url to run the tests>
 jobs:
-  - name: <job to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
+  - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
     description: <individual job description>
-    endpoint: <API endpoint>
+    endpoint: <API endpoint>    # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
+    operation: <HTTP operation>
+    query_parameters:
+      <Query Param name> : <value>
+    request_body: |
+      <request body to be sent in request>
+    response:
+      <response status>: |
+        <data to be matched against the response>
+  - name: <Sub job 2 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
+    description: <individual job description>
+    endpoint: <API endpoint>      # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
     operation: <HTTP operation>
     query_parameters:
       <Query Param name> : <value>
