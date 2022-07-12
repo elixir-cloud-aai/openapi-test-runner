@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 from compliance_suite.functions.requestor import send_request
-from compliance_suite.constants.constants import version_info
+from compliance_suite.constants.constants import VERSION_INFO, ENDPOINT_TO_MODEL
 from compliance_suite.models.v1_0_specs import *
 
 class TestRunner():
@@ -8,7 +8,7 @@ class TestRunner():
     def __init__(self, server, version):
 
         self.server = server
-        self.version = version_info[version]
+        self.version = VERSION_INFO[version]
         self.job_data = None
 
     def validate_response(self, response):
@@ -26,7 +26,14 @@ class TestRunner():
         # print(response_json)
 
         try:
-            TesServiceInfo(**response_json)
+            endpoint_model = None
+            if self.job_data["name"] in ["list_tasks", "get_task"]:
+                view_query = [item["view"] for item in self.job_data["query_parameters"]]
+                endpoint_model = self.job_data["name"] + "_" + view_query[0]
+            else:
+                endpoint_model = self.job_data["name"]
+
+            ENDPOINT_TO_MODEL[endpoint_model](**response_json)
             print(f'Schema validation successful for {self.job_data["endpoint"]}')
         except ValidationError as err:
             print(err)

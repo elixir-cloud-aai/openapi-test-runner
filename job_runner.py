@@ -13,6 +13,7 @@ class JobRunner():
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 with open(os.path.join(yaml_path, yaml_file), "r") as f:
+                    print(f"Initiating jobs for {yaml_file}")
                     try:
                         yaml_data = yaml.safe_load(f)
                         # print(yaml_data)
@@ -21,6 +22,7 @@ class JobRunner():
                         auxiliary_space = {}
                         test_runner = TestRunner(yaml_data["server"], yaml_data["version"][0])
                         for job in yaml_data["jobs"]:
+                            print(f'Running tests for sub-job -> {job["name"]}')
                             test_runner.run_tests(job, auxiliary_space)
 
 

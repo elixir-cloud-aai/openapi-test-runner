@@ -363,3 +363,17 @@ class TesListTasksResponse(BaseModel):
         None,
         description='Token used to return the next page of results. This value can be used\nin the `page_token` field of the next ListTasks request.',
     )
+
+class TesTaskMinimal(BaseModel):
+    id: str = Field(
+        ...,
+        description='Task identifier assigned by the server.',
+        example='job-0012345',
+    )
+    state: TesState = Field(..., example='UNKNOWN')
+
+class TesListTasksResponseMinimal(BaseModel):
+    tasks: List[TesTaskMinimal] = Field(
+        ...,
+        description='List of tasks. These tasks will be based on the original submitted\ntask document, but with other fields, such as the job state and\nlogging info, added/changed as the job progresses.',
+    )
