@@ -1,17 +1,30 @@
 import os
+from jsonschema import validate, SchemaError, ValidationError
 import yaml
 from test_runner import TestRunner
 
+
 class JobRunner():
 
+    def __init__(self):
+        self.path = os.getcwd()
+
+
     def validate_job(self, yaml_data):
-    # TODO - Validate if each required field present in YAML file
-        pass
+        schema_path = os.path.join(self.path, "tests", "template", "test_template_schema.json")
+        with open(schema_path, "r") as f:
+            json_schema = yaml.safe_load(f)
+
+        try:
+            validate(yaml_data, json_schema)
+            print(f'Test YAML file valid for {yaml_data["name"]}')
+        except (SchemaError, ValidationError) as err:
+            print(f"Error is {err}")
 
     def run_jobs(self):
 
         test_count = 0
-        yaml_path = os.path.join(os.getcwd(), "compliance_suite", "jobs")
+        yaml_path = os.path.join(self.path, "tests")
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 test_count += 1

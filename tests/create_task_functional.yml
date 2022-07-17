@@ -1,32 +1,42 @@
-name: Functional Job to create tasks
-description: Job to create tasks and test functionality
+name: Create Tes Task Functional Job
+description: Job to create a new TES Task and test functionality
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
 jobs:
   - name: create_task
-    description: Create a TES task
+    description: Create a new TES task
     endpoint: /tasks
     operation: POST
     request_body: |
       {
+        "name": "CompTest",
+        "description": "CompTest",
         "executors": [
-        {
-          "image": "ubuntu:20.04",
-          "command": [
-            "/bin/md5",
-            "/data/file1"
-          ]
-        }
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString1",
+              "TestString2"
+            ]
+          },
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString3",
+              "TestString4"
+            ]
+          }
+        ]
       }
     response:
-      200:
+      200: {}
   - name: list_tasks
     description: Retrieve the list of tasks tracked by the TES server
     endpoint: /tasks
     operation: GET
     query_parameters:
-      - view: BASIC
+      - view: FULL
     response:
       200: |
         {

@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "version": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "server": {
+      "type": "string"
+    },
+    "jobs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "service_info",
+              "list_tasks",
+              "create_task",
+              "get_task",
+              "cancel_task"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string",
+            "enum": [
+              "/service-info",
+              "/tasks",
+              "/tasks/{id}",
+              "/tasks/{id}:cancel"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST"
+            ]
+          },
+          "query_parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "request_body": {
+            "type": "string"
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "name",
+          "endpoint",
+          "operation",
+          "response"
+        ]
+      }
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "server",
+    "jobs"
+  ]
+}
