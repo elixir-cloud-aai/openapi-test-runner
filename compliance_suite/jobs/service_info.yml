@@ -5,7 +5,7 @@ version:
 server: https://csc-tesk-noauth.rahtiapp.fi/
 jobs:
   - name: service_info
-    description: Retrieve TES the server info
+    description: Retrieve the TES server info
     endpoint: /service-info
     operation: GET
     response:

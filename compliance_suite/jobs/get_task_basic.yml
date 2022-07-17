@@ -1,5 +1,5 @@
-name: List Tasks Job
-description: Job to retrieve the list of tasks
+name: Get Basic Task Job
+description: Job to retrieve the Basic view of TES Task
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/

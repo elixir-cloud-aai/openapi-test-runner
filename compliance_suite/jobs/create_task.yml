@@ -1,0 +1,34 @@
+name: Create Tes Task Job
+description: Job to create a new TES Task
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString1",
+              "TestString2"
+            ]
+          },
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString3",
+              "TestString4"
+            ]
+          }
+        ]
+      }
+
+    response:
+      200: {}

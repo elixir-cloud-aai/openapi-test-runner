@@ -1,7 +1,8 @@
+import json
 from pydantic import ValidationError
 from compliance_suite.functions.requestor import send_request
 from compliance_suite.constants.constants import VERSION_INFO, ENDPOINT_TO_MODEL
-from compliance_suite.models.v1_0_specs import *
+
 
 class TestRunner():
 
@@ -11,6 +12,25 @@ class TestRunner():
         self.version = VERSION_INFO[version]
         self.job_data = None
         self.auxiliary_space = {}
+
+    def validate_request_body(self, request_body):
+
+        request_body_json = None
+
+        # JSON Validation
+        try:
+            request_body_json = json.loads(request_body)
+        except json.JSONDecodeError as err:
+            print(f"Error in request body - {err}")
+
+        # Logical Schema Validation
+        try:
+            endpoint_model = self.job_data["name"] + "_request_body"
+
+            ENDPOINT_TO_MODEL[endpoint_model](**request_body_json)
+            print(f'Request Body Schema validation successful for {self.job_data["endpoint"]}')
+        except ValidationError as err:
+            print(err)
 
     def validate_response(self, response):
 
@@ -35,13 +55,12 @@ class TestRunner():
                 endpoint_model = self.job_data["name"]
 
             ENDPOINT_TO_MODEL[endpoint_model](**response_json)
-            print(f'Schema validation successful for {self.job_data["endpoint"]}')
+            print(f'Response Schema validation successful for {self.job_data["operation"]} {self.job_data["endpoint"]}')
 
             self.auxiliary_space[self.job_data["name"]] = response_json
             # print(self.auxiliary_space)
         except ValidationError as err:
             print(err)
-
 
     def run_tests(self, job_data):
 
@@ -49,10 +68,19 @@ class TestRunner():
         self.job_data = job_data
 
         id_uri_param = None
-        if job_data["name"] in ["get_task", "cancel_task"]:
+        request_body = None
+        if job_data["name"] in ["get_task"]:
             id_uri_param = self.auxiliary_space["list_tasks"]["tasks"][0]["id"]
-            print(id_uri_param)
+            # print(id_uri_param)
+        elif job_data["name"] in ["cancel_task"]:
+            id_uri_param = self.auxiliary_space["list_tasks"]["tasks"][0]["id"]
+            # print(id_uri_param)
+        elif job_data["name"] in ["create_task"]:
+            request_body = job_data["request_body"]
+            self.validate_request_body(request_body)
+            # print(request_body)
 
-        response = send_request(self.server, self.version, job_data["endpoint"], id_uri_param, job_data["operation"])
+        response = send_request(self.server, self.version, job_data["endpoint"],
+                                id_uri_param, job_data["operation"], request_body)
         self.validate_response(response)
 

@@ -16,12 +16,12 @@ ENDPOINT_TO_MODEL = {
     'list_tasks_FULL': TesListTasksResponse,
     'get_task_MINIMAL': TesTaskMinimal,
     'get_task_BASIC': TesTask,
-    'get_task_FULL': TesTask
+    'get_task_FULL': TesTask,
+    'create_task': TesCreateTaskResponse,
+    'create_task_request_body': TesTask
 }
 
 REQUEST_HEADERS = {
-    'Accept': 'application/json'
-}
-API_ENDPOINTS = {
-    'SERVICE_INFO_API': 'v1/service-info'
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
 }

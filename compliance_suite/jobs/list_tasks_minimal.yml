@@ -1,5 +1,5 @@
-name: List Tasks Job
-description: Job to retrieve the list of tasks
+name: List Minimal Tasks Job
+description: Job to retrieve the list of Minimal view of TES tasks
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
