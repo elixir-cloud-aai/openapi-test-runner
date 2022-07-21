@@ -3,6 +3,10 @@ description: Job to retrieve the Basic view of TES Task
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - Logical
+  - Get Basic Task Test
+  - All
 jobs:
   - name: list_tasks
     description: Retrieve the list of tasks tracked by the TES server

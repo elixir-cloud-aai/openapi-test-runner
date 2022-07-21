@@ -1,27 +1,35 @@
 name: <Job Name>
-description: <Job Description>
+description: <Job Description>    #Optional
 version:
   - <API Spec version>
 server: <server url to run the tests>
+tags:
+  - <Tag Name>                # Logical - No Polling needed, Functional - Polling needed. Always add 2 tags - Individual tag based on test name and "All" tag
 jobs:
-  - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
-    description: <individual job description>
+  - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task
+    description: <individual job description>       #Optional
     endpoint: <API endpoint>    # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
-    operation: <HTTP operation>
-    query_parameters:
+    operation: <HTTP operation>               #Required
+    query_parameters:                               #Optional
       <Query Param name> : <value>
-    request_body: |
+    polling:                                        #Optional
+      interval: <Polling Interval Value in seconds>
+      timeout: <Polling Timeout Value in seconds>
+    request_body: |                                 #Optional
       <request body to be sent in request>
     response:
       <response status>: |
         <data to be matched against the response>
   - name: <Sub job 2 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task]
-    description: <individual job description>
+    description: <individual job description>       #Optional
     endpoint: <API endpoint>      # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
     operation: <HTTP operation>
-    query_parameters:
+    query_parameters:                               #Optional
       <Query Param name> : <value>
-    request_body: |
+    polling: #Optional
+      interval: <Polling Interval Value in seconds>
+      timeout: <Polling Timeout Value in seconds>
+    request_body: |                                 #Optional
       <request body to be sent in request>
     response:
       <response status>: |

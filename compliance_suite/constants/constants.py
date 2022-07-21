@@ -18,7 +18,8 @@ ENDPOINT_TO_MODEL = {
     'get_task_BASIC': TesTask,
     'get_task_FULL': TesTask,
     'create_task': TesCreateTaskResponse,
-    'create_task_request_body': TesTask
+    'create_task_request_body': TesTask,
+    'cancel_task': TesCancelTaskResponse
 }
 
 REQUEST_HEADERS = {

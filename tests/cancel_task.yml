@@ -1,11 +1,11 @@
-name: Create Tes Task Functional Job
-description: Job to create a new TES Task and test functionality
+name: Cancel Tes Task Job
+description: Job to cancel a TES Task
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - Functional
-  - Create Task Functional Test
+  - Cancel Task Test
   - All
 jobs:
   - name: create_task
@@ -27,9 +27,15 @@ jobs:
         ]
       }
     response:
-      200: {}
+      200: { }
+  - name: cancel_task
+    description: Cancel a TES task
+    endpoint: /tasks/{id}:cancel
+    operation: POST
+    response:
+      200:
   - name: get_task
-    description: Retrieve the task details for TES task
+    description: Retrieve the list of tasks tracked by the TES server
     endpoint: /tasks/{id}
     operation: GET
     query_parameters:

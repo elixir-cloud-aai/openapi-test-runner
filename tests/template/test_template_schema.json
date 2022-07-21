@@ -17,6 +17,12 @@
     "server": {
       "type": "string"
     },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "jobs": {
       "type": "array",
       "items": {
@@ -58,6 +64,21 @@
               "additionalProperties": true
             }
           },
+          "polling": {
+            "type": "object",
+            "properties": {
+              "interval": {
+                "type": "number"
+              },
+              "timeout": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "interval",
+              "timeout"
+            ]
+          },
           "request_body": {
             "type": "string"
           },
@@ -79,6 +100,7 @@
     "name",
     "version",
     "server",
+    "tags",
     "jobs"
   ]
 }

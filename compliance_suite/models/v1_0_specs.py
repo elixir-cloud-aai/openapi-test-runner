@@ -191,8 +191,8 @@ class TesTaskLog(BaseModel):
         description='When the task ended, in RFC 3339 format.',
         example='2020-10-02T16:00:00.000Z',
     )
-    outputs: List[TesOutputFileLog] = Field(
-        ...,
+    outputs: Optional[List[TesOutputFileLog]] = Field(              #Make it optional as its not TESK compliant. Revert later
+        None,
         description='Information about all output files. Directory outputs are\nflattened into separate items.',
     )
     system_logs: Optional[List[str]] = Field(

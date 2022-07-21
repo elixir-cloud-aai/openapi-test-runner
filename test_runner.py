@@ -1,6 +1,6 @@
 import json
 from pydantic import ValidationError
-from compliance_suite.functions.requestor import send_request
+from compliance_suite.functions.requestor import send_request, poll_request
 from compliance_suite.constants.constants import VERSION_INFO, ENDPOINT_TO_MODEL
 
 
@@ -28,7 +28,7 @@ class TestRunner():
             endpoint_model = self.job_data["name"] + "_request_body"
 
             ENDPOINT_TO_MODEL[endpoint_model](**request_body_json)
-            print(f'Request Body Schema validation successful for {self.job_data["endpoint"]}')
+            print(f'Request Body Schema validation |successful| for {self.job_data["endpoint"]}')
         except ValidationError as err:
             print(err)
 
@@ -43,8 +43,10 @@ class TestRunner():
 
         # Logical Schema Validation
 
-        response_json = response.json()
-        # print(response_json)
+        if not response.text:
+            response_json = {}
+        else:
+            response_json = response.json()
 
         try:
             endpoint_model = None
@@ -55,7 +57,7 @@ class TestRunner():
                 endpoint_model = self.job_data["name"]
 
             ENDPOINT_TO_MODEL[endpoint_model](**response_json)
-            print(f'Response Schema validation successful for {self.job_data["operation"]} {self.job_data["endpoint"]}')
+            print(f'Response Schema validation |successful| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
 
             self.auxiliary_space[self.job_data["name"]] = response_json
             # print(self.auxiliary_space)
@@ -68,19 +70,43 @@ class TestRunner():
         self.job_data = job_data
 
         id_uri_param = None
+        query_params = {}
         request_body = None
-        if job_data["name"] in ["get_task"]:
+        response = None
+
+        if job_data["name"] in ["get_task"] and "polling" not in job_data.keys():
             id_uri_param = self.auxiliary_space["list_tasks"]["tasks"][0]["id"]
             # print(id_uri_param)
-        elif job_data["name"] in ["cancel_task"]:
-            id_uri_param = self.auxiliary_space["list_tasks"]["tasks"][0]["id"]
-            # print(id_uri_param)
-        elif job_data["name"] in ["create_task"]:
+
+        if job_data["name"] in ["get_task", "list_tasks"]:
+            for param in job_data["query_parameters"]:
+                query_params.update(param)
+            # print(query_params)
+
+        if job_data["name"] in ["create_task"]:
             request_body = job_data["request_body"]
             self.validate_request_body(request_body)
             # print(request_body)
 
-        response = send_request(self.server, self.version, job_data["endpoint"],
-                                id_uri_param, job_data["operation"], request_body)
+        if job_data["name"] in ["cancel_task"]:
+            id_uri_param = self.auxiliary_space["create_task"]["id"]
+            # print(id_uri_param)
+
+        if "polling" in job_data.keys():
+
+            id_uri_param = self.auxiliary_space["create_task"]["id"]
+
+            check_cancel = False
+            # print(self.auxiliary_space)
+            if "cancel_task" in self.auxiliary_space.keys():
+                check_cancel = True
+
+            response = poll_request(self.server, self.version, job_data["endpoint"],
+                                id_uri_param, query_params, job_data["operation"], job_data["polling"]["interval"],
+                                job_data["polling"]["timeout"], check_cancel)
+        else:
+            response = send_request(self.server, self.version, job_data["endpoint"],
+                                id_uri_param, query_params, job_data["operation"], request_body)
+
         self.validate_response(response)
 

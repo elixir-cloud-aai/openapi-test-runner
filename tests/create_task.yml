@@ -3,6 +3,10 @@ description: Job to create a new TES Task
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - Logical
+  - Create Task Test
+  - All
 jobs:
   - name: create_task
     description: Create a new TES task

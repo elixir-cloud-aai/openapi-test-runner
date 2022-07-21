@@ -6,8 +6,9 @@ from test_runner import TestRunner
 
 class JobRunner():
 
-    def __init__(self):
+    def __init__(self, tags):
         self.path = os.getcwd()
+        self.tags = tags
 
 
     def validate_job(self, yaml_data):
@@ -35,12 +36,19 @@ class JobRunner():
                         # print(yaml_data)
                         self.validate_job(yaml_data)
 
-                        test_runner = TestRunner(yaml_data["server"], yaml_data["version"][0])
-                        job_count = 0
-                        for job in yaml_data["jobs"]:
-                            job_count += 1
-                            print(f'Running tests for sub-job-{job_count} -> {job["name"]}')
-                            test_runner.run_tests(job)
+                        tag_matched = False
+                        print(f' {self.tags}   {yaml_data["tags"]}')
+                        for tag in self.tags:
+                            if tag in yaml_data["tags"]:
+                                tag_matched = True
+                                test_runner = TestRunner(yaml_data["server"], yaml_data["version"][0])
+                                job_count = 0
+                                for job in yaml_data["jobs"]:
+                                    job_count += 1
+                                    print(f'Running tests for sub-job-{job_count} -> {job["name"]}')
+                                    test_runner.run_tests(job)
+                        if not tag_matched:
+                            print(f"No Tag matched. Skipping Test-{test_count} for {yaml_file}")
 
                     except yaml.YAMLError as err:
-                        print(f"Invalid YAML File - {yaml_file}")
+                        print(f"Invalid YAML File - {yaml_file}. Error details - {err}")

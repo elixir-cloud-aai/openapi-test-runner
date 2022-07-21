@@ -3,6 +3,10 @@ description: Job to retrieve the service info
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - Logical
+  - Get Service Info Test
+  - All
 jobs:
   - name: service_info
     description: Retrieve the TES server info
