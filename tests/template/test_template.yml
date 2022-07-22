@@ -4,7 +4,7 @@ version:
   - <API Spec version>
 server: <server url to run the tests>
 tags:
-  - <Tag Name>                # Logical - No Polling needed, Functional - Polling needed. Always add 2 tags - Individual tag based on test name and "All" tag
+  - <Tag Name>                # Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and "All" tag
 jobs:
   - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task
     description: <individual job description>       #Optional

@@ -5,24 +5,30 @@ version:
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - Logical
+  - Get Task
   - Get Basic Task Test
   - All
 jobs:
-  - name: list_tasks
-    description: Retrieve the list of tasks tracked by the TES server
+  - name: create_task
+    description: Create a new TES task
     endpoint: /tasks
-    operation: GET
-    query_parameters:
-      - view: MINIMAL
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
     response:
-      200: |
-        {
-          "tasks": [
-            {
-              "state": "COMPLETE"
-            }
-          ]
-        }
+      200: { }
   - name: get_task
     description: Retrieve the task details for TES task
     endpoint: /tasks/{id}

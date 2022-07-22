@@ -5,6 +5,7 @@ version:
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - Logical
+  - Service Info
   - Get Service Info Test
   - All
 jobs:

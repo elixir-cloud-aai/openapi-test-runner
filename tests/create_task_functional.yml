@@ -5,6 +5,7 @@ version:
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - Functional
+  - Create Task
   - Create Task Functional Test
   - All
 jobs:

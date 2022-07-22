@@ -5,6 +5,7 @@ version:
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - Logical
+  - Create Task
   - Create Task Test
   - All
 jobs:
