@@ -2,6 +2,7 @@ import json
 from pydantic import ValidationError
 from compliance_suite.functions.requestor import send_request, poll_request
 from compliance_suite.constants.constants import VERSION_INFO, ENDPOINT_TO_MODEL
+from compliance_suite.functions.colored_console import print_blue, print_red, print_green
 
 
 class TestRunner():
@@ -17,9 +18,9 @@ class TestRunner():
 
         try:
             ENDPOINT_TO_MODEL[endpoint_model](**json_data)
-            print(f'{message} Schema validation |successful| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
+            print_green(f'{message} Schema validation |successful| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
         except ValidationError as err:
-            print(f'{message} Schema validation |failed| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
+            print_red(f'{message} Schema validation |failed| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
             print(err)
 
     def validate_request_body(self, request_body):
@@ -30,7 +31,7 @@ class TestRunner():
         try:
             request_body_json = json.loads(request_body)
         except json.JSONDecodeError as err:
-            print(f"Error in request body - {err}")
+            print_red(f"Error in request body - {err}")
 
         # Logical Schema Validation
 
@@ -44,14 +45,14 @@ class TestRunner():
         if response.status_code == response_status:
             print(f"Successful request")
         else:
-            print("Request Failed. Incorrect Response Status Code.")
+            print_red("Request Failed. Incorrect Response Status Code.")
 
         # Logical Schema Validation
         if not response.text:
             response_json = {}
         else:
             response_json = response.json()
-        print(response_json)
+        # print(response_json)
 
         if self.job_data["name"] in ["list_tasks", "get_task"]:
             view_query = [item["view"] for item in self.job_data["query_parameters"]]

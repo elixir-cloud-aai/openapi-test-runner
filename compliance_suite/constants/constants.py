@@ -7,6 +7,20 @@ VERSION_INFO = {
     'v1.1': 'v1'
 }
 
+# Utility Constants
+
+COLORS = {
+    'HEADER': '\033[95m',
+    'BLUE': '\033[94m',
+    'CYAN': '\033[96m',
+    'GREEN': '\033[92m',
+    'YELLOW': '\033[93m',
+    'RED': '\033[91m',
+    'END': '\033[0m',
+    'BOLD': '\033[1m',
+    'UNDERLINE': '\033[4m'
+}
+
 # API Constants
 
 ENDPOINT_TO_MODEL = {

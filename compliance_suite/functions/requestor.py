@@ -34,19 +34,19 @@ def poll_callback(response):
 def check_poll(response, check_cancel):
 
     if response.status_code != 200:
-        print(f"Polling request failed")
+        print(f"Unexpected response from Polling request. Retrying...")
         return False
 
     response_json = response.json()
     if check_cancel and response_json["state"] in ["CANCELED"]:
-        print(f"Polling request successful")
+        print(f"Expected response received. Polling request successful")
         return True
 
     elif not check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR"]:
-        print(f"Polling request successful")
+        print(f"Expected response received. Polling request successful")
         return True
 
-    print(f"Polling request failed")
+    print(f"Unexpected response from Polling request. Retrying...")
     return False
 
 
@@ -65,3 +65,4 @@ def poll_request(server, version, endpoint, id_uri_param, query_params, operatio
                                  step=polling_interval, timeout=polling_timeout,
                                  check_success=poll_callback)
     return response
+

@@ -6,10 +6,10 @@ def main():
     pass
 
 @main.command(help='Run TES compliance tests against the servers')
-@click.option('--tags', '-t', multiple=True, help='Tags')
-def report(tags):
-    print(tags)
-    job_runner = JobRunner(tags)
+@click.option('--tag', '-t', multiple=True, help='Tag')
+def report(tag):
+    # print(tag)
+    job_runner = JobRunner(tag)
     job_runner.run_jobs()
 
 if __name__ == "__main__":
