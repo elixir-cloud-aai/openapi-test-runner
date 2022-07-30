@@ -2,6 +2,7 @@ import json
 import requests
 from compliance_suite.constants.constants import *
 import polling2
+from compliance_suite.exceptions.ComplianceException import ComplianceException
 
 check_cancel = None
 
@@ -61,8 +62,11 @@ def poll_request(server, version, endpoint, id_uri_param, query_params, operatio
     print(f"Sending {operation} polling request to {base_url}. Query Parameters - {query_params}")
     if operation == "GET":
 
-        response = polling2.poll(lambda: requests.get(base_url, headers=REQUEST_HEADERS, params=query_params),
-                                 step=polling_interval, timeout=polling_timeout,
-                                 check_success=poll_callback)
+        try:
+            response = polling2.poll(lambda: requests.get(base_url, headers=REQUEST_HEADERS, params=query_params),
+                                     step=polling_interval, timeout=polling_timeout,
+                                     check_success=poll_callback)
+        except polling2.TimeoutException:
+            raise ComplianceException(f"Polling timeout for {operation} {base_url}")
     return response
 

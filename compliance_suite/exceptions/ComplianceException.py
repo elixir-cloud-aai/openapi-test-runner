@@ -1,0 +1,3 @@
+class ComplianceException(Exception):
+
+    pass

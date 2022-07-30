@@ -2,7 +2,8 @@ import json
 from pydantic import ValidationError
 from compliance_suite.functions.requestor import send_request, poll_request
 from compliance_suite.constants.constants import VERSION_INFO, ENDPOINT_TO_MODEL
-from compliance_suite.functions.colored_console import print_blue, print_red, print_green
+from compliance_suite.functions.colored_console import print_underline
+from compliance_suite.exceptions.ComplianceException import ComplianceException
 
 
 class TestRunner():
@@ -18,20 +19,20 @@ class TestRunner():
 
         try:
             ENDPOINT_TO_MODEL[endpoint_model](**json_data)
-            print_green(f'{message} Schema validation |successful| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
+            print_underline(f'{message} Schema validation successful for '
+                            f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
         except ValidationError as err:
-            print_red(f'{message} Schema validation |failed| for {self.job_data["operation"]} {self.job_data["endpoint"]}')
-            print(err)
+            raise ComplianceException(f'{message} Schema validation failed for {self.job_data["operation"]} '
+                                      f'{self.job_data["endpoint"]}. Error Details - {err}')
 
     def validate_request_body(self, request_body):
-
-        request_body_json = None
 
         # JSON Validation
         try:
             request_body_json = json.loads(request_body)
         except json.JSONDecodeError as err:
-            print_red(f"Error in request body - {err}")
+            raise ComplianceException(f'JSON Error in request body for '
+                                      f'{self.job_data["operation"]} {self.job_data["endpoint"]} - {err}')
 
         # Logical Schema Validation
 
@@ -42,14 +43,16 @@ class TestRunner():
 
         # General status validation
         response_status = list(self.job_data["response"].keys())[0]
+
         if response.status_code == response_status:
-            print(f"Successful request")
+            print(f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful Response status code')
         else:
-            print_red("Request Failed. Incorrect Response Status Code.")
+            raise ComplianceException(f'{self.job_data["operation"]} {self.job_data["endpoint"]}'
+                                      f' Response status code is not 200')
 
         # Logical Schema Validation
         if not response.text:
-            response_json = {}
+            response_json = {}          # Handle the Cancel Task Endpoint empty response
         else:
             response_json = response.json()
         # print(response_json)
