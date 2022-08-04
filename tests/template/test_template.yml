@@ -26,7 +26,7 @@ jobs:
     operation: <HTTP operation>
     query_parameters:                               #Optional
       <Query Param name> : <value>
-    polling: #Optional
+    polling: #Optional      Only to be used with Get Task endpoint
       interval: <Polling Interval Value in seconds>
       timeout: <Polling Timeout Value in seconds>
     request_body: |                                 #Optional

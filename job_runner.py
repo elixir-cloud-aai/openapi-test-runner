@@ -12,12 +12,12 @@ class JobRunner():
         self.path = os.getcwd()
         self.tags = tags
         self.test_count = 0
-        self.result = {
+        self.result = {             # To store the count of passed/failed/skipped tests
             "passed": 0,
             "failed": 0,
             "skipped": 0
         }
-        self.test_status = {
+        self.test_status = {        # To store the status of each test
             "passed": [],
             "failed": [],
             "skipped": []
@@ -50,6 +50,13 @@ class JobRunner():
         except ValidationError as err:
             raise ComplianceException(f"YAML schema validation error - {yaml_file}. Error details - {err.message}")
 
+    def validate_yaml(self, file, yaml_file):
+        try:
+            yaml_data = yaml.safe_load(file)
+            return yaml_data
+        except yaml.YAMLError as err:
+            raise ComplianceException(f"Invalid YAML File - {yaml_file}. Error details - {err}")
+
     def run_jobs(self):
 
         yaml_path = os.path.join(self.path, "tests")
@@ -59,11 +66,7 @@ class JobRunner():
                 with open(os.path.join(yaml_path, yaml_file), "r") as f:
                     print("\n{:#^100}".format(f"     Initiating Test-{self.test_count} for {yaml_file}     "))
                     try:
-                        try:
-                            yaml_data = yaml.safe_load(f)
-                        except yaml.YAMLError as err:
-                            raise ComplianceException(f"Invalid YAML File - {yaml_file}. Error details - {err}")
-                        # print(yaml_data)
+                        yaml_data = self.validate_yaml(f, yaml_file)
                         self.validate_job(yaml_data, yaml_file)
 
                         tag_matched = False
