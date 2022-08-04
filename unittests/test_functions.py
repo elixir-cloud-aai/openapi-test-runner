@@ -28,7 +28,7 @@ class TestFunctions(unittest.TestCase):
         test_runner.job_data = yaml_data["jobs"][0]
 
         post_response = send_request(test_runner.server, test_runner.version, test_runner.job_data["endpoint"],
-                                    None, {}, test_runner.job_data["operation"], test_runner.job_data["request_body"])
+                                     None, {}, test_runner.job_data["operation"], test_runner.job_data["request_body"])
         task_id = post_response.json()["id"]
 
         # Now, get task
@@ -77,5 +77,5 @@ class TestFunctions(unittest.TestCase):
         task_id = post_response.json()["id"]
 
         with self.assertRaises(ComplianceException):
-            get_response = poll_request(test_runner.server, test_runner.version, "/tasks/{id}",
-                                        task_id, {"view": "MINIMAL"}, "GET", 10, 5, False)
+            poll_request(test_runner.server, test_runner.version, "/tasks/{id}",
+                         task_id, {"view": "MINIMAL"}, "GET", 10, 5, False)

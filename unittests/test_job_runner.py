@@ -1,4 +1,3 @@
-import job_runner
 from compliance_suite.exceptions.ComplianceException import ComplianceException
 from job_runner import JobRunner
 import unittest

@@ -4,6 +4,7 @@ from job_runner import JobRunner
 from unittest.mock import patch
 import unittest
 
+
 class TestJobRunner(unittest.TestCase):
 
     def test_main(self):

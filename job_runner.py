@@ -1,5 +1,5 @@
 import os
-from jsonschema import validate, SchemaError, ValidationError
+from jsonschema import validate, ValidationError
 import yaml
 from test_runner import TestRunner
 from compliance_suite.exceptions.ComplianceException import ComplianceException

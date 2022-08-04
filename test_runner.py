@@ -95,11 +95,10 @@ class TestRunner():
                 check_cancel = True
 
             response = poll_request(self.server, self.version, job_data["endpoint"],
-                                id_uri_param, query_params, job_data["operation"], job_data["polling"]["interval"],
-                                job_data["polling"]["timeout"], check_cancel)
+                                    id_uri_param, query_params, job_data["operation"], job_data["polling"]["interval"],
+                                    job_data["polling"]["timeout"], check_cancel)
         else:
             response = send_request(self.server, self.version, job_data["endpoint"],
-                                id_uri_param, query_params, job_data["operation"], request_body)
+                                    id_uri_param, query_params, job_data["operation"], request_body)
 
         self.validate_response(response)
-

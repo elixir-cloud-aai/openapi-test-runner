@@ -22,37 +22,49 @@ class TesCreateTaskResponse(BaseModel):
 class TesExecutor(BaseModel):
     image: str = Field(
         ...,
-        description='Name of the container image. The string will be passed as the image\nargument to the containerization run command. Examples:\n   - `ubuntu`\n   - `quay.io/aptible/ubuntu`\n   - `gcr.io/my-org/my-image`\n   - `myregistryhost:5000/fedora/httpd:version1.0`',
+        description='Name of the container image. The string will be passed as the image\nargument to the '
+                    'containerization run command. Examples:\n   - `ubuntu`\n   - `quay.io/aptible/ubuntu`\n   - '
+                    '`gcr.io/my-org/my-image`\n   - `myregistryhost:5000/fedora/httpd:version1.0`',
         example='ubuntu:20.04',
     )
     command: List[str] = Field(
         ...,
-        description='A sequence of program arguments to execute, where the first argument\nis the program to execute (i.e. argv). Example:\n```\n{\n  "command" : ["/bin/md5", "/data/file1"]\n}\n```',
+        description='A sequence of program arguments to execute, where the first argument\nis the program to '
+                    'execute (i.e. argv). Example:\n```\n{\n  "command" : ["/bin/md5", "/data/file1"]\n}\n```',
         example=['/bin/md5', '/data/file1'],
     )
     workdir: Optional[str] = Field(
         None,
-        description='The working directory that the command will be executed in.\nIf not defined, the system will default to the directory set by\nthe container image.',
+        description='The working directory that the command will be executed in.\nIf not defined, the system will '
+                    'default to the directory set by\nthe container image.',
         example='/data/',
     )
     stdin: Optional[str] = Field(
         None,
-        description='Path inside the container to a file which will be piped\nto the executor\'s stdin. This must be an absolute path. This mechanism\ncould be used in conjunction with the input declaration to process\na data file using a tool that expects STDIN.\n\nFor example, to get the MD5 sum of a file by reading it into the STDIN\n```\n{\n  "command" : ["/bin/md5"],\n  "stdin" : "/data/file1"\n}\n```',
+        description='Path inside the container to a file which will be piped\nto the executor\'s stdin. This must be '
+                    'an absolute path. This mechanism\ncould be used in conjunction with the input declaration to '
+                    'process\na data file using a tool that expects STDIN.\n\nFor example, to get the MD5 sum of a '
+                    'file by reading it into the STDIN\n```\n{\n  "command" : ["/bin/md5"],\n  '
+                    '"stdin" : "/data/file1"\n}\n```',
         example='/data/file1',
     )
     stdout: Optional[str] = Field(
         None,
-        description='Path inside the container to a file where the executor\'s\nstdout will be written to. Must be an absolute path. Example:\n```\n{\n  "stdout" : "/tmp/stdout.log"\n}\n```',
+        description='Path inside the container to a file where the executor\'s\nstdout will be written to. '
+                    'Must be an absolute path. Example:\n```\n{\n  "stdout" : "/tmp/stdout.log"\n}\n```',
         example='/tmp/stdout.log',
     )
     stderr: Optional[str] = Field(
         None,
-        description='Path inside the container to a file where the executor\'s\nstderr will be written to. Must be an absolute path. Example:\n```\n{\n  "stderr" : "/tmp/stderr.log"\n}\n```',
+        description='Path inside the container to a file where the executor\'s\nstderr will be written to. Must be '
+                    'an absolute path. Example:\n```\n{\n  "stderr" : "/tmp/stderr.log"\n}\n```',
         example='/tmp/stderr.log',
     )
     env: Optional[Dict[str, str]] = Field(
         None,
-        description='Enviromental variables to set within the container. Example:\n```\n{\n  "env" : {\n    "ENV_CONFIG_PATH" : "/data/config.file",\n    "BLASTDB" : "/data/GRC38",\n    "HMMERDB" : "/data/hmmer"\n  }\n}\n```',
+        description='Enviromental variables to set within the container. Example:\n```\n{\n  "env" : {\n    '
+                    '"ENV_CONFIG_PATH" : "/data/config.file",\n    "BLASTDB" : "/data/GRC38",\n    '
+                    '"HMMERDB" : "/data/hmmer"\n  }\n}\n```',
         example={'BLASTDB': '/data/GRC38', 'HMMERDB': '/data/hmmer'},
     )
 
@@ -70,11 +82,19 @@ class TesExecutorLog(BaseModel):
     )
     stdout: Optional[str] = Field(
         None,
-        description='Stdout content.\n\nThis is meant for convenience. No guarantees are made about the content.\nImplementations may chose different approaches: only the head, only the tail,\na URL reference only, etc.\n\nIn order to capture the full stdout client should set Executor.stdout\nto a container file path, and use Task.outputs to upload that file\nto permanent storage.',
+        description='Stdout content.\n\nThis is meant for convenience. No guarantees are made about the '
+                    'content.\nImplementations may chose different approaches: only the head, only the tail,\na URL '
+                    'reference only, etc.\n\nIn order to capture the full stdout client should set '
+                    'Executor.stdout\nto a container file path, and use Task.outputs to upload that file\nto '
+                    'permanent storage.',
     )
     stderr: Optional[str] = Field(
         None,
-        description='Stderr content.\n\nThis is meant for convenience. No guarantees are made about the content.\nImplementations may chose different approaches: only the head, only the tail,\na URL reference only, etc.\n\nIn order to capture the full stderr client should set Executor.stderr\nto a container file path, and use Task.outputs to upload that file\nto permanent storage.',
+        description='Stderr content.\n\nThis is meant for convenience. No guarantees are made about the '
+                    'content.\nImplementations may chose different approaches: only the head, only the tail,\na URL '
+                    'reference only, etc.\n\nIn order to capture the full stderr client should set '
+                    'Executor.stderr\nto a container file path, and use Task.outputs to upload that file\nto '
+                    'permanent storage.',
     )
     exit_code: int = Field(..., description='Exit code.')
 
@@ -89,7 +109,9 @@ class TesInput(BaseModel):
     description: Optional[str] = None
     url: Optional[str] = Field(
         None,
-        description='REQUIRED, unless "content" is set.\n\nURL in long term storage, for example:\n - s3://my-object-store/file1\n - gs://my-bucket/file2\n - file:///path/to/my/file\n - /path/to/my/file',
+        description='REQUIRED, unless "content" is set.\n\nURL in long term storage, for example:\n - '
+                    's3://my-object-store/file1\n - gs://my-bucket/file2\n - file:///path/to/my/file\n - '
+                    '/path/to/my/file',
         example='s3://my-object-store/file1',
     )
     path: str = Field(
@@ -100,7 +122,9 @@ class TesInput(BaseModel):
     type: TesFileType
     content: Optional[str] = Field(
         None,
-        description='File content literal.\n\nImplementations should support a minimum of 128 KiB in this field\nand may define their own maximum.\n\nUTF-8 encoded\n\nIf content is not empty, "url" must be ignored.',
+        description='File content literal.\n\nImplementations should support a minimum of 128 KiB in this '
+                    'field\nand may define their own maximum.\n\nUTF-8 encoded\n\nIf content is not empty, '
+                    '"url" must be ignored.',
     )
 
 
@@ -112,7 +136,9 @@ class TesOutput(BaseModel):
     )
     url: str = Field(
         ...,
-        description='URL for the file to be copied by the TES server after the task is complete.\nFor Example:\n - `s3://my-object-store/file1`\n - `gs://my-bucket/file2`\n - `file:///path/to/my/file`',
+        description='URL for the file to be copied by the TES server after the task is complete.\nFor '
+                    'Example:\n - `s3://my-object-store/file1`\n - `gs://my-bucket/file2`\n - '
+                    '`file:///path/to/my/file`',
     )
     path: str = Field(
         ...,
@@ -131,7 +157,8 @@ class TesOutputFileLog(BaseModel):
     )
     size_bytes: str = Field(
         ...,
-        description="Size of the file in bytes. Note, this is currently coded as a string\nbecause official JSON doesn't support int64 numbers.",
+        description="Size of the file in bytes. Note, this is currently coded as a string\nbecause official "
+                    "JSON doesn't support int64 numbers.",
         example=['1024'],
     )
 
@@ -142,7 +169,9 @@ class TesResources(BaseModel):
     )
     preemptible: Optional[bool] = Field(
         None,
-        description="Define if the task is allowed to run on preemptible compute instances,\nfor example, AWS Spot. This option may have no effect when utilized\non some backends that don't have the concept of preemptible jobs.",
+        description="Define if the task is allowed to run on preemptible compute instances,\nfor example, "
+                    "AWS Spot. This option may have no effect when utilized\non some backends that don't have "
+                    "the concept of preemptible jobs.",
         example=False,
     )
     ram_gb: Optional[float] = Field(
@@ -153,7 +182,9 @@ class TesResources(BaseModel):
     )
     zones: Optional[List[str]] = Field(
         None,
-        description='Request that the task be run in these compute zones. How this string\nis utilized will be dependent on the backend system. For example, a\nsystem based on a cluster queueing system may use this string to define\npriorty queue to which the job is assigned.',
+        description='Request that the task be run in these compute zones. How this string\nis utilized '
+                    'will be dependent on the backend system. For example, a\nsystem based on a cluster '
+                    'queueing system may use this string to define\npriorty queue to which the job is assigned.',
         example='us-west-1',
     )
 
@@ -191,25 +222,34 @@ class TesTaskLog(BaseModel):
         description='When the task ended, in RFC 3339 format.',
         example='2020-10-02T16:00:00.000Z',
     )
-    outputs: Optional[List[TesOutputFileLog]] = Field(              #Make it optional as its not TESK compliant. Revert later
+    outputs: Optional[List[TesOutputFileLog]] = Field(       # Make it optional as its not TESK compliant. Revert later
         None,
         description='Information about all output files. Directory outputs are\nflattened into separate items.',
     )
     system_logs: Optional[List[str]] = Field(
         None,
-        description='System logs are any logs the system decides are relevant,\nwhich are not tied directly to an Executor process.\nContent is implementation specific: format, size, etc.\n\nSystem logs may be collected here to provide convenient access.\n\nFor example, the system may include the name of the host\nwhere the task is executing, an error message that caused\na SYSTEM_ERROR state (e.g. disk is full), etc.\n\nSystem logs are only included in the FULL task view.',
+        description='System logs are any logs the system decides are relevant,\nwhich are not tied directly '
+                    'to an Executor process.\nContent is implementation specific: format, size, etc.\n\nSystem '
+                    'logs may be collected here to provide convenient access.\n\nFor example, the system may '
+                    'include the name of the host\nwhere the task is executing, an error message '
+                    'that caused\na SYSTEM_ERROR state (e.g. disk is full), etc.\n\nSystem logs are '
+                    'only included in the FULL task view.',
     )
 
 
 class ServiceType(BaseModel):
     group: str = Field(
         ...,
-        description="Namespace in reverse domain name format. Use `org.ga4gh` for implementations compliant with official GA4GH specifications. For services with custom APIs not standardized by GA4GH, or implementations diverging from official GA4GH specifications, use a different namespace (e.g. your organization's reverse domain name).",
+        description="Namespace in reverse domain name format. Use `org.ga4gh` for implementations compliant "
+                    "with official GA4GH specifications. For services with custom APIs not standardized by "
+                    "GA4GH, or implementations diverging from official GA4GH specifications, use a different "
+                    "namespace (e.g. your organization's reverse domain name).",
         example='org.ga4gh',
     )
     artifact: str = Field(
         ...,
-        description='Name of the API or GA4GH specification implemented. Official GA4GH types should be assigned as part of standards approval process. Custom artifacts are supported.',
+        description='Name of the API or GA4GH specification implemented. Official GA4GH types should be assigned '
+                    'as part of standards approval process. Custom artifacts are supported.',
         example='beacon',
     )
     version: str = Field(
@@ -235,7 +275,9 @@ class Organization(BaseModel):
 class Service(BaseModel):
     id: str = Field(
         ...,
-        description='Unique ID of this service. Reverse domain name notation is recommended, though not required. The identifier should attempt to be globally unique so it can be used in downstream aggregator services e.g. Service Registry.',
+        description='Unique ID of this service. Reverse domain name notation is recommended, though not required. '
+                    'The identifier should attempt to be globally unique so it can be used in downstream '
+                    'aggregator services e.g. Service Registry.',
         example='org.ga4gh.myservice',
     )
     name: str = Field(
@@ -254,12 +296,15 @@ class Service(BaseModel):
     )
     contactUrl: Optional[AnyUrl] = Field(
         None,
-        description='URL of the contact for the provider of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).',
+        description='URL of the contact for the provider of this service, e.g. a link to a contact form '
+                    '(RFC 3986 format), or an email (RFC 2368 format).',
         example='mailto:support@example.com',
     )
     documentationUrl: Optional[AnyUrl] = Field(
         None,
-        description='URL of the documentation of this service (RFC 3986 format). This should help someone learn how to use your service, including any specifics required to access data, e.g. authentication.',
+        description='URL of the documentation of this service (RFC 3986 format). This should help someone '
+                    'learn how to use your service, including any specifics required to access data, '
+                    'e.g. authentication.',
         example='https://docs.myservice.example.com',
     )
     createdAt: Optional[datetime] = Field(
@@ -274,12 +319,16 @@ class Service(BaseModel):
     )
     environment: Optional[str] = Field(
         None,
-        description='Environment the service is running in. Use this to distinguish between production, development and testing/staging deployments. Suggested values are prod, test, dev, staging. However this is advised and not enforced.',
+        description='Environment the service is running in. Use this to distinguish between production, '
+                    'development and testing/staging deployments. Suggested values are prod, test, dev, '
+                    'staging. However this is advised and not enforced.',
         example='test',
     )
     version: str = Field(
         ...,
-        description='Version of the service being described. Semantic versioning is recommended, but other identifiers, such as dates or commit hashes, are also allowed. The version should be changed whenever the service is updated.',
+        description='Version of the service being described. Semantic versioning is recommended, but '
+                    'other identifiers, such as dates or commit hashes, are also allowed. The version should '
+                    'be changed whenever the service is updated.',
         example='1.0.0',
     )
 
@@ -314,7 +363,8 @@ class TesTask(BaseModel):
     )
     inputs: Optional[List[TesInput]] = Field(
         None,
-        description='Input files that will be used by the task. Inputs will be downloaded\nand mounted into the executor container as defined by the task request\ndocument.',
+        description='Input files that will be used by the task. Inputs will be downloaded\nand mounted into '
+                    'the executor container as defined by the task request\ndocument.',
         example=[{'url': 's3://my-object-store/file1', 'path': '/data/file1'}],
     )
     outputs: Optional[List[TesOutput]] = Field(
@@ -329,23 +379,34 @@ class TesTask(BaseModel):
         ],
     )
     resources: Optional[TesResources] = None
-    executors: Optional[List[TesExecutor]] = Field(         #Make Optional as its not TES compliant. Remove when TES Specs are updated
-        None,
-        description='An array of executors to be run. Each of the executors will run one\nat a time sequentially. Each executor is a different command that\nwill be run, and each can utilize a different docker image. But each of\nthe executors will see the same mapped inputs and volumes that are declared\nin the parent CreateTask message.\n\nExecution stops on the first error.',
+    executors: Optional[List[TesExecutor]] = Field(         # Make Optional as its not TES compliant.
+        None,                                               # Remove when TES Specs are updated
+        description='An array of executors to be run. Each of the executors will run one\nat a time sequentially. '
+                    'Each executor is a different command that\nwill be run, and each can utilize a different '
+                    'docker image. But each of\nthe executors will see the same mapped inputs and volumes '
+                    'that are declared\nin the parent CreateTask message.\n\nExecution stops on the first error.',
     )
     volumes: Optional[List[str]] = Field(
         None,
-        description='Volumes are directories which may be used to share data between\nExecutors. Volumes are initialized as empty directories by the\nsystem when the task starts and are mounted at the same path\nin each Executor.\n\nFor example, given a volume defined at `/vol/A`,\nexecutor 1 may write a file to `/vol/A/exec1.out.txt`, then\nexecutor 2 may read from that file.\n\n(Essentially, this translates to a `docker run -v` flag where\nthe container path is the same for each executor).',
+        description='Volumes are directories which may be used to share data between\nExecutors. Volumes are '
+                    'initialized as empty directories by the\nsystem when the task starts and are mounted at the '
+                    'same path\nin each Executor.\n\nFor example, given a volume defined at `/vol/A`,\nexecutor 1 '
+                    'may write a file to `/vol/A/exec1.out.txt`, then\nexecutor 2 may read from that '
+                    'file.\n\n(Essentially, this translates to a `docker run -v` flag where\nthe container path '
+                    'is the same for each executor).',
         example=['/vol/A/'],
     )
     tags: Optional[Dict[str, str]] = Field(
         None,
-        description='A key-value map of arbitrary tags. These can be used to store meta-data\nand annotations about a task. Example:\n```\n{\n  "tags" : {\n      "WORKFLOW_ID" : "cwl-01234",\n      "PROJECT_GROUP" : "alice-lab"\n  }\n}\n```',
+        description='A key-value map of arbitrary tags. These can be used to store meta-data\nand annotations '
+                    'about a task. Example:\n```\n{\n  "tags" : {\n      "WORKFLOW_ID" : "cwl-01234",\n      '
+                    '"PROJECT_GROUP" : "alice-lab"\n  }\n}\n```',
         example={'WORKFLOW_ID': 'cwl-01234', 'PROJECT_GROUP': 'alice-lab'},
     )
     logs: Optional[List[TesTaskLog]] = Field(
         None,
-        description='Task logging information.\nNormally, this will contain only one entry, but in the case where\na task fails and is retried, an entry will be appended to this list.',
+        description='Task logging information.\nNormally, this will contain only one entry, but in the case '
+                    'where\na task fails and is retried, an entry will be appended to this list.',
     )
     creation_time: Optional[str] = Field(
         None,
@@ -357,12 +418,15 @@ class TesTask(BaseModel):
 class TesListTasksResponse(BaseModel):
     tasks: List[TesTask] = Field(
         ...,
-        description='List of tasks. These tasks will be based on the original submitted\ntask document, but with other fields, such as the job state and\nlogging info, added/changed as the job progresses.',
+        description='List of tasks. These tasks will be based on the original submitted\ntask document, but with '
+                    'other fields, such as the job state and\nlogging info, added/changed as the job progresses.',
     )
     next_page_token: Optional[str] = Field(
         None,
-        description='Token used to return the next page of results. This value can be used\nin the `page_token` field of the next ListTasks request.',
+        description='Token used to return the next page of results. This value can be used\nin the `page_token` '
+                    'field of the next ListTasks request.',
     )
+
 
 class TesTaskMinimal(BaseModel):
     id: str = Field(
@@ -372,8 +436,10 @@ class TesTaskMinimal(BaseModel):
     )
     state: TesState = Field(..., example='UNKNOWN')
 
+
 class TesListTasksResponseMinimal(BaseModel):
     tasks: List[TesTaskMinimal] = Field(
         ...,
-        description='List of tasks. These tasks will be based on the original submitted\ntask document, but with other fields, such as the job state and\nlogging info, added/changed as the job progresses.',
+        description='List of tasks. These tasks will be based on the original submitted\ntask document, but with '
+                    'other fields, such as the job state and\nlogging info, added/changed as the job progresses.',
     )

@@ -1,6 +1,6 @@
 import json
 import requests
-from compliance_suite.constants.constants import *
+from compliance_suite.constants.constants import REQUEST_HEADERS
 import polling2
 from compliance_suite.exceptions.ComplianceException import ComplianceException
 
@@ -35,19 +35,19 @@ def poll_callback(response):
 def check_poll(response, check_cancel):
 
     if response.status_code != 200:
-        print(f"Unexpected response from Polling request. Retrying...")
+        print("Unexpected response from Polling request. Retrying...")
         return False
 
     response_json = response.json()
     if check_cancel and response_json["state"] in ["CANCELED"]:
-        print(f"Expected response received. Polling request successful")
+        print("Expected response received. Polling request successful")
         return True
 
     elif not check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR"]:
-        print(f"Expected response received. Polling request successful")
+        print("Expected response received. Polling request successful")
         return True
 
-    print(f"Unexpected response from Polling request. Retrying...")
+    print("Unexpected response from Polling request. Retrying...")
     return False
 
 
@@ -69,4 +69,3 @@ def poll_request(server, version, endpoint, id_uri_param, query_params, operatio
         except polling2.TimeoutException:
             raise ComplianceException(f"Polling timeout for {operation} {base_url}")
     return response
-

@@ -1,4 +1,5 @@
-from compliance_suite.models.v1_0_specs import *
+from compliance_suite.models.v1_0_specs import TesServiceInfo, TesListTasksResponseMinimal, TesListTasksResponse, \
+    TesTaskMinimal, TesTask, TesCreateTaskResponse, TesCancelTaskResponse
 
 # YAML Constants
 
