@@ -6,7 +6,7 @@ import yaml
 from test_runner import TestRunner
 from compliance_suite.exceptions.ComplianceException import ComplianceException
 
-YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "data", "tests", "success_create_task.yml")
+YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_create_task.yml")
 
 
 class TestFunctions(unittest.TestCase):

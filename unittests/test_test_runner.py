@@ -7,11 +7,11 @@ from compliance_suite.exceptions.ComplianceException import ComplianceException
 from unittest.mock import patch
 from requests.models import Response
 
-YAML_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "data", "tests", "success_service_info.yml")
-JSON_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "data", "json", "service_info_success.json")
-JSON_SERVICE_INFO_FAILURE = os.path.join(os.getcwd(), "data", "json", "service_info_failure.json")
-YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "data", "tests", "success_create_task.yml")
-YAML_CREATE_TASK_REQUEST_FAILURE = os.path.join(os.getcwd(), "data", "tests", "json_error_create_task.yml")
+YAML_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_service_info.yml")
+JSON_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "json", "service_info_success.json")
+JSON_SERVICE_INFO_FAILURE = os.path.join(os.getcwd(), "unittests", "data", "json", "service_info_failure.json")
+YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_create_task.yml")
+YAML_CREATE_TASK_REQUEST_FAILURE = os.path.join(os.getcwd(), "unittests", "data", "tests", "json_error_create_task.yml")
 
 
 class TestTestRunner(unittest.TestCase):
