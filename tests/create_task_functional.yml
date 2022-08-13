@@ -1,13 +1,14 @@
 name: Create Tes Task Functional Job
 description: Job to create a new TES Task and test functionality
+service: TES
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
-  - Functional
-  - Create Task
-  - Create Task Functional Test
-  - All
+  - functional
+  - create task
+  - create task functional test
+  - all
 jobs:
   - name: create_task
     description: Create a new TES task

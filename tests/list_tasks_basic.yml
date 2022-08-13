@@ -1,13 +1,14 @@
 name: List Basic Tasks Job
 description: Job to retrieve the list of Basic view of TES tasks
+service: TES
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
-  - Logical
-  - List Tasks
-  - Get List Basic Tasks Test
-  - All
+  - logical
+  - list tasks
+  - get list basic tasks test
+  - all
 jobs:
   - name: create_task
     description: Create a new TES task

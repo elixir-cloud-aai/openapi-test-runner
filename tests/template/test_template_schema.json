@@ -8,6 +8,12 @@
     "description": {
       "type": "string"
     },
+    "service": {
+      "type": "string",
+      "enum": [
+        "TES"
+      ]
+    },
     "version": {
       "type": "array",
       "items": {
@@ -99,6 +105,7 @@
   "required": [
     "name",
     "version",
+    "service",
     "server",
     "tags",
     "jobs"

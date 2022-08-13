@@ -1,5 +1,6 @@
 name: <Job Name>
 description: <Job Description>    #Optional
+service: <GA4GH Service Name>   # enum - [TES]
 version:
   - <API Spec version>
 server: <server url to run the tests>
@@ -9,7 +10,7 @@ jobs:
   - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task
     description: <individual job description>       #Optional
     endpoint: <API endpoint>    # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
-    operation: <HTTP operation>               #Required
+    operation: <HTTP operation>
     query_parameters:                               #Optional
       <Query Param name> : <value>
     polling:                                        #Optional
@@ -26,7 +27,7 @@ jobs:
     operation: <HTTP operation>
     query_parameters:                               #Optional
       <Query Param name> : <value>
-    polling: #Optional      Only to be used with Get Task endpoint
+    polling:                                        #Optional
       interval: <Polling Interval Value in seconds>
       timeout: <Polling Timeout Value in seconds>
     request_body: |                                 #Optional

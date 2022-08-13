@@ -25,7 +25,7 @@ The compliance suite has 3 components -
 2. Test Runner
 3. Report Generator
 
-![Architecture Diagram](/docs/images/Architecture.JPG)
+![Architecture Diagram](/docs/images/Architecture.svg)
 
 ## YAML Job Parser
 

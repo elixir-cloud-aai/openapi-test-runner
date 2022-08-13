@@ -5,10 +5,9 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 root_dir = Path(__file__).parent.resolve()
-install_requires = []
 req = root_dir / 'requirements.txt'
 with open(req, 'r') as _file:
-    install_requires = _file.read().splitlines()
+    install_requires: list = _file.read().splitlines()
 
 setup(
     name='tes-compliance-suite',
@@ -17,10 +16,10 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/elixir-cloud-aai/tes-compliance-suite',
-    author='ELIXIR Cloud & AAI',
-    author_email='alexander.kanitz@alumni.ethz.ch',
-    maintainer='Alexander Kanitz',
-    maintainer_email='alexander.kanitz@alumnni.ethz.ch',
+    author='Lakshya Garg',
+    author_email='garg.lakshya@gmail.com',
+    maintainer='ELIXIR Cloud & AAI',
+    maintainer_email='cloud-service@elixir-europe.org',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -37,6 +36,11 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Typing :: Typed',
     ],
+    entry_points={
+        'console_scripts': [
+            'tes-compliance-suite = compliance_suite.cli:main',
+        ],
+    },
     keywords=(
         'ga4gh tes elixir rest api app server openapi '
         'python compliance testing pydantic yaml '
