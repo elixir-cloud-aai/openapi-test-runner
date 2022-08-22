@@ -14,7 +14,10 @@ import requests
 from requests.models import Response
 
 from compliance_suite.constants.constants import REQUEST_HEADERS
-from compliance_suite.exceptions.compliance_exception import TestFailureException
+from compliance_suite.exceptions.compliance_exception import (
+    TestFailureException,
+    TestRunnerException
+)
 from compliance_suite.functions.log import logger
 
 
@@ -44,12 +47,17 @@ class Client():
         request_headers: dict = REQUEST_HEADERS[service]
         response = None
         logger.info(f"Sending {operation} request to {base_url}. Query Parameters - {query_params}")
-        if operation == "GET":
-            response = requests.get(base_url, headers=request_headers, params=query_params)
-        elif operation == "POST":
-            request_body = json.loads(request_body)
-            response = requests.post(base_url, headers=request_headers, json=request_body)
-        return response
+        try:
+            if operation == "GET":
+                response = requests.get(base_url, headers=request_headers, params=query_params)
+            elif operation == "POST":
+                request_body = json.loads(request_body)
+                response = requests.post(base_url, headers=request_headers, json=request_body)
+            return response
+        except OSError as err:
+            raise TestRunnerException(name="OS Error",
+                                      message=f"Connection error to {operation} {base_url}",
+                                      details=err)
 
     def check_poll(
             self,
@@ -100,8 +108,13 @@ class Client():
             response = polling2.poll(lambda: requests.get(base_url, headers=request_headers, params=query_params),
                                      step=polling_interval, timeout=polling_timeout,
                                      check_success=self.check_poll)
+            return response
         except polling2.TimeoutException:
             raise TestFailureException(name="Polling Timeout Exception",
                                        message=f"Polling timeout for {operation} {base_url}",
                                        details=None)
-        return response
+        except OSError as err:
+            raise TestRunnerException(name="OS Error",
+                                      message=f"Connection error to {operation} {base_url}",
+                                      details=err)
+

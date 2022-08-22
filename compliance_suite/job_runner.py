@@ -20,9 +20,14 @@ import yaml
 from compliance_suite.constants.constants import LOGGING_LEVEL
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
-    TestFailureException
+    TestFailureException,
+    TestRunnerException
 )
 from compliance_suite.functions.log import logger
+from compliance_suite.functions.report import (
+    Report,
+    ReportUtility
+)
 from compliance_suite.test_runner import TestRunner
 
 
@@ -62,7 +67,8 @@ class JobRunner():
     def validate_job(
             self,
             yaml_data: Any,
-            yaml_file: str
+            yaml_file: str,
+            report_case_yaml_validate: Any
     ) -> None:
         """ Validates if the Test file is in conformance to the test template/schema"""
 
@@ -73,7 +79,12 @@ class JobRunner():
         try:
             validate(yaml_data, json_schema)
             logger.info(f'Test YAML file valid for {yaml_file}')
+            ReportUtility.case_pass(case=report_case_yaml_validate,
+                                    message=f'Test YAML file valid for {yaml_file}')
         except ValidationError as err:
+            ReportUtility.case_fail(case=report_case_yaml_validate,
+                                    message=f'YAML file {yaml_file} does not match the Test template/schema',
+                                    log_message=err.message)
             raise JobValidationException(name="YAML Schema Validation Error",
                                          message=f"YAML file {yaml_file} does not match the Test template/schema",
                                          details=err.message)
@@ -94,22 +105,51 @@ class JobRunner():
         The individual jobs are then executed via Test Runner"""
 
         os.chdir(os.getcwd())
+
+        report = Report()
+
         yaml_path: Any = os.path.join(self.path, "..", "tests")
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 self.test_count += 1
                 logger.log(LOGGING_LEVEL['SUMMARY'], "\n{:#^100}".format(f"     Initiating Test-{self.test_count}"
                                                                          f" for {yaml_file}     "))
+
+                report_phase = report.add_phase(yaml_file.split("/")[-1])
+                report_yaml_test = report_phase.add_test()
+                ReportUtility.set_test(test=report_yaml_test,
+                                       name="yaml_test",
+                                       description="Perform tests on YAML Test File")
                 yaml_data: Any = None
+                report_job_test: Any = None
                 try:
+
+                    report_case_yaml = report_yaml_test.add_case()
+                    ReportUtility.set_case(case=report_case_yaml,
+                                           name="yaml_check",
+                                           description="Check if YAML file is in proper format")
+
                     with open(os.path.join(yaml_path, yaml_file), "r") as f:
                         try:
                             yaml_data = yaml.safe_load(f)
+                            ReportUtility.case_pass(case=report_case_yaml,
+                                                    message=f'Proper YAML format for {yaml_file}')
                         except yaml.YAMLError as err:
+                            ReportUtility.case_fail(case=report_case_yaml,
+                                                    message=f'Invalid YAML file {yaml_file}',
+                                                    log_message=err.__str__())
                             raise JobValidationException(name="YAML Error",
                                                          message=f"Invalid YAML file {yaml_file}",
                                                          details=err)
-                    self.validate_job(yaml_data, yaml_file)
+
+                    report_case_yaml_validate = report_yaml_test.add_case()
+                    ReportUtility.set_case(case=report_case_yaml_validate,
+                                           name="yaml_validate",
+                                           description="Validate if YAML file is in proper schema")
+                    self.validate_job(yaml_data, yaml_file, report_case_yaml_validate)
+
+                    if report.platform_name == "":
+                        report.set_platform_details(yaml_data["server"])
 
                     if self.tag_matcher(yaml_data["tags"]):
                         test_runner = TestRunner(yaml_data["service"], yaml_data["server"],
@@ -118,7 +158,8 @@ class JobRunner():
                         for job in yaml_data["jobs"]:
                             job_count += 1
                             logger.info(f'Running tests for sub-job-{job_count} -> {job["name"]}')
-                            test_runner.run_tests(job)
+                            report_job_test = report_phase.add_test()
+                            test_runner.run_tests(job, report_job_test)
                         self.test_status["passed"].append(str(self.test_count))
                         logger.log(LOGGING_LEVEL['SUCCESS'], f'Compliance Test-{self.test_count}'
                                                              f' for {yaml_file} successful.')
@@ -131,5 +172,18 @@ class JobRunner():
                     self.test_status["failed"].append(str(self.test_count))
                     logger.error(f'Compliance Test-{self.test_count} for {yaml_file} failed.')
                     logger.error(err)
+                except TestRunnerException as err:
+                    self.test_status["failed"].append(str(self.test_count))
+                    logger.error(f'Compliance Test-{self.test_count} for {yaml_file} failed.')
+                    logger.error(err)
+                    report_custom_case = report_job_test.add_case()
+                    ReportUtility.set_case(case=report_custom_case,
+                                           name="test_runner_exception",
+                                           description="Runtime exception thrown in Compliance Suite")
+                    ReportUtility.case_fail(case=report_custom_case,
+                                            message=f'{err.name}. {err.message}',
+                                            log_message=str(err.details))
 
         self.generate_summary()
+        json_report = report.generate()
+        logger.info(json_report)

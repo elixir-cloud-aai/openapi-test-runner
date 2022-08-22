@@ -10,19 +10,21 @@ from typing import (
     List
 )
 
+from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
 
-from compliance_suite.functions.log import logger
 from compliance_suite.constants.constants import (
     ENDPOINT_TO_MODEL,
     VERSION_INFO,
 )
-from compliance_suite.functions.client import Client
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
 )
+from compliance_suite.functions.client import Client
+from compliance_suite.functions.log import logger
+from compliance_suite.functions.report import ReportUtility
 
 
 class TestRunner():
@@ -36,12 +38,16 @@ class TestRunner():
         self.version: str = VERSION_INFO[version]
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}
+        self.report_test: Any = None
 
     def set_job_data(self, job_data):
         self.job_data = job_data
 
     def set_auxiliary_space(self, key, value):
         self.auxiliary_space[key] = value
+
+    def set_report_test(self, report_test: Test):
+        self.report_test = report_test
 
     def validate_logic(
             self,
@@ -52,11 +58,23 @@ class TestRunner():
         """ Validates if the response is in accordance with the TES API Specs and Models. Validation is done via
         Pydantic generated models"""
 
+        report_case_schema = self.report_test.add_case()
+        ReportUtility.set_case(case=report_case_schema,
+                               name=f"{message.lower()}_schema_validation",
+                               description="Check if response matches the model schema")
+
         try:
             ENDPOINT_TO_MODEL[endpoint_model](**json_data)
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
+            ReportUtility.case_pass(case=report_case_schema,
+                                    message=f'{message} Schema validation successful for {self.job_data["operation"]} '
+                                            f'{self.job_data["endpoint"]}')
         except ValidationError as err:
+            ReportUtility.case_fail(case=report_case_schema,
+                                    message=f'{message} Schema validation failed for {self.job_data["operation"]}'
+                                            f' {self.job_data["endpoint"]}',
+                                    log_message=err.__str__())
             raise TestFailureException(name="Schema Validation Error",
                                        message=f'{message} Schema validation failed for {self.job_data["operation"]}'
                                                f' {self.job_data["endpoint"]}',
@@ -69,10 +87,22 @@ class TestRunner():
         """ Validates the request body for proper JSON format. Validates the request body with respective
         API Model"""
 
+        report_case_json_check = self.report_test.add_case()
+        ReportUtility.set_case(case=report_case_json_check,
+                               name="request_body_json_validation",
+                               description="Check if request body is in proper JSON format")
+
         # JSON Validation
         try:
             request_body_json: Any = json.loads(request_body)
+            ReportUtility.case_pass(case=report_case_json_check,
+                                    message=f'Proper JSON format in request body for {self.job_data["operation"]}'
+                                            f' {self.job_data["endpoint"]}')
         except json.JSONDecodeError as err:
+            ReportUtility.case_fail(case=report_case_json_check,
+                                    message=f'JSON Error in request body for {self.job_data["operation"]}'
+                                            f' {self.job_data["endpoint"]}',
+                                    log_message=err.__str__())
             raise JobValidationException(name="JSON Decode Error",
                                          message=f'JSON Error in request body for {self.job_data["operation"]}'
                                                  f' {self.job_data["endpoint"]}',
@@ -93,9 +123,23 @@ class TestRunner():
         # General status validation
         response_status: int = list(self.job_data["response"].keys())[0]
 
+        report_case_status = self.report_test.add_case()
+        ReportUtility.set_case(case=report_case_status,
+                               name="status_code",
+                               description="Check if response status code is 200")
+
         if response.status_code == response_status:
             logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful Response status code')
+            ReportUtility.case_pass(case=report_case_status,
+                                    message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful '
+                                            f'Response status code')
+
         else:
+            ReportUtility.case_fail(case=report_case_status,
+                                    message=f'Unsuccessful Response status code for '
+                                            f'{self.job_data["operation"]} {self.job_data["endpoint"]}',
+                                    log_message="")
+
             raise TestFailureException(name="Incorrect HTTP Response Status",
                                        message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} '
                                                f'Response status code is not 200',
@@ -117,11 +161,16 @@ class TestRunner():
 
     def run_tests(
             self,
-            job_data: Any
+            job_data: Any,
+            report_test: Test
     ) -> None:
         """ Runs the individual jobs """
 
         self.set_job_data(job_data)
+        ReportUtility.set_test(test=report_test,
+                               name=job_data["name"],
+                               description=job_data["description"])
+        self.set_report_test(report_test)
 
         uri_params: Dict = {}
         query_params: Dict = {}
