@@ -6,7 +6,10 @@ This module is to test the Test Runner class and its methods
 import json
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import (
+    MagicMock,
+    patch
+)
 
 from requests.models import Response
 import yaml
@@ -34,6 +37,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
 
         with open(JSON_SERVICE_INFO_SUCCESS) as f:
             json_data = json.load(f)
@@ -48,6 +52,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
 
         with open(JSON_SERVICE_INFO_FAILURE) as f:
             json_data = json.load(f)
@@ -63,6 +68,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
         test_runner.validate_request_body(yaml_data["jobs"][0]["request_body"])
         assert True
 
@@ -73,6 +79,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
         with self.assertRaises(JobValidationException):
             test_runner.validate_request_body(yaml_data["jobs"][0]["request_body"])
 
@@ -86,6 +93,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
 
         resp = Response()
         resp.status_code = 200
@@ -99,6 +107,7 @@ class TestTestRunner(unittest.TestCase):
 
         test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
         test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner.report_test = MagicMock()
 
         resp = Response()
         resp.status_code = 400

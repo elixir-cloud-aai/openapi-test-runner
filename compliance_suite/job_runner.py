@@ -43,6 +43,11 @@ class JobRunner():
             "failed": [],
             "skipped": []
         }
+        self.report: Any = None
+
+    def set_report(self, report: Any) -> None:
+        """Set the report data member"""
+        self.report = report
 
     def generate_summary(self) -> None:
         """Generate test summary at the completion"""
@@ -80,7 +85,8 @@ class JobRunner():
             validate(yaml_data, json_schema)
             logger.info(f'Test YAML file valid for {yaml_file}')
             ReportUtility.case_pass(case=report_case_yaml_validate,
-                                    message=f'Test YAML file valid for {yaml_file}')
+                                    message=f'Test YAML file valid for {yaml_file}',
+                                    log_message="No logs for success")
         except ValidationError as err:
             ReportUtility.case_fail(case=report_case_yaml_validate,
                                     message=f'YAML file {yaml_file} does not match the Test template/schema',
@@ -100,6 +106,12 @@ class JobRunner():
                 return True
         return False
 
+    def generate_report(self) -> Any:
+        """Generates the report via ga4gh-testbed-lib and returns it"""
+
+        json_report = self.report.generate()
+        return json_report
+
     def run_jobs(self) -> None:
         """ Reads the Test files from compliance-suite-tests directory. Validates and parses individual jobs.
         The individual jobs are then executed via Test Runner"""
@@ -107,6 +119,7 @@ class JobRunner():
         os.chdir(os.getcwd())
 
         report = Report()
+        self.set_report(report)
 
         yaml_path: Any = os.path.join(self.path, "..", "tests")
         for yaml_file in os.listdir(yaml_path):
@@ -115,7 +128,7 @@ class JobRunner():
                 logger.log(LOGGING_LEVEL['SUMMARY'], "\n{:#^100}".format(f"     Initiating Test-{self.test_count}"
                                                                          f" for {yaml_file}     "))
 
-                report_phase = report.add_phase(yaml_file.split("/")[-1])
+                report_phase = self.report.add_phase(yaml_file.split("/")[-1])
                 report_yaml_test = report_phase.add_test()
                 ReportUtility.set_test(test=report_yaml_test,
                                        name="yaml_test",
@@ -133,7 +146,8 @@ class JobRunner():
                         try:
                             yaml_data = yaml.safe_load(f)
                             ReportUtility.case_pass(case=report_case_yaml,
-                                                    message=f'Proper YAML format for {yaml_file}')
+                                                    message=f'Proper YAML format for {yaml_file}',
+                                                    log_message="No logs for success")
                         except yaml.YAMLError as err:
                             ReportUtility.case_fail(case=report_case_yaml,
                                                     message=f'Invalid YAML file {yaml_file}',
@@ -148,8 +162,8 @@ class JobRunner():
                                            description="Validate if YAML file is in proper schema")
                     self.validate_job(yaml_data, yaml_file, report_case_yaml_validate)
 
-                    if report.platform_name == "":
-                        report.set_platform_details(yaml_data["server"])
+                    if self.report.platform_name == "":
+                        self.report.set_platform_details(yaml_data["server"])
 
                     if self.tag_matcher(yaml_data["tags"]):
                         test_runner = TestRunner(yaml_data["service"], yaml_data["server"],
@@ -185,5 +199,3 @@ class JobRunner():
                                             log_message=str(err.details))
 
         self.generate_summary()
-        json_report = report.generate()
-        logger.info(json_report)

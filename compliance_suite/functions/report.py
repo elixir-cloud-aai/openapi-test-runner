@@ -77,11 +77,12 @@ class ReportUtility():
         test.set_test_description(description)
 
     @staticmethod
-    def case_pass(case: Any, message: str) -> None:
+    def case_pass(case: Any, message: str, log_message: str) -> None:
         """Update the case details with Passed"""
 
         case.set_status_pass()
         case.set_message(message)
+        case.add_log_message(ReportUtility.trunc(log_message))
 
     @staticmethod
     def case_fail(case: Any, message: str, log_message: str) -> None:

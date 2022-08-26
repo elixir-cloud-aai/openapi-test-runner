@@ -17,7 +17,8 @@ def set_logging():
     logging.addLevelName(LOGGING_LEVEL['SUMMARY'], 'SUMMARY')
     formatter = colorlog.ColoredFormatter(
         "%(log_color)s%(message)s",
-        log_colors={'SKIP': 'blue', 'SUCCESS': 'green', 'SUMMARY': 'yellow', 'DEBUG': 'white', 'INFO': 'white', 'ERROR': 'red'}
+        log_colors={'SKIP': 'blue', 'SUCCESS': 'green', 'SUMMARY': 'yellow', 'DEBUG': 'white',
+                    'INFO': 'white', 'ERROR': 'red'}
     )
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)

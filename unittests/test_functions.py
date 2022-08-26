@@ -8,12 +8,16 @@ import unittest
 
 import yaml
 
-from compliance_suite.exceptions.compliance_exception import TestFailureException
+from compliance_suite.exceptions.compliance_exception import (
+    TestFailureException,
+    TestRunnerException
+)
 from compliance_suite.functions.client import Client
 from compliance_suite.functions.log import set_logging
 from compliance_suite.test_runner import TestRunner
 
 YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_create_task.yml")
+YAML_SERVICE_INFO_FAIL = os.path.join(os.getcwd(), "unittests", "data", "tests", "fail_service_info.yml")
 
 
 class TestFunctions(unittest.TestCase):
@@ -48,6 +52,23 @@ class TestFunctions(unittest.TestCase):
                                            uri_params={"id": task_id}, query_params={"view": "MINIMAL"},
                                            operation="GET", request_body="{}")
         assert get_response.status_code == 200
+
+    def test_send_request_get_failure(self):
+        """ Asserts the Get endpoint to throw Connection error due to invalid server URL"""
+
+        # Create a task before get task
+        with open(YAML_SERVICE_INFO_FAIL) as f:
+            yaml_data = yaml.safe_load(f)
+
+        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
+        test_runner.set_job_data(yaml_data["jobs"][0])
+        client = Client()
+
+        with self.assertRaises(TestRunnerException):
+            client.send_request(service=test_runner.service, server=test_runner.server,
+                                version=test_runner.version, endpoint="/service-info",
+                                uri_params={}, query_params={},
+                                operation="GET", request_body="{}")
 
     def test_send_request_post(self):
         """ Asserts the Post endpoint response status to be 200"""

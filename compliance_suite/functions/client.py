@@ -117,4 +117,3 @@ class Client():
             raise TestRunnerException(name="OS Error",
                                       message=f"Connection error to {operation} {base_url}",
                                       details=err)
-

@@ -69,7 +69,8 @@ class TestRunner():
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
             ReportUtility.case_pass(case=report_case_schema,
                                     message=f'{message} Schema validation successful for {self.job_data["operation"]} '
-                                            f'{self.job_data["endpoint"]}')
+                                            f'{self.job_data["endpoint"]}',
+                                    log_message="No logs for success")
         except ValidationError as err:
             ReportUtility.case_fail(case=report_case_schema,
                                     message=f'{message} Schema validation failed for {self.job_data["operation"]}'
@@ -97,7 +98,8 @@ class TestRunner():
             request_body_json: Any = json.loads(request_body)
             ReportUtility.case_pass(case=report_case_json_check,
                                     message=f'Proper JSON format in request body for {self.job_data["operation"]}'
-                                            f' {self.job_data["endpoint"]}')
+                                            f' {self.job_data["endpoint"]}',
+                                    log_message="No logs for success")
         except json.JSONDecodeError as err:
             ReportUtility.case_fail(case=report_case_json_check,
                                     message=f'JSON Error in request body for {self.job_data["operation"]}'
@@ -132,7 +134,8 @@ class TestRunner():
             logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful Response status code')
             ReportUtility.case_pass(case=report_case_status,
                                     message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful '
-                                            f'Response status code')
+                                            f'Response status code',
+                                    log_message="No logs for success")
 
         else:
             ReportUtility.case_fail(case=report_case_status,

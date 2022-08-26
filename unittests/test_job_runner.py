@@ -5,7 +5,10 @@ This module is to test the Job Runner class and its methods
 
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import (
+    MagicMock,
+    patch
+)
 
 import yaml
 
@@ -18,6 +21,7 @@ YAML_TEST_PATH = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests")
 YAML_TEST_PATH_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "success_01.yml")
 YAML_TEST_PATH_INVALID = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "invalid_yaml.yml")
 YAML_TEST_PATH_SKIP = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "skip_01.yml")
+YAML_TEST_PATH_FAIL = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "fail_service_info.yml")
 YAML_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_service_info.yml")
 YAML_WRONG_SCHEMA = os.path.join(os.getcwd(), "unittests", "data", "tests", "wrong_schema_yaml.yml")
 YAML_INVALID = os.path.join(os.getcwd(), "unittests", "data", "tests", "invalid_yaml.yml")
@@ -40,7 +44,7 @@ class TestJobRunner(unittest.TestCase):
             yaml_data = yaml.safe_load(f)
 
         job_runner_object = JobRunner("")
-        job_runner_object.validate_job(yaml_data, "success_service_info.yml")
+        job_runner_object.validate_job(yaml_data, "success_service_info.yml", MagicMock())
         assert True
 
     @patch('os.path.join', return_value=SCHEMA_PATH)
@@ -52,14 +56,14 @@ class TestJobRunner(unittest.TestCase):
 
         with self.assertRaises(JobValidationException):
             job_runner_object = JobRunner("")
-            job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml")
+            job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml", MagicMock())
 
     @patch('os.path.join')
     def test_run_jobs_success(self, mock_os):
         """ Asserts run_jobs() for unit test YAML files"""
 
         mock_os.side_effect = [YAML_TEST_PATH, YAML_TEST_PATH_INVALID, YAML_TEST_PATH_SKIP, SCHEMA_PATH,
-                               YAML_TEST_PATH_SUCCESS, SCHEMA_PATH]
+                               YAML_TEST_PATH_SUCCESS, SCHEMA_PATH, YAML_TEST_PATH_FAIL, SCHEMA_PATH]
         tag = ["all"]
         job_runner_object = JobRunner(tag)
         job_runner_object.run_jobs()
