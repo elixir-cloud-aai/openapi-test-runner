@@ -1,0 +1,50 @@
+name: S3 Cat Command Functional Job
+description: Job to test the Cat command implementation in TES via S3 storage
+service: TES
+version:
+  - v1.0
+server: https://tesk-eu.hypatia-comp.athenarc.gr/
+tags:
+  - functional
+  - create task
+  - create task functional test
+  - s3
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "description": "S3 cat test",
+        "inputs": [
+          {
+            "url": "s3://compliance-testing/textfile.txt",
+            "path": "/compliance/tes/volumes/input",
+            "type": "FILE"
+          }
+        ],
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "cat",
+              "/compliance/tes/volumes/input"
+            ]
+          }
+        ]
+      }
+    response:
+      200: {}
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: FULL
+    polling:
+      interval: 17
+      timeout: 3600
+    response:
+      200: {}

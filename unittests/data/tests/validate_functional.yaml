@@ -1,0 +1,23 @@
+name: Validate Functional Job
+description: Job to validation functional data
+service: TES
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - functional
+  - get task
+  - get task functional test
+  - all
+jobs:
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: FULL
+    polling:
+      interval: 17
+      timeout: 3600
+    response:
+      200: {}

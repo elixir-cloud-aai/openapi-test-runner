@@ -1,0 +1,5 @@
+server: s3              # s3 or None
+server_url: None
+username: None
+password: None
+region_name: None

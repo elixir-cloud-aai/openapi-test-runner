@@ -4,6 +4,7 @@ This module contains class definition for Test Runner to run the individual jobs
 """
 
 import json
+import os
 from typing import (
     Any,
     Dict,
@@ -12,35 +13,51 @@ from typing import (
 
 from pydantic import ValidationError
 from requests.models import Response
+import yaml
 
-from compliance_suite.functions.log import logger
 from compliance_suite.constants.constants import (
     ENDPOINT_TO_MODEL,
     VERSION_INFO,
 )
-from compliance_suite.functions.client import Client
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
 )
+from compliance_suite.functions.client import Client
+from compliance_suite.functions.log import logger
+from compliance_suite.servers.s3 import ServerS3
 
 
 class TestRunner():
     """Class to run individual jobs by sending requests to the server endpoints. It stores the data to be used by other
     jobs. It validates the request, response and their schemas"""
 
-    def __init__(self, service, server, version):
+    def __init__(self, service, server, version, functional_test):
 
         self.service: str = service
         self.server: str = server
         self.version: str = VERSION_INFO[version]
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}
+        self.functional_test: bool = functional_test
+        self.functional_server: str = ""
 
-    def set_job_data(self, job_data):
+        self.set_functional_server()
+
+    def set_functional_server(self) -> None:
+        """Extract server config and assign to class data members"""
+
+        config_path: str = os.path.join(os.getcwd(), "resources", "server_config.yml")
+        with open(config_path, "r") as f:
+            server_config = yaml.safe_load(f)
+        self.functional_server = server_config["server"]
+
+    def set_job_data(self, job_data) -> None:
+        """ Setter for job_data"""
         self.job_data = job_data
 
-    def set_auxiliary_space(self, key, value):
+    def set_auxiliary_space(self, key, value) -> None:
+        """Setter for auxiliary_space"""
         self.auxiliary_space[key] = value
 
     def validate_logic(
@@ -83,6 +100,18 @@ class TestRunner():
         endpoint_model: str = self.job_data["name"] + "_request_body"
         self.validate_logic(endpoint_model, request_body_json, "Request Body")
 
+        # Functional Test Upload file
+
+        if self.functional_test and self.job_data["name"] in ["create_task"]:
+            logger.info("Functional validation setup initiated")
+            if self.functional_server == "s3":
+                s3_obj = ServerS3()
+                executor_data: Any = s3_obj.functional_test(request_body_json)
+                logger.debug(f'Executor data = {executor_data}')
+                self.set_auxiliary_space("create_task_server", executor_data)
+            elif self.functional_server == "None":
+                logger.info("Skipping Functional validation since no server provided")
+
     def validate_response(
             self,
             response: Response
@@ -91,6 +120,7 @@ class TestRunner():
         auxiliary space"""
 
         # General status validation
+        logger.info("General Response Validation Started")
         response_status: int = list(self.job_data["response"].keys())[0]
 
         if response.status_code == response_status:
@@ -102,6 +132,7 @@ class TestRunner():
                                        details=None)
 
         # Logical Schema Validation
+        logger.info("General Logical Validation Started")
         if not response.text:
             response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
         else:
@@ -113,6 +144,26 @@ class TestRunner():
         else:
             endpoint_model: str = self.job_data["name"]
         self.validate_logic(endpoint_model, response_json, "Response")
+
+        # Functional Validation
+        if self.functional_test and self.functional_server != "None" and self.job_data["name"] in ["get_task"]:
+            logger.info("Functional Validation for Response started.")
+            actual_response: Any = response_json["logs"][0]["logs"][0]["stdout"]
+            s3_obj = ServerS3()
+            s3_obj.delete_bucket_out()
+            logger.error(f'TES server response - {actual_response}. Expected response - '
+                         f'{self.auxiliary_space["create_task_server"]}')
+
+            if self.auxiliary_space["create_task_server"] == actual_response:
+                logger.info(f'Functional Validation for {self.job_data["operation"]} {self.job_data["endpoint"]} '
+                            f'successful')
+            else:
+                raise TestFailureException(name="Functional Test Exception",
+                                           message=f'Functional Test for {self.job_data["operation"]}'
+                                                   f' {self.job_data["endpoint"]} failed.',
+                                           details=f'Response from TES server - {actual_response} && Expected '
+                                                   f'response - {self.auxiliary_space["create_task_server"]}')
+
         self.set_auxiliary_space(self.job_data["name"], response_json)
 
     def run_tests(

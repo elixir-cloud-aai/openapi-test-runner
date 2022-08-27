@@ -1,0 +1,5 @@
+server: s3              # s3 or None
+server_url: https://minio-eu.hypatia-comp.athenarc.gr
+username: tesk-1
+password: Z6fsH6MG
+region_name: us-west-2

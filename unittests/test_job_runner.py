@@ -21,6 +21,7 @@ YAML_TEST_PATH_SKIP = os.path.join(os.getcwd(), "unittests", "data", "run_job_te
 YAML_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_service_info.yml")
 YAML_WRONG_SCHEMA = os.path.join(os.getcwd(), "unittests", "data", "tests", "wrong_schema_yaml.yml")
 YAML_INVALID = os.path.join(os.getcwd(), "unittests", "data", "tests", "invalid_yaml.yml")
+S3_SERVER_CONFIG_PATH = os.path.join(os.getcwd(), "unittests", "data", "resources", "s3_server_config.yml")
 
 
 class TestJobRunner(unittest.TestCase):
@@ -59,7 +60,7 @@ class TestJobRunner(unittest.TestCase):
         """ Asserts run_jobs() for unit test YAML files"""
 
         mock_os.side_effect = [YAML_TEST_PATH, YAML_TEST_PATH_INVALID, YAML_TEST_PATH_SKIP, SCHEMA_PATH,
-                               YAML_TEST_PATH_SUCCESS, SCHEMA_PATH]
+                               YAML_TEST_PATH_SUCCESS, SCHEMA_PATH, S3_SERVER_CONFIG_PATH]
         tag = ["all"]
         job_runner_object = JobRunner(tag)
         job_runner_object.run_jobs()

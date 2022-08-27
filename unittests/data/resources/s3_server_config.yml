@@ -1,0 +1,5 @@
+server: s3              # s3 or None
+server_url: TestUrl
+username: TestUsername
+password: TestPassword
+region_name: TestRegion

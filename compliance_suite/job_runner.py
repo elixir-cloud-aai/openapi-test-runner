@@ -20,7 +20,8 @@ import yaml
 from compliance_suite.constants.constants import LOGGING_LEVEL
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
-    TestFailureException
+    TestFailureException,
+    TestRunnerException
 )
 from compliance_suite.functions.log import logger
 from compliance_suite.test_runner import TestRunner
@@ -112,8 +113,12 @@ class JobRunner():
                     self.validate_job(yaml_data, yaml_file)
 
                     if self.tag_matcher(yaml_data["tags"]):
+                        functional_test: bool = False
+                        if "functional" in yaml_data["tags"]:
+                            functional_test = True
+
                         test_runner = TestRunner(yaml_data["service"], yaml_data["server"],
-                                                 yaml_data["version"][0])
+                                                 yaml_data["version"][0], functional_test)
                         job_count: int = 0
                         for job in yaml_data["jobs"]:
                             job_count += 1
@@ -127,7 +132,7 @@ class JobRunner():
                         logger.log(LOGGING_LEVEL['SKIP'], f"No Tag matched. Skipping Test-{self.test_count}"
                                                           f" for {yaml_file}")
 
-                except (JobValidationException, TestFailureException) as err:
+                except (JobValidationException, TestFailureException, TestRunnerException) as err:
                     self.test_status["failed"].append(str(self.test_count))
                     logger.error(f'Compliance Test-{self.test_count} for {yaml_file} failed.')
                     logger.error(err)

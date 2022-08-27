@@ -7,3 +7,5 @@ requests==2.27.1
 flake8==5.0.4
 pytest==7.1.2
 colorlog==6.6.0
+boto3==1.24.51
+botocore==1.27.51

@@ -1,13 +1,13 @@
-name: Create Tes Task Functional Job
+name: Create Tes Task Job
 description: Job to create a new TES Task and test functionality
 service: TES
 version:
   - v1.0
 server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
-  - functional
+  - logical
   - create task
-  - create task functional test
+  - create task test
   - all
 jobs:
   - name: create_task
@@ -18,6 +18,13 @@ jobs:
       {
         "name": "CompTest",
         "description": "CompTest",
+        "inputs": [
+          {
+            "url": "s3://compliance-testing/textfile.txt",
+            "path": "/compliance/tes/volumes/input",
+            "type": "FILE"
+          }
+        ],
         "executors": [
           {
             "image": "alpine",
