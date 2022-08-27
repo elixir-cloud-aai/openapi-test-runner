@@ -34,7 +34,13 @@ from compliance_suite.test_runner import TestRunner
 class JobRunner():
     """Class to run the individual YAML Tests"""
 
-    def __init__(self, tags):
+    def __init__(self, tags: List[str]):
+        """Initialize the Job Runner object
+
+        Args:
+            tags (List[str]): The list of tags for which the compliance suite will be run
+        """
+
         self.path: str = os.getcwd()
         self.tags: List[str] = tags
         self.test_count: int = 0
@@ -46,7 +52,11 @@ class JobRunner():
         self.report: Any = None
 
     def set_report(self, report: Any) -> None:
-        """Set the report data member"""
+        """Set the report data member
+
+        Args:
+            report (Any): The report object to be defined for use inside the class
+        """
         self.report = report
 
     def generate_summary(self) -> None:
@@ -75,7 +85,13 @@ class JobRunner():
             yaml_file: str,
             report_case_yaml_validate: Any
     ) -> None:
-        """ Validates if the Test file is in conformance to the test template/schema"""
+        """ Validates if the Test file is in conformance to the test template/schema
+
+        Args:
+            yaml_data (Any): The parsed yaml data to perform the schema checks
+            yaml_file (str): The yaml file name
+            report_case_yaml_validate (Any): The test case object to populate the result for YAML schema check
+        """
 
         schema_path: str = os.path.join(self.path, "../tests", "template", "test_template_schema.json")
         with open(schema_path, "r") as f:
@@ -99,7 +115,14 @@ class JobRunner():
             self,
             yaml_tags: List[str]
     ) -> bool:
-        """ Checks if any user provided tags match with the YAML Testfile tags. Skips the test if tag not matched """
+        """ Checks if any user provided tags match with the YAML Testfile tags. Skips the test if tag not matched
+
+        Args:
+            yaml_tags (List[str]): The tags defined for a YAML test file
+
+        Returns:
+            (bool): If the user tags match the YAML test file tags, return True
+        """
 
         for user_tag in self.tags:
             if user_tag in yaml_tags:
@@ -107,7 +130,11 @@ class JobRunner():
         return False
 
     def generate_report(self) -> Any:
-        """Generates the report via ga4gh-testbed-lib and returns it"""
+        """Generates the report via ga4gh-testbed-lib and returns it
+
+        Return:
+            (Any): Returns the JSON compliance report
+        """
 
         json_report = self.report.generate()
         return json_report

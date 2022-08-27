@@ -21,7 +21,7 @@ class TestReportServer(unittest.TestCase):
     def test_render_html(self):
         """Asserts if successfully able to render HTML from Jinja2 templates"""
 
-        report_server = ReportServer(output_dir=WEB_DIR)
+        report_server = ReportServer(web_dir=WEB_DIR)
         report_server.render_html()
         assert True
 
@@ -43,7 +43,7 @@ class TestReportServer(unittest.TestCase):
 
         mock_server.return_value = MagicMock()
 
-        report_server = ReportServer(output_dir=WEB_DIR)
+        report_server = ReportServer(web_dir=WEB_DIR)
         report_server.local_server = MagicMock()
         report_server.serve_thread(9090, 2)
         assert True

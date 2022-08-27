@@ -1,41 +1,51 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
+  "description": "The YAML test file object",
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "The name of the Test file"
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "description": "The description of the Test file"
     },
     "service": {
       "type": "string",
+      "description": "The GA4GH service name",
       "enum": [
         "TES"
       ]
     },
     "version": {
       "type": "array",
+      "description": "The version of the GA4GH service which will be used for response schema validation",
       "items": {
         "type": "string"
       }
     },
     "server": {
-      "type": "string"
+      "type": "string",
+      "description": "The server URL which will be used to send the requests"
     },
     "tags": {
       "type": "array",
+      "description": "The list of tags which define the test file. Example. Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and All tag",
       "items": {
         "type": "string"
       }
     },
     "jobs": {
       "type": "array",
+      "description": "The sub-job data containing request details",
       "items": {
         "type": "object",
+        "description": "The sub-job object",
         "properties": {
           "name": {
             "type": "string",
+            "description": "The sub-job name. It should be within the specified enum for consistency",
             "enum": [
               "service_info",
               "list_tasks",
@@ -45,10 +55,12 @@
             ]
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "The sub-job description"
           },
           "endpoint": {
             "type": "string",
+            "description": "The request endpoint. It should be within the specified enum for consistency",
             "enum": [
               "/service-info",
               "/tasks",
@@ -58,6 +70,7 @@
           },
           "operation": {
             "type": "string",
+            "description": "The HTTP operation for the request",
             "enum": [
               "GET",
               "POST"
@@ -65,6 +78,7 @@
           },
           "query_parameters": {
             "type": "array",
+            "description": "The query parameters to be sent along with the request",
             "items": {
               "type": "object",
               "additionalProperties": true
@@ -72,12 +86,15 @@
           },
           "polling": {
             "type": "object",
+            "description": "The polling object containing polling configuration",
             "properties": {
               "interval": {
-                "type": "number"
+                "type": "number",
+                "description": "The polling interval between each request in seconds"
               },
               "timeout": {
-                "type": "number"
+                "type": "number",
+                "description": "The polling timeout in seconds"
               }
             },
             "required": [
@@ -86,10 +103,12 @@
             ]
           },
           "request_body": {
-            "type": "string"
+            "type": "string",
+            "description": "The request body for the request"
           },
           "response": {
             "type": "object",
+            "description": "The expected response status for the given endpoint details",
             "additionalProperties": true
           }
         },

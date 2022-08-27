@@ -31,22 +31,48 @@ class TestRunner():
     """Class to run individual jobs by sending requests to the server endpoints. It stores the data to be used by other
     jobs. It validates the request, response and their schemas"""
 
-    def __init__(self, service, server, version):
+    def __init__(self, service: str, server: str, version: str):
+        """Initialize the Test Runner object
+
+        Args:
+            service (str): The GA4GH service name (eg. TES)
+            server (str): The server URL to send the request
+            version (str): The version of the deployed server
+        """
 
         self.service: str = service
         self.server: str = server
         self.version: str = VERSION_INFO[version]
         self.job_data: Any = None
-        self.auxiliary_space: Dict = {}
-        self.report_test: Any = None
+        self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
+        self.report_test: Any = None        # Test object to store the result
 
-    def set_job_data(self, job_data):
+    def set_job_data(self, job_data: Any) -> None:
+        """Set the individual sub job data
+
+        Args:
+            job_data (Any): The parsed job data containing the sub-job details
+        """
+
         self.job_data = job_data
 
-    def set_auxiliary_space(self, key, value):
+    def set_auxiliary_space(self, key: str, value: Any) -> None:
+        """Insert a key-value pair inside the auxiliary space
+
+        Args:
+            key (str): The key name for auxiliary_space dict
+            value (Any): The parsed response JSON data for auxiliary_space dict
+        """
+
         self.auxiliary_space[key] = value
 
-    def set_report_test(self, report_test: Test):
+    def set_report_test(self, report_test: Test) -> None:
+        """Set the test object for use inside the class
+
+        Args:
+            report_test (Test): The test object to store the result
+        """
+
         self.report_test = report_test
 
     def validate_logic(
@@ -56,7 +82,13 @@ class TestRunner():
             message: str
     ) -> None:
         """ Validates if the response is in accordance with the TES API Specs and Models. Validation is done via
-        Pydantic generated models"""
+        Pydantic generated models
+
+        Args:
+            endpoint_model (str): The endpoint name for mapping the Model class
+            json_data (Any): The response JSON data which will be checked for schema validation
+            message (str): Message specifying if it is a request or a response
+        """
 
         report_case_schema = self.report_test.add_case()
         ReportUtility.set_case(case=report_case_schema,
@@ -86,7 +118,11 @@ class TestRunner():
             request_body: str
     ) -> None:
         """ Validates the request body for proper JSON format. Validates the request body with respective
-        API Model"""
+        API Model
+
+        Args:
+            request_body (str): The request body from the YAML test file
+        """
 
         report_case_json_check = self.report_test.add_case()
         ReportUtility.set_case(case=report_case_json_check,
@@ -120,7 +156,11 @@ class TestRunner():
             response: Response
     ) -> None:
         """ Validates the response status. Validates the response with respective API Model. Stores the data in the
-        auxiliary space"""
+        auxiliary space
+
+        Args:
+            response (Response): The JSON response obtained from client.py
+        """
 
         # General status validation
         response_status: int = list(self.job_data["response"].keys())[0]
@@ -167,7 +207,12 @@ class TestRunner():
             job_data: Any,
             report_test: Test
     ) -> None:
-        """ Runs the individual jobs """
+        """ Runs the individual jobs
+
+        Args:
+            job_data (Any): The parsed YAML sub-job data containing infomation for test
+            report_test (Test): The test object to store the result
+        """
 
         self.set_job_data(job_data)
         ReportUtility.set_test(test=report_test,

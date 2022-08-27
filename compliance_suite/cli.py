@@ -28,7 +28,16 @@ def report(tag: List[str],
            serve: bool,
            port: int,
            uptime: int) -> None:
-    """ Run the compliance suite for the given tags """
+    """ Program entrypoint called via "report" in CLI.
+    Run the compliance suite for the given tags.
+
+    Args:
+        tag (List[str]): The list of the tags for which the compliance suite will be run. Default - All
+        output_path (str): The output path to store the JSON compliance report
+        serve (bool): If true, runs a local server and displays the JSON report in webview
+        port (int): Set the local server port. Default - 16800
+        uptime (int): The local server duration in seconds. Default - 3600 seconds
+    """
 
     tag = [val.lower() for val in tag]      # Convert the tags into lowercase to allow case-insensitive tags
     logger.info(f"Input tag is - {tag}")
@@ -37,12 +46,13 @@ def report(tag: List[str],
 
     json_report = job_runner.generate_report()
 
+    # Store the report in given output path
     if output_path is not None:
         logger.info(f"Writing JSON Report on directory {output_path}")
         with open(os.path.join(output_path, "report.json"), "w+") as output:
             output.write(json_report)
 
-    # Writing a report copy to web dir
+    # Writing a report copy to web dir for local server
     with open(os.path.join(os.getcwd(), "web", "web_report.json"), "w+") as output:
         output.write(json_report)
 

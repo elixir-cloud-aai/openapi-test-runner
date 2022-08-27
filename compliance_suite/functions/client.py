@@ -25,7 +25,9 @@ class Client():
     """ This class is used to send REST requests to the provided server URL """
 
     def __init__(self):
-        self.check_cancel = False
+        """ Initialize the Client object"""
+
+        self.check_cancel = False   # Checks if the Cancel status is to be validated or not
 
     def send_request(
             self,
@@ -38,7 +40,21 @@ class Client():
             operation: str,
             request_body: str
     ) -> Response:
-        """ Sends the REST request to provided server"""
+        """ Sends the REST request to provided server
+
+        Args:
+            service (str): The GA4GH service name (eg. TES)
+            server (str): The server URL to send the request
+            version (str): The version of the deployed server
+            endpoint (str): The endpoint of the given server
+            uri_params (dict): URI parameters in the endpoint
+            query_params (dict): The query parameters to be sent along with the request
+            operation (str): The HTTP operation for the endpoint
+            request_body (str): The request body for the request
+
+        Returns:
+            (Response): The response from the server is returned
+        """
 
         for key in uri_params.keys():
             endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
@@ -63,7 +79,14 @@ class Client():
             self,
             response: Any
     ) -> bool:
-        """ Polling callback function to validate the polling response"""
+        """ Polling callback function to validate the polling response
+
+        Args:
+            response (Any): The polling response that the callback receives
+
+        Returns:
+            (bool): Depending on the below checks, return if the response was successful or not
+        """
 
         if response.status_code != 200:
             logger.info("Unexpected response from Polling request. Retrying...")
@@ -94,7 +117,23 @@ class Client():
             polling_timeout: int,
             check_cancel_val: bool
     ) -> Response:
-        """ This function polls a request to specified server with given interval and timeout"""
+        """ This function polls a request to specified server with given interval and timeout
+
+        Args:
+            service (str): The GA4GH service name (eg. TES)
+            server (str): The server URL to send the request
+            version (str): The version of the deployed server
+            endpoint (str): The endpoint of the given server
+            uri_params (dict): URI parameters in the endpoint
+            query_params (dict): The query parameters to be sent along with the request
+            operation (str): The HTTP operation for the endpoint
+            polling_interval (int): The duration between polling
+            polling_timeout (int): The timeout for the polling request. Raises Timeout exception if exceeded
+            check_cancel_val (bool): Bool to verify Cancel status or not
+
+        Returns:
+            (Response): The response from the server is returned
+        """
 
         for key in uri_params.keys():
             endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])

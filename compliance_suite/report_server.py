@@ -8,8 +8,8 @@ import http.server
 import json
 import os
 import socketserver
-import time
 import threading
+import time
 from typing import Any
 import webbrowser
 
@@ -21,10 +21,16 @@ from compliance_suite.functions.log import logger
 class ReportServer():
     """Class containing the methods to serve the report via webview locally"""
 
-    def __init__(self, output_dir: str):
-        self.cwd: str = os.getcwd()
+    def __init__(self, web_dir: str):
+        """Initialize the Report Server object
+
+        Args:
+            web_dir (str): The location of web directory inside the project
+        """
+
+        self.cwd: str = os.getcwd()     # Store the current location
         self.local_server: Any = None
-        self.web_dir: str = output_dir
+        self.web_dir: str = web_dir
 
     def render_html(self) -> None:
         """Renders HTML dynamically at runtime via Jinja2 templates"""
