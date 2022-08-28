@@ -12,9 +12,9 @@ The aim is not have a global storage of data which might result in difficulties 
 This approach enables the Tests to be loosely coupled and not hard coded in the codebase.
 Any number of job combinations and tests can be executed this way without needing to modify the codebase.
 
-For example, File1 is supposed to test ListTasks endpoint and File2 is supposed to test GetTask endpoint. 
-File1 will contain a sub-job to test ListTasks endpoint and it will be validated.
-File2 will contain a combo of jobs. It will have a ListTasks sub-job and a GetTask sub-job. First, ListTasks will be executed (and validated) and then using this response, GetTask will be executed and validated. The GetTask is dependent on the ListTasks on File2, instead of File1 which would have required global storage of data.
+For example, File1 is supposed to test `ListTasks` endpoint and File2 is supposed to test `GetTask` endpoint. 
+File1 will contain a sub-job to test `ListTasks` endpoint and it will be validated.
+File2 will contain a combo of jobs. It will have a `ListTasks` sub-job and a `GetTask` sub-job. First, `ListTasks` will be executed (and validated) and then using this response, `GetTask` will be executed and validated. The `GetTask` is dependent on the `ListTasks` on File2, instead of File1 which would have required global storage of data.
 
 The YAML Test file template is present at `/docs/job_template.yml`
 
@@ -29,7 +29,7 @@ The compliance suite has 3 components -
 
 ## YAML Job Parser
 
-All the YAML files are present in the `/compliance_suite/jobs` directory.
+All the YAML files are present in the `/tests` directory.
 The Runner scans all the YAML files and process them individually.
 
 The functions are - 
@@ -49,7 +49,7 @@ The functions are -
 2. Send the request - A requestor function is called which sends the request with provided details like URL, Endpoint, Request Body, etc. It returns the response.
 3. Response Validation - The response validation can be broken into 3 steps based on its complexity.
    1. General validation - HTTP Response Status and Response Headers like `Accept` and `Content-Type` are checked here.
-   2. Schema model validation - The response is validated against the appropriate PyDantic model class. It returns a list of errors if the validation fails.
+   2. Schema model validation - The response is validated against the appropriate `Pydantic` model class. It returns a list of errors if the validation fails.
    3. Functional validation - In YAML Test file, we provide the expected response body. Here, we match the expected body with the actual response. It raises Exception if any error found.
       For example, we create a task with "Hello World" command. Now, we will GetTask and validate if the response contains "Hello World" command or not. This can similarly be extended to tackle complex scenarios.
 
@@ -59,5 +59,5 @@ A final report is generated which showcases all our test results. This report is
         
 The functions are - 
 1. Generate report - A common GA4GH Testbed Python Library has been developed focusing on generating reports. It will be used to generate the report.
-2. Display HTML web view in local server - As part of CLI arguments, if local server is enabled, a web view will be hosted on the local server which which display our report in HTML.
-3. Push the report to GA4GH Testbed API - To send the report to central GA4GH Testbed, an API request is sent containing relevant info.
+2. Display HTML web view in local server - As part of CLI arguments, if local server is enabled, a web view will be hosted on the local server which will display our report in HTML.
+3. Push the report to GA4GH Testbed API - To send the report to central GA4GH Testbed, an API request is sent containing relevant info (This feature is still in development at the GA4GH Testbed. It will be implemented in complaince suite once completed)
