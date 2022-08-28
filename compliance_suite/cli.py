@@ -2,7 +2,8 @@
 
 This module is the entry point for the compliance suite and contains a CLI functionality
 """
-import os.path
+
+import os
 from typing import List
 
 import click
