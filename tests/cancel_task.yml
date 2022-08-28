@@ -1,0 +1,38 @@
+name: Cancel Tes Task Job
+description: Job to cancel a TES Task
+service: TES
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - logical
+  - cancel task
+  - cancel task test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
+    response:
+      200: { }
+  - name: cancel_task
+    description: Cancel a TES task
+    endpoint: /tasks/{id}:cancel
+    operation: POST
+    response:
+      200:

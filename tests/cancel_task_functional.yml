@@ -1,0 +1,64 @@
+name: Cancel Tes Task Job
+description: Job to cancel a TES Task
+service: TES
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - functional
+  - cancel task
+  - cancel task functional test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
+    response:
+      200: { }
+  - name: cancel_task
+    description: Cancel a TES task
+    endpoint: /tasks/{id}:cancel
+    operation: POST
+    response:
+      200:
+  - name: get_task
+    description: Retrieve the list of tasks tracked by the TES server
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: MINIMAL
+    polling:
+      interval: 10
+      timeout: 3600
+    response:
+      200: |
+        {
+          "tasks": [
+            {
+              "executors": [
+                {
+                  "image": "ubuntu:20.04",
+                  "command": [
+                    "/bin/md5",
+                    "/data/file1"
+                  ]
+                }
+              ]
+            }
+          ]
+        }

@@ -28,5 +28,14 @@ jobs:
           pip install -r requirements.txt
       - name: Lint with flake8
         run: flake8 --max-line-length=120
-      - name: Test with pytest
-        run: pytest --disable-warnings
+      - name: Calculate unit test coverage
+        run: |
+          coverage run --source compliance_suite -m pytest -W ignore::DeprecationWarning
+          coverage xml
+          coverage report -m
+      - name: Submit Report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true

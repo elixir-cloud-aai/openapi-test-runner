@@ -1,0 +1,43 @@
+name: Get Minimal Task Job
+description: Job to retrieve the Minimal view of TES Task
+service: TES
+version:
+  - v1.0
+server: https://csc-tesk-noauth.rahtiapp.fi/
+tags:
+  - logical
+  - get task
+  - get minimal task test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
+    response:
+      200: { }
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: MINIMAL
+    response:
+      200: |
+        {
+          "state": "COMPLETE"
+        }
