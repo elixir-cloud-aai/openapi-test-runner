@@ -93,7 +93,7 @@ class JobRunner():
             report_case_yaml_validate (Any): The test case object to populate the result for YAML schema check
         """
 
-        schema_path: str = os.path.join(self.path, "../tests", "template", "test_template_schema.json")
+        schema_path: str = os.path.join(self.path, "tests", "template", "test_template_schema.json")
         with open(schema_path, "r") as f:
             json_schema: Any = yaml.safe_load(f)
 
@@ -148,7 +148,7 @@ class JobRunner():
         report = Report()
         self.set_report(report)
 
-        yaml_path: Any = os.path.join(self.path, "..", "tests")
+        yaml_path: Any = os.path.join(self.path, "tests")
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 self.test_count += 1
