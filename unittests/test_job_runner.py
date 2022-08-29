@@ -5,10 +5,7 @@ This module is to test the Job Runner class and its methods
 
 import os
 import unittest
-from unittest.mock import (
-    MagicMock,
-    patch
-)
+from unittest.mock import patch
 
 import yaml
 
@@ -32,7 +29,7 @@ class TestJobRunner(unittest.TestCase):
     def test_generate_summary(self):
         """ Checks if generate summary functions runs successfully"""
 
-        job_runner_object = JobRunner("")
+        job_runner_object = JobRunner([])
         job_runner_object.generate_summary()
         assert True
 
@@ -43,8 +40,8 @@ class TestJobRunner(unittest.TestCase):
         with open(YAML_SERVICE_INFO_SUCCESS, "r") as f:
             yaml_data = yaml.safe_load(f)
 
-        job_runner_object = JobRunner("")
-        job_runner_object.validate_job(yaml_data, "success_service_info.yml", MagicMock())
+        job_runner_object = JobRunner([])
+        job_runner_object.validate_job(yaml_data, "success_service_info.yml")
         assert True
 
     @patch('os.path.join', return_value=SCHEMA_PATH)
@@ -55,8 +52,8 @@ class TestJobRunner(unittest.TestCase):
             yaml_data = yaml.safe_load(f)
 
         with self.assertRaises(JobValidationException):
-            job_runner_object = JobRunner("")
-            job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml", MagicMock())
+            job_runner_object = JobRunner([])
+            job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml")
 
     @patch('os.path.join')
     def test_run_jobs_success(self, mock_os):
