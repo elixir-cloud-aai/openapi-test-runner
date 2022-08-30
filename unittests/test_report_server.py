@@ -13,7 +13,7 @@ from unittest.mock import (
 from compliance_suite.report_server import ReportServer
 
 
-WEB_DIR = os.path.join(os.getcwd(), "compliance_suite", "web")
+WEB_DIR = os.path.join(os.getcwd(), "unittests", "data", "web")
 
 
 class TestReportServer(unittest.TestCase):
@@ -37,13 +37,29 @@ class TestReportServer(unittest.TestCase):
         report_server.start_local_server(9090, 10)
         assert True
 
-    @patch.object(ReportServer, 'start_local_server')
-    def test_serve_thread(self, mock_server):
+    @patch.object(ReportServer, 'render_html')
+    @patch('threading.Thread')
+    def test_serve_thread(self, mock_server, mock_render_html):
         """Asserts if local server can be launched in a separate thread for given uptime"""
 
         mock_server.return_value = MagicMock()
+        mock_render_html.return_value = None
 
         report_server = ReportServer(web_dir=WEB_DIR)
         report_server.local_server = MagicMock()
-        report_server.serve_thread(9090, 2)
+        report_server.serve_thread(9090, 1)
+        assert True
+
+    @patch.object(ReportServer, 'render_html')
+    @patch('threading.Thread')
+    def test_serve_thread_keyboard_interrupt(self, mock_server, mock_render_html):
+        """Asserts if local server can be launched in a separate thread for given uptime"""
+
+        mock_server.side_effect = [KeyboardInterrupt]
+        mock_render_html.return_value = None
+
+        report_server = ReportServer(web_dir=WEB_DIR)
+        report_server.local_server = MagicMock()
+        report_server.serve_thread(9090, 100)
+
         assert True

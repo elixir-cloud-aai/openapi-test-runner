@@ -3,28 +3,18 @@
 This module is to test the Test Runner class and its methods
 """
 
-import json
-import os
 import unittest
 from unittest.mock import (
     MagicMock,
     patch
 )
 
-from requests.models import Response
-import yaml
-
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
 )
+from compliance_suite.functions.client import Client
 from compliance_suite.test_runner import TestRunner
-
-YAML_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_service_info.yml")
-JSON_SERVICE_INFO_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "json", "service_info_success.json")
-JSON_SERVICE_INFO_FAILURE = os.path.join(os.getcwd(), "unittests", "data", "json", "service_info_failure.json")
-YAML_CREATE_TASK_REQUEST_SUCCESS = os.path.join(os.getcwd(), "unittests", "data", "tests", "success_create_task.yml")
-YAML_CREATE_TASK_REQUEST_FAILURE = os.path.join(os.getcwd(), "unittests", "data", "tests", "json_error_create_task.yml")
 
 
 class TestTestRunner(unittest.TestCase):
@@ -32,84 +22,174 @@ class TestTestRunner(unittest.TestCase):
     def test_validate_logic_success(self):
         """ Asserts validate_logic() function for successful schema validation to API Model"""
 
-        with open(YAML_SERVICE_INFO_SUCCESS) as f:
-            yaml_data = yaml.safe_load(f)
-
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "operation": "test",
+                "endpoint": "test"
+            }
+        )
         test_runner.report_test = MagicMock()
 
-        with open(JSON_SERVICE_INFO_SUCCESS) as f:
-            json_data = json.load(f)
-        test_runner.validate_logic(test_runner.job_data["name"], json_data, "Response")
+        service_info_response = {
+            "id": "test",
+            "name": "test",
+            "organization": {"name": "test", "url": "https://example.com"},
+            "version": "test"
+        }
+
+        test_runner.validate_logic("service_info", service_info_response, "Response")
+
         assert True
 
     def test_validate_logic_failure(self):
         """ Asserts validate_logic() function for unsuccessful schema validation to API Model"""
 
-        with open(YAML_SERVICE_INFO_SUCCESS) as f:
-            yaml_data = yaml.safe_load(f)
-
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "operation": "test",
+                "endpoint": "test"
+            }
+        )
         test_runner.report_test = MagicMock()
-
-        with open(JSON_SERVICE_INFO_FAILURE) as f:
-            json_data = json.load(f)
-
         with self.assertRaises(TestFailureException):
-            test_runner.validate_logic(test_runner.job_data["name"], json_data, "Response")
+            test_runner.validate_logic("service_info", {}, "Response")
 
-    def test_validate_request_body_success(self):
+    @patch.object(TestRunner, "validate_logic")
+    def test_validate_request_body_success(self, mock_validate_job):
         """ Asserts validate_request_body() function for successful JSON format and schema validation to API Model"""
 
-        with open(YAML_CREATE_TASK_REQUEST_SUCCESS) as f:
-            yaml_data = yaml.safe_load(f)
+        mock_validate_job.return_value = {}
 
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "name": "test",
+                "operation": "test",
+                "endpoint": "test"
+            }
+        )
         test_runner.report_test = MagicMock()
-        test_runner.validate_request_body(yaml_data["jobs"][0]["request_body"])
+        test_runner.validate_request_body("{}")
         assert True
 
     def test_validate_request_body_failure(self):
         """ Asserts validate_request_body() function for unsuccessful JSON format"""
-        with open(YAML_CREATE_TASK_REQUEST_FAILURE) as f:
-            yaml_data = yaml.safe_load(f)
 
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "operation": "test",
+                "endpoint": "test"
+            }
+        )
         test_runner.report_test = MagicMock()
         with self.assertRaises(JobValidationException):
-            test_runner.validate_request_body(yaml_data["jobs"][0]["request_body"])
+            test_runner.validate_request_body("{")
+
+    @patch.object(TestRunner, "validate_logic")
+    def test_validate_response_success_get(self, mock_validate_job):
+        """ Asserts validate_response() function for successful response and schema validation to API Model"""
+
+        mock_validate_job.return_value = {}
+
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "name": "list_tasks",
+                "operation": "test",
+                "endpoint": "test",
+                "query_parameters": [{"view": "BASIC"}],
+                "response": {"200": ""}
+            }
+        )
+        test_runner.report_test = MagicMock()
+
+        resp = MagicMock(status_code=200, text="")
+        test_runner.validate_response(resp)
+        assert True
 
     @patch.object(TestRunner, "validate_logic")
     def test_validate_response_success(self, mock_validate_job):
         """ Asserts validate_response() function for successful response and schema validation to API Model"""
 
         mock_validate_job.return_value = {}
-        with open(YAML_SERVICE_INFO_SUCCESS) as f:
-            yaml_data = yaml.safe_load(f)
 
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "name": "test",
+                "operation": "test",
+                "endpoint": "test",
+                "response": {"200": ""}
+            }
+        )
         test_runner.report_test = MagicMock()
 
-        resp = Response()
-        resp.status_code = 200
+        resp = MagicMock(status_code=200)
         test_runner.validate_response(resp)
         assert True
 
     def test_validate_response_failure(self):
         """ Asserts validate_response() function for unsuccessful response"""
-        with open(YAML_SERVICE_INFO_SUCCESS) as f:
-            yaml_data = yaml.safe_load(f)
 
-        test_runner = TestRunner(yaml_data["service"], yaml_data["server"], yaml_data["version"][0])
-        test_runner.set_job_data(yaml_data["jobs"][0])
+        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner.set_job_data(
+            {
+                "operation": "test",
+                "endpoint": "test",
+                "response": {"200": ""}
+            }
+        )
         test_runner.report_test = MagicMock()
 
-        resp = Response()
-        resp.status_code = 400
+        resp = MagicMock(status_code=400)
         with self.assertRaises(TestFailureException):
             test_runner.validate_response(resp)
+
+    @patch.object(Client, "poll_request")
+    @patch.object(TestRunner, "validate_response")
+    def test_run_jobs_get_task(self, mock_validate_response, mock_client):
+        """Assert the run job method for get task to be successful"""
+
+        mock_validate_response.return_value = {}
+        mock_client.return_value = MagicMock()
+
+        test_runner = TestRunner("test", "test", "v1.0")
+        job_data = {
+            "name": "get_task",
+            "description": "test",
+            "operation": "test",
+            "endpoint": "test",
+            "query_parameters": [{"view": "BASIC"}],
+            "polling": {"interval": 10, "timeout": 10}
+        }
+        test_runner.set_auxiliary_space("create_task", {"id": "test-id"})
+        test_runner.set_auxiliary_space("cancel_task", "test-id")
+        test_runner.run_tests(job_data, MagicMock())
+
+        assert True
+
+    @patch.object(Client, "send_request")
+    @patch.object(TestRunner, "validate_request_body")
+    @patch.object(TestRunner, "validate_response")
+    def test_run_jobs_create_task(self, mock_validate_response, mock_validate_request_body, mock_client):
+        """Assert the run job method for create task to be successful"""
+
+        mock_validate_response.return_value = {}
+        mock_validate_request_body.return_value = {}
+        mock_client.return_value = MagicMock()
+
+        test_runner = TestRunner("test", "test", "v1.0")
+        job_data = {
+            "name": "create_task",
+            "description": "test",
+            "operation": "test",
+            "endpoint": "test",
+            "request_body": "{}"
+        }
+        test_runner.set_auxiliary_space("create_task", "test-id")
+        test_runner.run_tests(job_data, MagicMock())
+
+        assert True
