@@ -1,8 +1,11 @@
 # Getting Started  
 
-The TES compliance suite tests the server conformance to the TES API specifications. The tool can be installed and executed from the command line. The YAML test files can be modified to run the compliance tests for user-defined configuration.
+The TES compliance suite tests the server conformance to the TES API specifications. 
+The tool can be installed and executed from the command line. 
+The YAML test files can be modified to run the compliance tests for user-defined configuration.
 
-The compliance suite generates a report, giving the summary and detailed view of the tests. The report can also be viewed as HTML web page in local server.
+The compliance suite generates a report, giving the summary and detailed view of the tests. 
+The report can also be viewed as HTML web page in local server.
 
 ## Installation  
 
@@ -26,6 +29,17 @@ python setup.py install
 tes-compliance-suite report --help
 ```
   
+## YAML Test files
+
+Verify or modify the YAML test files according to the requirements.
+The YAML files are present at the `/tests` directory. 
+The template and JSON schema can be found at `/tests/template`.
+
+The package needs to be updated everytime the files are updated, run the setup command again.
+```base  
+python setup.py install  
+``` 
+
 ## Usage
 
 The following command line parameters can be run:
@@ -55,9 +69,4 @@ tes-compliance-suite report --tag "all" --output_path "path/to/store" --serve --
 ```base  
 path/to/python3.8/python setup.py install
 path/to/python3.8/Scripts/tes-compliance-suite report
-``` 
-
-3.  If the YAML files are updated, the package needs to be updated. It can done by running setup command again.
-```base  
-python setup.py install  
-``` 
+```
