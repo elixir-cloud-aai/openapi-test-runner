@@ -1,0 +1,102 @@
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  position: relative;
+  margin: 0;
+  padding-bottom: 6rem;
+  min-height: 100%;
+}
+
+.audit-logs {
+  font-family: "Courier New", Courier, monospace;
+}
+
+.audit-message {
+  margin: 0;
+  word-break: break-all;
+}
+
+.report-endpoint-section {
+  /* border: 1px solid #aaa; */
+  border-radius: 10px;
+  margin: 2.0em 0 2.0em 0;
+  padding: 1.0em;
+  box-shadow: 2px 2px 2px 2px #aaa;
+}
+.test-result-div {
+  margin-bottom: 1.0em;
+}
+.underline {
+  text-decoration: underline;
+}
+.tab1 {
+  padding-left: 12px;
+}
+.tab2 {
+  padding-left: 24px;
+}
+.tab3 {
+  padding-left: 36px;
+}
+.tab4 {
+  padding-left: 48px;
+}
+.tab5 {
+  padding-left: 60px;
+}
+.tab6 {
+  padding-left: 72px;
+}
+
+.tr-div {
+  display: block;
+  margin-bottom: 5.0px;
+}
+.tr-elem {
+  display: inline-block;
+}
+.tr-p {
+  width: 30.0em;
+}
+
+.downbtn {
+        background-color: DodgerBlue;
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+#text {
+  margin-top: 5px;
+}
+#btn-json-dload-foo {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+}
+#navbar {
+  background-image: linear-gradient(to right, #373b44, #4286f4) !important;
+}
+#navbar-title {
+  color: #eee !important;
+}
+
+#footer {
+  background-color: #373b44;
+  color: white;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0;
+  text-align: center; 
+}

@@ -52,6 +52,7 @@ setup(
     },
     license='Apache License 2.0',
     packages=find_packages(),
+    package_data={'': ['../tests/*', 'web/*/*']},
     install_requires=install_requires,
     include_package_data=True,
 )

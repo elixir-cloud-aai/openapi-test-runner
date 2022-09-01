@@ -1,0 +1,146 @@
+{% include "partials/header.html" %}
+{% include "partials/navbar.html" %}
+
+<div class="container">
+
+  <h2>TES Compliance Report</h2>
+  <h3>Server: {{data.platform_name}}</h3>
+  <br><h4>Report Specifications</h4>
+  <p class="tab1">Compliance suite definition: {{data.testbed_name}} {{data.testbed_version}}. {{data.testbed_description}}</p>
+  <p class="tab1">Platform definition: {{data.platform_description}}</p>
+  <p class="tab1">GA4GH Report standard: {{data.schema_name}} {{data.schema_version}}</p><br>
+  
+  <h4>Summary</h4>
+  <p class="tab1">Total test cases: {{ data.summary.passed + data.summary.warned + data.summary.skipped + data.summary.failed + data.summary.unknown }}</p>
+  <p class="tab1">Passed test cases: {{data.summary.passed}}</p>
+  <p class="tab1">Warned test cases: {{data.summary.warned}}</p>
+  <p class="tab1">Skipped test cases: {{data.summary.skipped}}</p>
+  <p class="tab1">Failed test cases: {{data.summary.failed}}</p>
+  <p class="tab1">Unknown test cases: {{data.summary.unknown}}</p><br>
+
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#text_summary">Text</a></li>
+    <li><a data-toggle="tab" href="#table">Table Results</a></li>
+    <li><a data-toggle="tab" href="#json_report">JSON Report</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="text_summary" class="tab-pane fade in active">
+
+      {% for phase in data.phases %}
+        <div class="report-endpoint-section">
+          <p class="tab2"><strong>Phase {{loop.index}}</strong></p>
+          <p class="tab2"><strong>Phase Name:</strong> {{phase.phase_name}}</p>
+          <p class="tab2"><strong>Phase Description:</strong> {{phase.phase_description}}</p>
+          {% if phase.status == "PASS" %}
+            <p class="tab2 text-success"><i class="fa fa-check-circle"></i> Phase Status: {{phase.status}}</p>
+          {% elif phase.status == "FAIL" %}
+            <p class="tab2 text-danger"><i class="fa fa-times-circle"></i> Phase Status: {{phase.status}}</p>
+          {% elif phase.status == "SKIP" %}
+            <p class="tab2 text-info"><i class="fa fa-ban"></i> Phase Status: {{phase.status}}</p>
+          {% else %}
+            <p class="tab2"> Phase Status: {{phase.status}}</p>
+          {% endif %}
+
+          {% set phaseloop = loop %}
+          {% for test in phase.tests %}
+            <div class="report-endpoint-section">
+              <p class="tab2"><strong>Test {{loop.index}}</strong></p>
+              <p class="tab2"><strong>Test Name:</strong> {{test.test_name}}</p>
+              <p class="tab2"><strong>Test Description:</strong> {{test.test_description}}</p>
+              {% if test.status == "PASS" %}
+                <p class="tab2 text-success"><i class="fa fa-check-circle"></i> Test Status: {{test.status}}</p>
+              {% elif test.status == "FAIL" %}
+                <p class="tab2 text-danger"><i class="fa fa-times-circle"></i> Test Status: {{test.status}}</p>
+              {% elif test.status == "SKIP" %}
+                <p class="tab2 text-info"><i class="fa fa-ban"></i> Test Status: {{test.status}}</p>
+              {% else %}
+                <p class="tab2"> Test Status: {{test.status}}</p>
+              {% endif %}
+
+              {% set testloop = loop %}
+              {% for case in test.cases %}
+                  <br><p class="tab3"><strong>Case {{loop.index}}</strong></p>
+                  <p class="tab3"><strong>Case Name:</strong> {{case.case_name}}</p>
+                  <p class="tab3"><strong>Case Description:</strong> {{case.case_description}}</p>
+                  {% if case.status == "PASS" %}
+                    <p class="tab3 text-success"><i class="fa fa-check-circle"></i> Case Status: {{case.status}}</p>
+                  {% elif case.status == "FAIL" %}
+                    <p class="tab3 text-danger"><i class="fa fa-times-circle"></i> Case Status: {{case.status}}</p>
+                  {% elif case.status == "SKIP" %}
+                    <p class="tab3 text-info"><i class="fa fa-ban"></i> Case Status: {{case.status}}</p>
+                  {% else %}
+                    <p class="tab3"> Case Status: {{case.status}}</p>
+                  {% endif %}
+
+                  <p class="tab4">
+                    <button class="btn btn-info tr-elem" type="button" data-toggle="collapse" data-target="#collapse-{{phaseloop.index}}-{{testloop.index}}-{{loop.index}}" aria-expanded="false" aria-controls="collapse-{{phaseloop.index}}-{{testloop.index}}-{{loop.index}}">
+                      <i class="fa fa-info-circle"></i> View Case Details
+                    </button>
+                  </p>
+
+                  <div class="collapse" id="collapse-{{phaseloop.index}}-{{testloop.index}}-{{loop.index}}">
+                    <div class="well audit-logs">
+                      <p><strong>Case Message:</strong> {{case.message}}</p>
+                      <p><strong>Case Logs:</strong> {{case.log_messages}}</p>
+                    </div>
+                </div>
+
+              {% endfor %}
+
+            </div>
+          {% endfor %}
+
+        </div>
+      {% endfor %}
+    </div>
+
+    <div id="table" class="tab-pane fade">
+      <div class="container"><br>
+        <table id="compliance_table" class="table">
+          <thead>
+            <th>Phase</th>
+            <th>Test</th>
+            <th>Case</th>
+            <th>Status</th>
+          </thead>
+          <tbody>
+
+            {% for phase in data.phases %}
+              {% for test in phase.tests %}
+                {% for case in test.cases %}
+                  {% if case.status == "PASS" %}
+                    <tr class="text-success">
+                  {% elif case.status == "FAIL" %}
+                    <tr class="text-danger">
+                  {% elif case.status == "SKIP" %}
+                    <tr class="text-info">
+                  {% else %}
+                    <tr>
+                  {% endif %}
+                    <td>{{phase.phase_name}}</td>
+                    <td>{{test.test_name}}</td>
+                    <td>{{case.case_name}}</td>
+                    <td>{{case.status}}</td>
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="json_report" class="tab-pane fade">
+        <div class="container">
+            <div id="json_div">
+
+            </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+{% include "partials/footer.html" %}

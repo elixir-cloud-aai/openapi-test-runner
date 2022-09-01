@@ -10,6 +10,15 @@ class BasicException(Exception):
     """ Base Exception Class for all custom exceptions """
 
     def __init__(self, name: str, message: str, details: Any, _type: str):
+        """Initialize Base Exception object
+
+        Args:
+            name (str): The name of the occurred exception
+            message (str): Exception message containing brief summary
+            details (Any): Detailed error message
+            _type (str): The type of custom compliance exception
+        """
+
         self.name = name
         self.message = message
         self.details = details
@@ -25,6 +34,14 @@ class TestFailureException(BasicException):
     TES API Specs"""
 
     def __init__(self, name: str, message: str, details: Any):
+        """Initialize Test Failure Exception object
+
+        Args:
+            name (str): The name of the occurred exception
+            message (str): Exception message containing brief summary
+            details (Any): Detailed error message
+        """
+
         BasicException.__init__(self, name=name, message=message, details=details,
                                 _type="TestFailureException")
 
@@ -34,6 +51,14 @@ class JobValidationException(BasicException):
     Test Template and schema to resolve this"""
 
     def __init__(self, name: str, message: str, details: Any):
+        """Initialize Job Validation Exception object
+
+        Args:
+            name (str): The name of the occurred exception
+            message (str): Exception message containing brief summary
+            details (Any): Detailed error message
+        """
+
         BasicException.__init__(self, name=name, message=message, details=details,
                                 _type="JobValidationException")
 
@@ -42,5 +67,13 @@ class TestRunnerException(BasicException):
     """ Exception raised within the Test runner. See the error details for more info """
 
     def __init__(self, name: str, message: str, details: Any):
+        """Initialize Test Runner Exception object
+
+        Args:
+            name (str): The name of the occurred exception
+            message (str): Exception message containing brief summary
+            details (Any): Detailed error message
+        """
+
         BasicException.__init__(self, name=name, message=message, details=details,
                                 _type="TestRunnerException")
