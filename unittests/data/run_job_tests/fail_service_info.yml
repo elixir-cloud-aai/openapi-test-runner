@@ -3,11 +3,11 @@ description: Job to retrieve the service info
 service: TES
 version:
   - v1.0
-server: https://csc-tesk-noauth.rahtiapp
+server: https://invalid-url
 tags:
   - logical
   - service info
-  - set service info test
+  - fail service info test
   - all
 jobs:
   - name: service_info

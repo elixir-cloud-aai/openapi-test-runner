@@ -163,7 +163,7 @@ class TestRunner():
         """
 
         # General status validation
-        response_status: int = list(self.job_data["response"].keys())[0]
+        response_status: int = int(list(self.job_data["response"].keys())[0])
 
         report_case_status = self.report_test.add_case()
         ReportUtility.set_case(case=report_case_status,

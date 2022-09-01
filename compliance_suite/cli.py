@@ -2,7 +2,8 @@
 
 This module is the entry point for the compliance suite and contains a CLI functionality
 """
-import os.path
+
+import os
 from typing import List
 
 import click
@@ -53,11 +54,11 @@ def report(tag: List[str],
             output.write(json_report)
 
     # Writing a report copy to web dir for local server
-    with open(os.path.join(os.getcwd(), "web", "web_report.json"), "w+") as output:
+    with open(os.path.join(os.getcwd(), "compliance_suite", "web", "web_report.json"), "w+") as output:
         output.write(json_report)
 
     if serve is True:
-        report_server = ReportServer(os.path.join(os.getcwd(), "web"))
+        report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"))
         report_server.serve_thread(port, uptime)
 
 

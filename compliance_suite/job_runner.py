@@ -83,31 +83,23 @@ class JobRunner():
     def validate_job(
             self,
             yaml_data: Any,
-            yaml_file: str,
-            report_case_yaml_validate: Any
+            yaml_file: str
     ) -> None:
         """ Validates if the Test file is in conformance to the test template/schema
 
         Args:
             yaml_data (Any): The parsed yaml data to perform the schema checks
             yaml_file (str): The yaml file name
-            report_case_yaml_validate (Any): The test case object to populate the result for YAML schema check
         """
 
-        schema_path: str = os.path.join(self.path, "../tests", "template", "test_template_schema.json")
+        schema_path: str = os.path.join(self.path, "tests", "template", "test_template_schema.json")
         with open(schema_path, "r") as f:
             json_schema: Any = yaml.safe_load(f)
 
         try:
             validate(yaml_data, json_schema)
             logger.info(f'Test YAML file valid for {yaml_file}')
-            ReportUtility.case_pass(case=report_case_yaml_validate,
-                                    message=f'Test YAML file valid for {yaml_file}',
-                                    log_message="No logs for success")
         except ValidationError as err:
-            ReportUtility.case_fail(case=report_case_yaml_validate,
-                                    message=f'YAML file {yaml_file} does not match the Test template/schema',
-                                    log_message=err.message)
             raise JobValidationException(name="YAML Schema Validation Error",
                                          message=f"YAML file {yaml_file} does not match the Test template/schema",
                                          details=err.message)
@@ -149,7 +141,7 @@ class JobRunner():
         report = Report()
         self.set_report(report)
 
-        yaml_path: Any = os.path.join(self.path, "..", "tests")
+        yaml_path: Any = os.path.join(self.path, "tests")
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 self.test_count += 1
@@ -157,38 +149,19 @@ class JobRunner():
                                                                          f" for {yaml_file}     "))
 
                 report_phase = self.report.add_phase(yaml_file.split("/")[-1])
-                report_yaml_test = report_phase.add_test()
-                ReportUtility.set_test(test=report_yaml_test,
-                                       name="yaml_test",
-                                       description="Perform tests on YAML Test File")
                 yaml_data: Any = None
                 report_job_test: Any = None
                 try:
 
-                    report_case_yaml = report_yaml_test.add_case()
-                    ReportUtility.set_case(case=report_case_yaml,
-                                           name="yaml_check",
-                                           description="Check if YAML file is in proper format")
-
                     with open(os.path.join(yaml_path, yaml_file), "r") as f:
                         try:
                             yaml_data = yaml.safe_load(f)
-                            ReportUtility.case_pass(case=report_case_yaml,
-                                                    message=f'Proper YAML format for {yaml_file}',
-                                                    log_message="No logs for success")
                         except yaml.YAMLError as err:
-                            ReportUtility.case_fail(case=report_case_yaml,
-                                                    message=f'Invalid YAML file {yaml_file}',
-                                                    log_message=err.__str__())
                             raise JobValidationException(name="YAML Error",
                                                          message=f"Invalid YAML file {yaml_file}",
                                                          details=err)
 
-                    report_case_yaml_validate = report_yaml_test.add_case()
-                    ReportUtility.set_case(case=report_case_yaml_validate,
-                                           name="yaml_validate",
-                                           description="Validate if YAML file is in proper schema")
-                    self.validate_job(yaml_data, yaml_file, report_case_yaml_validate)
+                    self.validate_job(yaml_data, yaml_file)
 
                     if self.report.platform_name == "":
                         self.report.set_platform_details(yaml_data["server"])
