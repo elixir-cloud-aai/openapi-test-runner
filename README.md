@@ -1,4 +1,3 @@
-[![License][badge-apache-license]](https://opensource.org/licenses/Apache-2.0)
 [![Coverage][badge-coverage]][badge-url-coverage]
 [![Python 3.6][badge-python]](https://www.python.org)
 
@@ -16,12 +15,12 @@ Please refer [Installation and Usage][res-doc-installation]  to get started with
 
 You can also find more details about suite architecture and methodology.
 
-- [Preamble](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/preamble.md)
-- [API Specification](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/api_spec.md)
-- [Architecture](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/architecture.md)
-- [Endpoint Test Flow](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/endpoints.md)
-- [Tests - Deep Analysis](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/test_structure.md)
-- [Report](https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/docs/report.md)
+- [Preamble](docs/preamble.md)
+- [API Specification](docs/api_spec.md)
+- [Architecture](docs/architecture.md)
+- [Endpoint Test Flow](docs/endpoints.md)
+- [Tests - Deep Analysis](docs/test_structure.md)
+- [Report](docs/report.md)
 
 
 ## Contributing
@@ -38,11 +37,6 @@ with the community.
 The project adopts [semantic versioning][res-semver]. Currently, the service
 is in alpha stage, so the API may change without further notice.
 
-## License
-
-This project is covered by the [Apache License 2.0][res-apache-license] also
-[shipped with this repository][res-repo-license].
-
 ## Contact
 
 The project is a collaborative effort under the umbrella of [ELIXIR Cloud &
@@ -53,18 +47,15 @@ question etc.
 ![GA4GH_Logo_banner][img-logo-ga4gh]
 ![Elixir_Logo_banner][img-logo-elixir]
 
-[badge-apache-license]: https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square
 [badge-coverage]: <https://codecov.io/gh/elixir-cloud-aai/tes-compliance-suite/branch/dev/graph/badge.svg?branch=dev>
 [badge-url-coverage]: <https://codecov.io/gh/elixir-cloud-aai/tes-compliance-suite?branch=dev>
 [badge-python]: <https://img.shields.io/badge/python-3.8%20-blue.svg?style=flat-square>
-[img-logo-elixir]: <https://github.com/elixir-cloud-aai/tes-compliance-suite/tree/dev/docs/images/img-elixir.svg>
-[img-logo-ga4gh]: <https://github.com/elixir-cloud-aai/tes-compliance-suite/tree/dev/docs/images/img-ga4gh.svg>
+[img-logo-elixir]: docs/images/img-elixir.svg
+[img-logo-ga4gh]: docs/images/img-ga4gh.svg
 [res-elixir-cloud]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai>
-[res-apache-license]: <https://www.apache.org/licenses/LICENSE-2.0>
-[res-repo-license]: <https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/dev/LICENSE>
 [res-semver]: <https://semver.org/>
 [res-contributing]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai/blob/dev/CONTRIBUTING.md>
 [res-coc]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai/blob/dev/CODE_OF_CONDUCT.md>
-[res-doc-installation]: <https://github.com/elixir-cloud-aai/tes-compliance-suite/blob/feature/doc/docs/utility.md>
+[res-doc-installation]: docs/utility.md
 [res-tes-spec]: <https://github.com/ga4gh/task-execution-schemas/blob/develop/openapi/task_execution_service.openapi.yaml>
 [res-ga4gh]: <http://genomicsandhealth.org/>
