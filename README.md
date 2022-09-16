@@ -1,3 +1,4 @@
+[![License][badge-apache-license]](https://opensource.org/licenses/Apache-2.0)
 [![Coverage][badge-coverage]][badge-url-coverage]
 [![Python 3.6][badge-python]](https://www.python.org)
 
@@ -37,6 +38,11 @@ with the community.
 The project adopts [semantic versioning][res-semver]. Currently, the service
 is in alpha stage, so the API may change without further notice.
 
+## License
+
+This project is covered by the [Apache License 2.0][res-apache-license] also
+[shipped with this repository][res-repo-license].
+
 ## Contact
 
 The project is a collaborative effort under the umbrella of [ELIXIR Cloud &
@@ -47,12 +53,15 @@ question etc.
 ![GA4GH_Logo_banner][img-logo-ga4gh]
 ![Elixir_Logo_banner][img-logo-elixir]
 
+[badge-apache-license]: https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square
 [badge-coverage]: <https://codecov.io/gh/elixir-cloud-aai/tes-compliance-suite/branch/dev/graph/badge.svg?branch=dev>
 [badge-url-coverage]: <https://codecov.io/gh/elixir-cloud-aai/tes-compliance-suite?branch=dev>
 [badge-python]: <https://img.shields.io/badge/python-3.8%20-blue.svg?style=flat-square>
 [img-logo-elixir]: docs/images/img-elixir.svg
 [img-logo-ga4gh]: docs/images/img-ga4gh.svg
 [res-elixir-cloud]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai>
+[res-apache-license]: <https://www.apache.org/licenses/LICENSE-2.0>
+[res-repo-license]: LICENSE
 [res-semver]: <https://semver.org/>
 [res-contributing]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai/blob/dev/CONTRIBUTING.md>
 [res-coc]: <https://github.com/elixir-cloud-aai/elixir-cloud-aai/blob/dev/CODE_OF_CONDUCT.md>
