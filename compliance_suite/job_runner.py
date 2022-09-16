@@ -78,6 +78,7 @@ class JobRunner():
         logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(f'Skipped - {skipped_tests_count} ({skipped_tests})'))
         logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(""))
         logger.log(LOGGING_LEVEL['SUMMARY'], "{:#^90}".format(""))
+        logger.log(LOGGING_LEVEL['SUMMARY'], "\n\n\n")
 
     def validate_job(
             self,
