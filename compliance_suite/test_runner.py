@@ -212,7 +212,7 @@ class TestRunner():
 
         if "storage_vars" in self.job_data.keys():
             dot_dict = DotMap(response)
-            if dot_dict:
+            if dot_dict is not None:
                 for key, value in self.job_data["storage_vars"].items():
                     dot_value = eval("dot_dict" + value[9:])
                     self.set_auxiliary_space(key, dot_value)
