@@ -3,7 +3,6 @@ description: Job to cancel a TES Task
 service: TES
 version:
   - v1.0
-server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - functional
   - cancel task
@@ -28,6 +27,8 @@ jobs:
           }
         ]
       }
+    storage_vars:
+      id: $response.id
     response:
       200: { }
   - name: cancel_task
@@ -45,6 +46,8 @@ jobs:
     polling:
       interval: 10
       timeout: 3600
+    env_vars:
+      check_cancel: True
     response:
       200: |
         {

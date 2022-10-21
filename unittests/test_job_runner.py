@@ -34,24 +34,24 @@ class TestJobRunner(unittest.TestCase):
     def test_generate_summary(self):
         """ Checks if generate summary functions runs successfully"""
 
-        job_runner_object = JobRunner([])
+        job_runner_object = JobRunner('https://test.com/', [])
         job_runner_object.generate_summary()
         assert True
 
     def test_generate_report(self):
         """ Checks if generate summary functions runs successfully"""
 
-        job_runner_object = JobRunner([])
+        job_runner_object = JobRunner('https://test.com/', [])
         job_runner_object.set_report(MagicMock())
         job_runner_object.generate_report()
         assert True
 
     def test_tag_matcher_success(self):
-        job_runner_object = JobRunner(["tag"])
+        job_runner_object = JobRunner('https://test.com/', ["tag"])
         assert job_runner_object.tag_matcher(["tag", "tag1", "tag2"]) is True
 
     def test_tag_matcher_fail(self):
-        job_runner_object = JobRunner(["NoMatch"])
+        job_runner_object = JobRunner('https://test.com/', ["NoMatch"])
         assert job_runner_object.tag_matcher(["tag", "tag1", "tag2"]) is False
 
     @patch("os.path.join", return_value=SCHEMA_PATH)
@@ -61,7 +61,7 @@ class TestJobRunner(unittest.TestCase):
         with open(YAML_TEST_PATH_SUCCESS, "r") as f:
             yaml_data = yaml.safe_load(f)
 
-        job_runner_object = JobRunner([])
+        job_runner_object = JobRunner('https://test.com/', [])
         job_runner_object.validate_job(yaml_data, "success_01.yml")
         assert True
 
@@ -73,7 +73,7 @@ class TestJobRunner(unittest.TestCase):
             yaml_data = yaml.safe_load(f)
 
         with self.assertRaises(JobValidationException):
-            job_runner_object = JobRunner([])
+            job_runner_object = JobRunner('https://test.com/', [])
             job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml")
 
     @patch.object(JobRunner, 'validate_job')
@@ -88,6 +88,6 @@ class TestJobRunner(unittest.TestCase):
         mock_os.side_effect = [YAML_TEST_PATH, YAML_TEST_PATH_FAIL, YAML_TEST_PATH_INVALID, YAML_TEST_PATH_SKIP,
                                YAML_TEST_PATH_SUCCESS]
         tag = ["all"]
-        job_runner_object = JobRunner(tag)
+        job_runner_object = JobRunner('https://test.com/', tag)
         job_runner_object.run_jobs()
         assert True

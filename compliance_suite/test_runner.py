@@ -10,6 +10,7 @@ from typing import (
     List
 )
 
+from dotmap import DotMap
 from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
@@ -200,7 +201,21 @@ class TestRunner():
         else:
             endpoint_model: str = self.job_data["name"]
         self.validate_logic(endpoint_model, response_json, "Response")
-        self.set_auxiliary_space(self.job_data["name"], response_json)
+        self.save_storage_vars(response_json)
+
+    def save_storage_vars(self, response: Any) -> None:
+        """ Extract the keys mentioned in the YAML job from the response and save them in the auxiliary space.
+
+        Args:
+            response (Any): The response in JSON format
+        """
+
+        if "storage_vars" in self.job_data.keys():
+            dot_dict = DotMap(response)
+            if dot_dict:
+                for key, value in self.job_data["storage_vars"].items():
+                    dot_value = eval("dot_dict" + value[9:])
+                    self.set_auxiliary_space(key, dot_value)
 
     def run_tests(
             self,
@@ -210,7 +225,7 @@ class TestRunner():
         """ Runs the individual jobs
 
         Args:
-            job_data (Any): The parsed YAML sub-job data containing infomation for test
+            job_data (Any): The parsed YAML sub-job data containing information for test
             report_test (Test): The test object to store the result
         """
 
@@ -225,7 +240,7 @@ class TestRunner():
         request_body: str = "{}"
 
         if self.job_data["name"] in ["get_task", "cancel_task"]:
-            uri_params["id"] = self.auxiliary_space["create_task"]["id"]
+            uri_params["id"] = self.auxiliary_space["id"]
 
         if self.job_data["name"] in ["get_task", "list_tasks"]:
             for param in self.job_data["query_parameters"]:
@@ -240,8 +255,8 @@ class TestRunner():
         if "polling" in self.job_data.keys():
 
             check_cancel: bool = False
-            if "cancel_task" in self.auxiliary_space.keys():
-                check_cancel = True
+            if "env_vars" in self.job_data.keys() and "check_cancel" in self.job_data["env_vars"].keys():
+                check_cancel = self.job_data["env_vars"]["check_cancel"]
 
             response = client.poll_request(service=self.service, server=self.server, version=self.version,
                                            endpoint=self.job_data["endpoint"], uri_params=uri_params,

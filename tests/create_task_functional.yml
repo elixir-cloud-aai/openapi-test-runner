@@ -3,7 +3,6 @@ description: Job to create a new TES Task and test functionality
 service: TES
 version:
   - v1.0
-server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - functional
   - create task
@@ -28,6 +27,8 @@ jobs:
           }
         ]
       }
+    storage_vars:
+      id: $response.id
     response:
       200: {}
   - name: get_task
