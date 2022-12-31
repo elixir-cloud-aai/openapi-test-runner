@@ -1,9 +1,6 @@
 name: Get Full Task Job
 description: Job to retrieve the Full view of TES Task
 service: TES
-version:
-  - v1.0
-server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - logical
   - get task
