@@ -28,6 +28,8 @@ jobs:
           }
         ]
       }
+    storage_vars:
+      id: $response.id
     response:
       200: {}
   - name: get_task

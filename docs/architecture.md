@@ -37,7 +37,7 @@ The Runner scans all the YAML files and process them individually.
 
 The functions are - 
 1. Validate YAML file - The YAML files are validated to have a proper YAML format. Raises Exception if any error found.
-2. Validate required fields - Each YAML job should have common mandatory fields like `server` and the sub jobs 
+2. Validate required fields - Each YAML test file should have common mandatory fields like `version` and the sub jobs 
    should have mandatory fields like `name`, `endpoint`, `operation`, etc.
    The parser validates all the fields and raises exception if any error found
 3. Parse the data and send to Test Runner to execute and validate the tests.

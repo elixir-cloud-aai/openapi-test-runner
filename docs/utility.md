@@ -40,17 +40,40 @@ The package needs to be updated everytime the files are updated, run the setup c
 python setup.py install  
 ``` 
 
+### Test file features
+
+The test files provide multiple features for better operability and extensibility. 
+
+1. Storage Variables - Persist response values to be used in subsequent jobs. 
+   Refer the [test template][res-test-template] for syntax details.
+   Example - "$response.id" is extracted from the CreateTask response and stored in the key "id" for later
+   GetTask or CancelTask jobs.
+
+```base
+storage_vars:
+      id: $response.id
+```
+
+2. Environment Variables - Define key-value pairs to be referenced inside the code.
+   Refer the [test template][res-test-template] for syntax details.
+   Example - 
+
+```base
+env_vars:
+      check_cancel: True
+```
+
 ## Usage
 
 The following command line parameters can be run:
 
-| Parameter     | Short Name |Required |Description |
-|---------------|------------|---|---|
-| --tag         | -t         |No |  Tag for which the compliance suite will be run. It is case insensitive. Default - all |
-| --output_path | -o         |No |The output path to store the JSON compliance report |
-| --serve       | NA         |No |If set, runs a local server and displays the JSON report in HTML web page |
-| --port        | NA         |No | The port at which the local server is run. Default - 15800 |
-| --uptime      | -u         |No |The local server duration in seconds. Default - 3600 seconds |
+| Parameter     | Short Name | Required |Description |
+|---------------|------------|----------|---|
+| --tag         | -t         | No       |  Tag for which the compliance suite will be run. It is case insensitive. Default - all |
+| --output_path | -o         | No       |The output path to store the JSON compliance report |
+| --serve       | NA         | No       |If set, runs a local server and displays the JSON report in HTML web page |
+| --port        | NA         | No       | The port at which the local server is run. Default - 15800 |
+| --uptime      | -u         | No       |The local server duration in seconds. Default - 3600 seconds |
 
 Multiple tags can be set by providing multiple `--tag` or `-t` parameter.
 ```base  
@@ -70,3 +93,5 @@ tes-compliance-suite report --tag "all" --output_path "path/to/store" --serve --
 path/to/python3.8/python setup.py install
 path/to/python3.8/Scripts/tes-compliance-suite report
 ```
+
+[res-test-template]: ../tests/template/test_template.yml

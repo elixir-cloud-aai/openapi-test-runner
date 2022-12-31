@@ -102,9 +102,19 @@
               "timeout"
             ]
           },
+          "env_vars": {
+            "type": "object",
+            "description": "Provide user-defined environment variables",
+            "additionalProperties": true
+          },
           "request_body": {
             "type": "string",
             "description": "The request body for the request"
+          },
+          "storage_vars": {
+            "type": "object",
+            "description": "Extract values from response and store into provided keys. Provide location of key from response root in dot notation",
+            "additionalProperties": true
           },
           "response": {
             "type": "object",

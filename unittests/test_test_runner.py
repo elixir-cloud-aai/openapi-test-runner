@@ -163,23 +163,26 @@ class TestTestRunner(unittest.TestCase):
             "operation": "test",
             "endpoint": "test",
             "query_parameters": [{"view": "BASIC"}],
-            "polling": {"interval": 10, "timeout": 10}
+            "polling": {"interval": 10, "timeout": 10},
+            "env_vars": {
+                "check_cancel": "True"
+            }
         }
-        test_runner.set_auxiliary_space("create_task", {"id": "test-id"})
-        test_runner.set_auxiliary_space("cancel_task", "test-id")
+        test_runner.set_auxiliary_space("id", "1234")
         test_runner.run_tests(job_data, MagicMock())
 
         assert True
 
     @patch.object(Client, "send_request")
     @patch.object(TestRunner, "validate_request_body")
-    @patch.object(TestRunner, "validate_response")
-    def test_run_jobs_create_task(self, mock_validate_response, mock_validate_request_body, mock_client):
+    @patch.object(TestRunner, "validate_logic")
+    def test_run_jobs_create_task(self, mock_validate_logic, mock_validate_request_body, mock_client):
         """Assert the run job method for create task to be successful"""
 
-        mock_validate_response.return_value = {}
+        mock_validate_logic.return_value = {}
         mock_validate_request_body.return_value = {}
-        mock_client.return_value = MagicMock()
+        resp = MagicMock(status_code=200, text='{"id": "1234"}')
+        mock_client.return_value = resp
 
         test_runner = TestRunner("test", "test", "v1.0")
         job_data = {
@@ -187,9 +190,12 @@ class TestTestRunner(unittest.TestCase):
             "description": "test",
             "operation": "test",
             "endpoint": "test",
-            "request_body": "{}"
+            "request_body": "{}",
+            "storage_vars": {
+                "id": "$response.id"
+            },
+            "response": {"200": ""}
         }
-        test_runner.set_auxiliary_space("create_task", "test-id")
         test_runner.run_tests(job_data, MagicMock())
 
         assert True
