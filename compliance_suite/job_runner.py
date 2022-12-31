@@ -34,16 +34,14 @@ from compliance_suite.test_runner import TestRunner
 class JobRunner():
     """Class to run the individual YAML Tests"""
 
-    def __init__(self, server: str, tags: List[str]):
+    def __init__(self, tags: List[str]):
         """Initialize the Job Runner object
 
         Args:
-            server (str): The server URL on which the compliance suite will be run
             tags (List[str]): The list of tags for which the compliance suite will be run
         """
 
         self.path: str = os.getcwd()
-        self.server: str = server
         self.tags: List[str] = tags
         self.test_count: int = 0
         self.test_status: Dict = {        # To store the status of each test
@@ -166,10 +164,10 @@ class JobRunner():
                     self.validate_job(yaml_data, yaml_file)
 
                     if self.report.platform_name == "":
-                        self.report.set_platform_details(self.server)
+                        self.report.set_platform_details(yaml_data["server"])
 
                     if self.tag_matcher(yaml_data["tags"]):
-                        test_runner = TestRunner(yaml_data["service"], self.server,
+                        test_runner = TestRunner(yaml_data["service"], yaml_data["server"],
                                                  yaml_data["version"][0])
                         job_count: int = 0
                         for job in yaml_data["jobs"]:

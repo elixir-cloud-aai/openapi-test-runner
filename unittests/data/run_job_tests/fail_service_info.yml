@@ -3,6 +3,7 @@ description: Job to retrieve the service info
 service: TES
 version:
   - v1.0
+server: https://invalid-url
 tags:
   - logical
   - service info

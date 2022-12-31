@@ -25,6 +25,10 @@
         "type": "string"
       }
     },
+    "server": {
+      "type": "string",
+      "description": "The server URL which will be used to send the requests"
+    },
     "tags": {
       "type": "array",
       "description": "The list of tags which define the test file. Example. Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and All tag",
@@ -131,6 +135,7 @@
     "name",
     "version",
     "service",
+    "server",
     "tags",
     "jobs"
   ]
