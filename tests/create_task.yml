@@ -1,9 +1,6 @@
 name: Create Tes Task Job
 description: Job to create a new TES Task
 service: TES
-version:
-  - v1.0
-server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - logical
   - create task

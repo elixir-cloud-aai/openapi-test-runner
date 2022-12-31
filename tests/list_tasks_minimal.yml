@@ -1,9 +1,6 @@
 name: List Minimal Tasks Job
 description: Job to retrieve the list of Minimal view of TES tasks
 service: TES
-version:
-  - v1.0
-server: https://csc-tesk-noauth.rahtiapp.fi/
 tags:
   - logical
   - list tasks

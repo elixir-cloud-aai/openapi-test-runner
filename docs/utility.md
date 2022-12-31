@@ -69,23 +69,25 @@ The following command line parameters can be run:
 
 | Parameter     | Short Name | Required |Description |
 |---------------|------------|----------|---|
-| --tag         | -t         | No       |  Tag for which the compliance suite will be run. It is case insensitive. Default - all |
+| --server      | -s         | Yes      |The server URL on which the compliance suite will be run. Format - `https://<url>/`|
+| --version     | -v         | No       |The compliance suite will be run against this TES version. Default - Latest version. Example - `"v1.0"`|
+| --tag         | -t         | No       |Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"` |
 | --output_path | -o         | No       |The output path to store the JSON compliance report |
 | --serve       | NA         | No       |If set, runs a local server and displays the JSON report in HTML web page |
-| --port        | NA         | No       | The port at which the local server is run. Default - 15800 |
+| --port        | NA         | No       |The port at which the local server is run. Default - 15800 |
 | --uptime      | -u         | No       |The local server duration in seconds. Default - 3600 seconds |
 
 Multiple tags can be set by providing multiple `--tag` or `-t` parameter.
 ```base  
-tes-compliance-suite report --tag "cancel task" --tag "create task" --tag "get task"  
+tes-compliance-suite report --server "https://test.com/" --tag "cancel task" --tag "create task" --tag "get task"  
 ```  
 
 ## Notes
 
 1. Some examples for command line are:
 ```base  
-tes-compliance-suite report --tag "all" 
-tes-compliance-suite report --tag "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
+tes-compliance-suite report --server "https://test.com/" --tag "all" 
+tes-compliance-suite report --server "https://test.com/" --version "v1.0" --tag "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
 ``` 
 
 2.  If the HOME python version is different than 3.8, then absolute path with reference to 3.8 should be used.
