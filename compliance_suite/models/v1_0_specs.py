@@ -223,8 +223,8 @@ class TesTaskLog(BaseModel):
         description='When the task ended, in RFC 3339 format.',
         example='2020-10-02T16:00:00.000Z',
     )
-    outputs: Optional[List[TesOutputFileLog]] = Field(       # Make it optional as its not TESK compliant. Revert later
-        None,
+    outputs: List[TesOutputFileLog] = Field(
+        ...,
         description='Information about all output files. Directory outputs are\nflattened into separate items.',
     )
     system_logs: Optional[List[str]] = Field(
@@ -347,7 +347,7 @@ class TesServiceInfo(Service):
             's3://ohsu-compbio-funnel/storage',
         ],
     )
-    type: Optional[TesServiceType] = None
+    type: TesServiceType = Field(...)
 
 
 class TesTask(BaseModel):
@@ -380,8 +380,8 @@ class TesTask(BaseModel):
         ],
     )
     resources: Optional[TesResources] = None
-    executors: Optional[List[TesExecutor]] = Field(         # Make Optional as its not TES compliant.
-        None,                                               # Remove when TES Specs are updated
+    executors: List[TesExecutor] = Field(
+        ...,
         description='An array of executors to be run. Each of the executors will run one\nat a time sequentially. '
                     'Each executor is a different command that\nwill be run, and each can utilize a different '
                     'docker image. But each of\nthe executors will see the same mapped inputs and volumes '
