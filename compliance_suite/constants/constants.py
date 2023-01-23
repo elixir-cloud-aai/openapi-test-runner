@@ -13,6 +13,7 @@ from compliance_suite.models.v1_0_specs import (
     TesTaskMinimal,
 )
 
+import compliance_suite.models.v1_1_specs as v1_1
 # YAML Constants
 
 VERSION_INFO = {
