@@ -34,6 +34,11 @@ class TestTestRunner(unittest.TestCase):
         service_info_response = {
             "id": "test",
             "name": "test",
+            "type": {
+                "group": "org.ga4gh",
+                "artifact": "tes",
+                "version": "1.0"
+            },
             "organization": {"name": "test", "url": "https://example.com"},
             "version": "test"
         }
