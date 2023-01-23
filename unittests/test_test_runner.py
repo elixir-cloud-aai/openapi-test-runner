@@ -15,14 +15,19 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.functions.client import Client
 from compliance_suite.test_runner import TestRunner
+from parameterized import parameterized_class
 
 
+@parameterized_class([
+   {"version": "v1.0"},
+   {"version": "v1.1"},
+])
 class TestTestRunner(unittest.TestCase):
 
     def test_validate_logic_success(self):
         """ Asserts validate_logic() function for successful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -45,7 +50,7 @@ class TestTestRunner(unittest.TestCase):
     def test_validate_logic_failure(self):
         """ Asserts validate_logic() function for unsuccessful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -62,7 +67,7 @@ class TestTestRunner(unittest.TestCase):
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -77,7 +82,7 @@ class TestTestRunner(unittest.TestCase):
     def test_validate_request_body_failure(self):
         """ Asserts validate_request_body() function for unsuccessful JSON format"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -94,7 +99,7 @@ class TestTestRunner(unittest.TestCase):
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "name": "list_tasks",
@@ -116,7 +121,7 @@ class TestTestRunner(unittest.TestCase):
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -134,7 +139,7 @@ class TestTestRunner(unittest.TestCase):
     def test_validate_response_failure(self):
         """ Asserts validate_response() function for unsuccessful response"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -156,7 +161,7 @@ class TestTestRunner(unittest.TestCase):
         mock_validate_response.return_value = {}
         mock_client.return_value = MagicMock()
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         job_data = {
             "name": "get_task",
             "description": "test",
@@ -184,7 +189,7 @@ class TestTestRunner(unittest.TestCase):
         resp = MagicMock(status_code=200, text='{"id": "1234"}')
         mock_client.return_value = resp
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner("test", "test", self.version)
         job_data = {
             "name": "create_task",
             "description": "test",
