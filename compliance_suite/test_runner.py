@@ -151,6 +151,7 @@ class TestRunner():
 
         endpoint_model: str = self.job_data["name"] + "_request_body"
         self.validate_logic(endpoint_model, request_body_json, "Request Body")
+        self.save_storage_vars(request_body_json)
 
     def validate_response(
             self,
@@ -203,19 +204,21 @@ class TestRunner():
         self.validate_logic(endpoint_model, response_json, "Response")
         self.save_storage_vars(response_json)
 
-    def save_storage_vars(self, response: Any) -> None:
-        """ Extract the keys mentioned in the YAML job from the response and save them in the auxiliary space.
+    def save_storage_vars(self, json_data: Any) -> None:
+        """ Extract the keys mentioned in the YAML job from the request/response and save them in the auxiliary space.
 
         Args:
-            response (Any): The response in JSON format
+            json_data (Any): The request/response data in JSON format
         """
 
         if "storage_vars" in self.job_data.keys():
-            dot_dict = DotMap(response)
+            dot_dict = DotMap(json_data)
             if dot_dict is not None:
                 for key, value in self.job_data["storage_vars"].items():
-                    dot_value = eval("dot_dict" + value[9:])
-                    self.set_auxiliary_space(key, dot_value)
+                    # Default value of absent key is DotMap()
+                    if key not in self.auxiliary_space.keys() or self.auxiliary_space[key] == "DotMap()":
+                        dot_value = str(eval("dot_dict." + value.split('.', maxsplit=1)[1]))
+                        self.set_auxiliary_space(key, dot_value)
 
     def run_tests(
             self,
