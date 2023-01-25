@@ -1,6 +1,9 @@
 name: Get Minimal Task Job
 description: Job to retrieve the Minimal view of TES Task
 service: TES
+compatible_versions:
+  - v1.0
+  - v1.1
 tags:
   - logical
   - get task

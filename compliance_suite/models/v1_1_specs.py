@@ -1,6 +1,6 @@
-"""Module compliance_suite.models.v1_0_specs.py
+"""Module compliance_suite.models.v1_1_specs.py
 
-Pydantic generated models for TES API Specs v1.0
+Pydantic generated models for TES API Specs v1.1
 """
 
 from __future__ import annotations
@@ -68,18 +68,24 @@ class TesExecutor(BaseModel):
                     '"HMMERDB" : "/data/hmmer"\n  }\n}\n```',
         example={'BLASTDB': '/data/GRC38', 'HMMERDB': '/data/hmmer'},
     )
+    ignore_error: Optional[bool] = Field(
+        None,
+        description='Default behavior of running an array of executors is that execution\nstops on the first error. '
+                    'If `ignore_error` is `True`, then the\nrunner will record error exit codes, but will continue on '
+                    'to the next\ntesExecutor.',
+    )
 
 
 class TesExecutorLog(BaseModel):
     start_time: Optional[str] = Field(
         None,
         description='Time the executor started, in RFC 3339 format.',
-        example='2020-10-02T15:00:00.000Z',
+        example='2020-10-02T10:00:00-05:00',
     )
     end_time: Optional[str] = Field(
         None,
         description='Time the executor ended, in RFC 3339 format.',
-        example='2020-10-02T16:00:00.000Z',
+        example='2020-10-02T11:00:00-05:00',
     )
     stdout: Optional[str] = Field(
         None,
@@ -120,12 +126,21 @@ class TesInput(BaseModel):
         description='Path of the file inside the container.\nMust be an absolute path.',
         example='/data/file1',
     )
-    type: TesFileType
+    type: Optional[TesFileType] = None
     content: Optional[str] = Field(
         None,
         description='File content literal.\n\nImplementations should support a minimum of 128 KiB in this '
                     'field\nand may define their own maximum.\n\nUTF-8 encoded\n\nIf content is not empty, '
                     '"url" must be ignored.',
+    )
+    streamable: Optional[bool] = Field(
+        None,
+        description='Indicate that a file resource could be accessed using a streaming\ninterface, ie a FUSE mounted '
+                    's3 object. This flag indicates that\nusing a streaming mount, as opposed to downloading the whole '
+                    'file to\nthe local scratch space, may be faster despite the latency and\noverhead. This does not '
+                    'mean that the backend will use a streaming\ninterface, as it may not be provided by the vendor, '
+                    'but if the\ncapacity is avalible it can be used without degrading the\nperformance of the '
+                    'underlying program.',
     )
 
 
@@ -137,15 +152,25 @@ class TesOutput(BaseModel):
     )
     url: str = Field(
         ...,
-        description='URL for the file to be copied by the TES server after the task is complete.\nFor '
-                    'Example:\n - `s3://my-object-store/file1`\n - `gs://my-bucket/file2`\n - '
-                    '`file:///path/to/my/file`',
+        description='URL at which the TES server makes the output accessible after the task is complete.\nWhen '
+                    'tesOutput.path contains wildcards, it must be a directory; see\n`tesOutput.path_prefix` for '
+                    'details on how output URLs are constructed in this case.\nFor Example:\n - '
+                    '`s3://my-object-store/file1`\n - `gs://my-bucket/file2`\n - `file:///path/to/my/file`',
     )
     path: str = Field(
         ...,
-        description='Path of the file inside the container.\nMust be an absolute path.',
+        description='Absolute path of the file inside the container.\nMay contain pattern matching wildcards to select '
+                    'multiple outputs at once, but mind\nimplications for `tesOutput.url` and `tesOutput.path_prefix`.'
+                    '\nOnly wildcards defined in IEEE Std 1003.1-2017 (POSIX), 12.3 are supported; '
+                    'see\nhttps://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_13',
     )
-    type: TesFileType
+    path_prefix: Optional[str] = Field(
+        None,
+        description='Prefix to be removed from matching outputs if `tesOutput.path` contains wildcards;\noutput URLs '
+                    'are constructed by appending pruned paths to the directory specfied\nin '
+                    '`tesOutput.url`.\nRequired if `tesOutput.path` contains wildcards, ignored otherwise.',
+    )
+    type: Optional[TesFileType] = None
 
 
 class TesOutputFileLog(BaseModel):
@@ -188,6 +213,25 @@ class TesResources(BaseModel):
                     'queueing system may use this string to define\npriorty queue to which the job is assigned.',
         example='us-west-1',
     )
+    backend_parameters: Optional[Dict[str, str]] = Field(
+        None,
+        description='Key/value pairs for backend configuration.\nServiceInfo shall return a list of keys that a '
+                    'backend supports.\nKeys are case insensitive.\nIt is expected that clients pass all runtime '
+                    'or hardware requirement key/values\nthat are not mapped to existing tesResources properties '
+                    'to backend_parameters.\nBackends shall log system warnings if a key is passed that is '
+                    'unsupported.\nBackends shall not store or return unsupported keys if included in a task.\nIf '
+                    'backend_parameters_strict equals true,\nbackends should fail the task if any key/values are '
+                    'unsupported, otherwise,\nbackends should attempt to run the task\nIntended uses include VM size '
+                    'selection, coprocessor configuration, etc.\nExample:\n```\n{\n  "backend_parameters" : '
+                    '{\n    "VmSize" : "Standard_D64_v3"\n  }\n}\n```',
+        example={'VmSize': 'Standard_D64_v3'},
+    )
+    backend_parameters_strict: Optional[bool] = Field(
+        False,
+        description='If set to true, backends should fail the task if any backend_parameters\nkey/values are '
+                    'unsupported, otherwise, backends should attempt to run the task',
+        example=False,
+    )
 
 
 class Artifact(Enum):
@@ -204,6 +248,8 @@ class TesState(Enum):
     EXECUTOR_ERROR = 'EXECUTOR_ERROR'
     SYSTEM_ERROR = 'SYSTEM_ERROR'
     CANCELED = 'CANCELED'
+    PREEMPTED = 'PREEMPTED'
+    CANCELING = 'CANCELING'
 
 
 class TesTaskLog(BaseModel):
@@ -216,12 +262,12 @@ class TesTaskLog(BaseModel):
     start_time: Optional[str] = Field(
         None,
         description='When the task started, in RFC 3339 format.',
-        example='2020-10-02T15:00:00.000Z',
+        example='2020-10-02T10:00:00-05:00',
     )
     end_time: Optional[str] = Field(
         None,
         description='When the task ended, in RFC 3339 format.',
-        example='2020-10-02T16:00:00.000Z',
+        example='2020-10-02T11:00:00-05:00',
     )
     outputs: List[TesOutputFileLog] = Field(
         ...,
@@ -347,6 +393,11 @@ class TesServiceInfo(Service):
             's3://ohsu-compbio-funnel/storage',
         ],
     )
+    tesResources_backend_parameters: Optional[List[str]] = Field(
+        None,
+        description='Lists all tesResources.backend_parameters keys supported\nby the service',
+        example=['VmSize'],
+    )
     type: TesServiceType = Field(...)
 
 
@@ -412,7 +463,7 @@ class TesTask(BaseModel):
     creation_time: Optional[str] = Field(
         None,
         description='Date + time the task was created, in RFC 3339 format.\nThis is set by the system, not the client.',
-        example='2020-10-02T15:00:00.000Z',
+        example='2020-10-02T10:00:00-05:00',
     )
 
 

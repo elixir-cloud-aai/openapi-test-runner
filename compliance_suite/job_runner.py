@@ -126,6 +126,24 @@ class JobRunner():
                 return True
         return False
 
+    def version_matcher(
+            self,
+            compatible_versions: List[str]
+    ) -> bool:
+        """ Checks if the user provided spec version matches with the YAML test compatible versions.
+         Skips the test if versions are not matched.
+
+        Args:
+            compatible_versions (List[str]): The compatible versions defined for a YAML test
+
+        Returns:
+            (bool): If the user provided spec version is compatible with the YAML test, return True
+        """
+
+        if self.version in compatible_versions:
+            return True
+        return False
+
     def generate_report(self) -> Any:
         """Generates the report via ga4gh-testbed-lib and returns it
 
@@ -170,7 +188,7 @@ class JobRunner():
                     if self.report.platform_name == "":
                         self.report.set_platform_details(self.server)
 
-                    if self.tag_matcher(yaml_data["tags"]):
+                    if self.version_matcher(yaml_data["compatible_versions"]) and self.tag_matcher(yaml_data["tags"]):
                         test_runner = TestRunner(yaml_data["service"], self.server, self.version)
                         job_count: int = 0
                         for job in yaml_data["jobs"]:

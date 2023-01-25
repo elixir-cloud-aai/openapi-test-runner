@@ -1,6 +1,9 @@
 name: Create Tes Task Job
 description: Job to create a new TES Task
 service: TES
+compatible_versions:
+  - v1.0
+  - v1.1
 tags:
   - logical
   - create task

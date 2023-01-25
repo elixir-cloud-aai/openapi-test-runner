@@ -3,11 +3,11 @@
 This module contains class definition for Test Runner to run the individual jobs, validate them and store their result
 """
 
+import importlib
 import json
 from typing import (
     Any,
-    Dict,
-    List
+    Dict
 )
 
 from dotmap import DotMap
@@ -15,10 +15,7 @@ from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
 
-from compliance_suite.constants.constants import (
-    ENDPOINT_TO_MODEL,
-    VERSION_INFO,
-)
+from compliance_suite.constants.constants import ENDPOINT_TO_MODEL
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
@@ -43,7 +40,7 @@ class TestRunner():
 
         self.service: str = service
         self.server: str = server
-        self.version: str = VERSION_INFO[version]
+        self.version: str = version
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
         self.report_test: Any = None        # Test object to store the result
@@ -97,7 +94,10 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            ENDPOINT_TO_MODEL[endpoint_model](**json_data)
+            pydantic_module: Any = importlib.import_module(
+                "compliance_suite.models." + self.version.replace('.', '_') + "_specs")
+            pydantic_model_class: Any = getattr(pydantic_module, ENDPOINT_TO_MODEL[endpoint_model])
+            pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
             ReportUtility.case_pass(case=report_case_schema,
@@ -261,14 +261,14 @@ class TestRunner():
             if "env_vars" in self.job_data.keys() and "check_cancel" in self.job_data["env_vars"].keys():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
-            response = client.poll_request(service=self.service, server=self.server, version=self.version,
+            response = client.poll_request(service=self.service, server=self.server, version=self.version[0:2],
                                            endpoint=self.job_data["endpoint"], uri_params=uri_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
-            response = client.send_request(service=self.service, server=self.server, version=self.version,
+            response = client.send_request(service=self.service, server=self.server, version=self.version[0:2],
                                            endpoint=self.job_data["endpoint"], uri_params=uri_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            request_body=request_body)

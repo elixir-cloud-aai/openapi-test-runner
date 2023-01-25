@@ -52,7 +52,7 @@ def report(server: str,
 
     if version is None:
         logger.info("No version provided. Latest version is used as default value.")
-        version = "v1.0"                    # Hardcode the latest version here. TODO - Future versions
+        version = "v1.1"                    # Hardcode the latest version here. TODO - Retrieve via external config
 
     tag = [val.lower() for val in tag]      # Convert the tags into lowercase to allow case-insensitive tags
     logger.info(f"Input tag is - {tag}")
