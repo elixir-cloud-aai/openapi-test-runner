@@ -7,7 +7,8 @@ import importlib
 import json
 from typing import (
     Any,
-    Dict
+    Dict,
+    List
 )
 
 from dotmap import DotMap
