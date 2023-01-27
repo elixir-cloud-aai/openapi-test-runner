@@ -10,8 +10,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt install -y software-properties-common
 
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt-get update
-RUN apt-get -y install python3.8 python3.8-distutils python3-pip git jq
+RUN apt update
+RUN apt -y install python3.8 python3.8-distutils python3-pip git jq
 
 RUN git clone https://github.com/elixir-cloud-aai/tes-compliance-suite.git 
 
