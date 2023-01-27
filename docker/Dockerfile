@@ -1,9 +1,9 @@
-# Creates a docker image that is ready to execute tes compliance suite
+# Creates a Docker image that is ready to execute tes compliance suite
 
 FROM ubuntu:latest AS build-env
 WORKDIR /app
 
-# Install Tes Compliance suite dependencies
+# Install TES Compliance suite dependencies
 # Git is needed for the clone and jq is helpful with parsing results if needed
 RUN apt update
 ENV DEBIAN_FRONTEND=noninteractive
@@ -15,14 +15,14 @@ RUN apt-get -y install python3.8 python3.8-distutils python3-pip git jq
 
 RUN git clone https://github.com/elixir-cloud-aai/tes-compliance-suite.git 
 
-# Install Tes Compliance suite
+# Install TES Compliance suite
 WORKDIR /app/tes-compliance-suite
 RUN python3.8 setup.py install
 
 # Precreate results directory
 RUN mkdir results
 
-# Cope over specific instruction around how to run the tests
+# Copy over specific instructions around how to run the tests
 COPY entrypoint.sh /app/tes-compliance-suite/entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
