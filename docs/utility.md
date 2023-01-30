@@ -96,4 +96,25 @@ path/to/python3.8/python setup.py install
 path/to/python3.8/Scripts/tes-compliance-suite report
 ```
 
+## Docker image
+
+The project has a [Dockerfile][dockerfile] that creates a ubuntu based container image ready to run tes-compliance-suite. It uses [entrypoint.sh][entrypoint] as an entrypoint, which is most useful if the url of the server changes each time the test suite is run or if only specific tests need to be run. Also, if the server requires basic authentication to connect to, entrypoint.sh can be edited to accept not just the endpoint url, but the username and password as well. 
+
+```base  
+http://$tesuser:$tespassword@$teshostname/
+```
+
+Currently the TES endpoint url in entrypoint.sh will grab the value from an enviormental variable in the image. However, entrypoint.sh gives flexibility to define how that value can be populated. For example, a file can be copied over to the image containing the endpoint url, username and password which could then be read and parsed to pass into tes-compliance suite. Refer to the example below. 
+
+```base  
+#!/bin/sh
+teshostname=$(jq -r '.TesHostname' TesCredentials.json)
+tesuser=$(jq -r '.TesUsername' TesCredentials.json)
+tespassword=$(jq -r '.TesPassword' TesCredentials.json)
+
+tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --tag all --output_path results
+```
+
 [res-test-template]: ../tests/template/test_template.yml
+[dockerfile]: ../docker/Dockerfile
+[entrypoint]: ../docker/entrypoint.sh
