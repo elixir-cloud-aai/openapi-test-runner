@@ -25,7 +25,7 @@ RUN mkdir results
 # Copy over specific instructions around how to run the tests
 COPY entrypoint.sh /app/tes-compliance-suite/entrypoint.sh
 
-# If using entryoint script with no edits, set TES endpoint url here
+# If using entrpyoint script with no edits, set TES endpoint url here
 ENV TES_ENDPOINT_URL=http://localhost/
 
 ENTRYPOINT ["/bin/bash", "entrypoint.sh"]
