@@ -1,4 +1,4 @@
-# Creates a Docker image that is ready to execute tes compliance suite                                                                                     Dockerfile                                                                                                 # Creates a Docker image that is ready to execute tes compliance suite
+# Creates a Docker image that is ready to execute tes compliance suite
 
 FROM python:3.8-slim AS build-env
 
