@@ -1,6 +1,8 @@
 name: List Full Tasks Job
 description: Job to retrieve the list of Full view of TES tasks
 service: TES
+versions:
+  - 1.0.0
 tags:
   - logical
   - list tasks

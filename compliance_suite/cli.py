@@ -20,7 +20,7 @@ def main() -> None:
 
 @main.command(help='Run TES compliance tests against the servers')
 @click.option('--server', '-s', help='server URL on which the compliance tests are run. Format - https://<url>/')
-@click.option('--version', '-v', help='TES version. Example - "v1.0"')
+@click.option('--version', '-v', help='TES version. Example - "1.0.0"')
 @click.option('--tag', '-t', multiple=True, help='Tag', default=['All'])
 @click.option('--output_path', '-o', help='path to output the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
@@ -38,8 +38,7 @@ def report(server: str,
 
     Args:
         server (str): The server URL on which the compliance suite will be run. Format - https://<url>/
-        version (str): The compliance suite will be run against this TES version.
-                       Default - Latest version. Example - "v1.0"
+        version (str): The compliance suite will be run against this TES version. Example - "1.0.0"
         tag (List[str]): The list of the tags for which the compliance suite will be run. Default - All
         output_path (str): The output path to store the JSON compliance report
         serve (bool): If true, runs a local server and displays the JSON report in webview
@@ -51,8 +50,7 @@ def report(server: str,
         raise Exception("No server provided. Please provide a server URL.")
 
     if version is None:
-        logger.info("No version provided. Latest version is used as default value.")
-        version = "v1.0"                    # Hardcode the latest version here. TODO - Future versions
+        raise Exception("No version provided. Please provide a version.")
 
     tag = [val.lower() for val in tag]      # Convert the tags into lowercase to allow case-insensitive tags
     logger.info(f"Input tag is - {tag}")

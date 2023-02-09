@@ -18,6 +18,13 @@
         "TES"
       ]
     },
+    "versions": {
+      "type": "array",
+      "description": "The list of TES versions against which the test file can be run",
+      "items": {
+        "type": "string"
+      }
+    },
     "tags": {
       "type": "array",
       "description": "The list of tags which define the test file. Example. Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and All tag",
@@ -123,6 +130,7 @@
   "required": [
     "name",
     "service",
+    "versions",
     "tags",
     "jobs"
   ]
