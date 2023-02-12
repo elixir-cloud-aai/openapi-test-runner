@@ -24,56 +24,86 @@ from compliance_suite.functions.log import logger
 class Client():
     """ This class is used to send REST requests to the provided server URL """
 
-    def __init__(self):
-        """ Initialize the Client object"""
+    def __init__(self, service: str, server: str, version: str):
+        """ Initialize the Client object containing the server details
 
+        Args:
+            service: The API service name
+            server: The server URL to send the request
+            version: The version of the deployed API service
+        """
+
+        self.service: str = service
+        self.server: str = server
+        self.version: str = self.parse_version(version)
+        self.request_headers: dict = REQUEST_HEADERS[service]
+        self.endpoint: str = ""
+        self.uri_params: Dict = {}
+        self.query_params: Dict = {}
+        self.operation: str = ""
+        self.request_body: str = ""
+        self.base_url: str = ""
         self.check_cancel = False   # Checks if the Cancel status is to be validated or not
 
-    def send_request(
+    @staticmethod
+    def parse_version(version: str) -> str:
+        """Parse the API version and convert into server URL specific version
+
+        Args:
+            version: The API version. Format - SemVer
+
+        Returns:
+            Transformed version to be set in API server URL
+        """
+
+        # Extract the major API version
+        return "v" + version.split(".")[0]
+
+    def set_endpoint_data(
             self,
-            service: str,
-            server: str,
-            version: str,
             endpoint: str,
             uri_params: Dict,
             query_params: Dict,
             operation: str,
             request_body: str
-    ) -> Response:
-        """ Sends the REST request to provided server
+    ) -> None:
+        """Sets the endpoint data
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
-            server (str): The server URL to send the request
-            version (str): The version of the deployed server
-            endpoint (str): The endpoint of the given server
-            uri_params (dict): URI parameters in the endpoint
-            query_params (dict): The query parameters to be sent along with the request
-            operation (str): The HTTP operation for the endpoint
-            request_body (str): The request body for the request
-
-        Returns:
-            (Response): The response from the server is returned
+            endpoint: The endpoint of the given server
+            uri_params: URI parameters in the endpoint
+            query_params: The query parameters to be sent along with the request
+            operation: The HTTP operation for the endpoint
+            request_body: The request body for the request
         """
 
         for key in uri_params.keys():
             endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
+        self.endpoint = endpoint
+        self.base_url = str(self.server) + self.version + self.endpoint
+        self.uri_params = uri_params
+        self.query_params = query_params
+        self.operation = operation
+        self.request_body = request_body
 
-        version = "v" + version[0]  # Convert SemVer into Major API version
-        base_url: str = str(server) + version + endpoint
-        request_headers: dict = REQUEST_HEADERS[service]
+    def send_request(self) -> Response:
+        """ Sends the REST request to configured server
+        Returns:
+            The response from the server is returned
+        """
+
         response = None
-        logger.info(f"Sending {operation} request to {base_url}. Query Parameters - {query_params}")
+        logger.info(f"Sending {self.operation} request to {self.base_url}. Query Parameters - {self.query_params}")
         try:
-            if operation == "GET":
-                response = requests.get(base_url, headers=request_headers, params=query_params)
-            elif operation == "POST":
-                request_body = json.loads(request_body)
-                response = requests.post(base_url, headers=request_headers, json=request_body)
+            if self.operation == "GET":
+                response = requests.get(self.base_url, headers=self.request_headers, params=self.query_params)
+            elif self.operation == "POST":
+                request_body = json.loads(self.request_body)
+                response = requests.post(self.base_url, headers=self.request_headers, json=request_body)
             return response
         except OSError as err:
             raise TestRunnerException(name="OS Error",
-                                      message=f"Connection error to {operation} {base_url}",
+                                      message=f"Connection error to {self.operation} {self.base_url}",
                                       details=err)
 
     def check_poll(
@@ -107,55 +137,36 @@ class Client():
 
     def poll_request(
             self,
-            service: str,
-            server: str,
-            version: str,
-            endpoint: str,
-            uri_params: Dict,
-            query_params: Dict,
-            operation: str,
             polling_interval: int,
             polling_timeout: int,
             check_cancel_val: bool
     ) -> Response:
-        """ This function polls a request to specified server with given interval and timeout
+        """ This function polls a request to configured server with given interval and timeout
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
-            server (str): The server URL to send the request
-            version (str): The version of the deployed server
-            endpoint (str): The endpoint of the given server
-            uri_params (dict): URI parameters in the endpoint
-            query_params (dict): The query parameters to be sent along with the request
-            operation (str): The HTTP operation for the endpoint
-            polling_interval (int): The duration between polling
-            polling_timeout (int): The timeout for the polling request. Raises Timeout exception if exceeded
-            check_cancel_val (bool): Bool to verify Cancel status or not
+            polling_interval: The duration between polling
+            polling_timeout: The timeout for the polling request. Raises Timeout exception if exceeded
+            check_cancel_val: Bool to verify Cancel status or not
 
         Returns:
-            (Response): The response from the server is returned
+            The response from the server is returned
         """
 
-        for key in uri_params.keys():
-            endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
-
         self.check_cancel = check_cancel_val
-        version = "v" + version[0]  # Convert SemVer into Major API version
-        base_url: str = str(server) + version + endpoint
-        request_headers: dict = REQUEST_HEADERS[service]
-
-        logger.info(f"Sending {operation} polling request to {base_url}. Query Parameters - {query_params}")
+        logger.info(f"Sending {self.operation} polling request to {self.base_url}."
+                    f" Query Parameters - {self.query_params}")
 
         try:
-            response = polling2.poll(lambda: requests.get(base_url, headers=request_headers, params=query_params),
-                                     step=polling_interval, timeout=polling_timeout,
-                                     check_success=self.check_poll)
+            response = polling2.poll(
+                lambda: requests.get(self.base_url, headers=self.request_headers, params=self.query_params),
+                step=polling_interval, timeout=polling_timeout, check_success=self.check_poll
+            )
             return response
         except polling2.TimeoutException:
             raise TestFailureException(name="Polling Timeout Exception",
-                                       message=f"Polling timeout for {operation} {base_url}",
+                                       message=f"Polling timeout for {self.operation} {self.base_url}",
                                        details=None)
         except OSError as err:
             raise TestRunnerException(name="OS Error",
-                                      message=f"Connection error to {operation} {base_url}",
+                                      message=f"Connection error to {self.operation} {self.base_url}",
                                       details=err)
