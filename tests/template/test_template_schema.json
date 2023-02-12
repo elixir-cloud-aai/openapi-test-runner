@@ -20,7 +20,7 @@
     },
     "versions": {
       "type": "array",
-      "description": "The list of TES versions against which the test file can be run",
+      "description": "The list of API versions against which the test file can be run",
       "items": {
         "type": "string"
       }
