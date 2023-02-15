@@ -124,6 +124,16 @@ class TestFunctions(unittest.TestCase):
 
         assert client.check_poll(resp) is True
 
+    def test_check_poll_canceling(self):
+        """ Asserts the check poll function to be True for status code 200 and CANCELING state"""
+
+        client = Client()
+        client.check_cancel = True
+        resp = MagicMock(status_code=200)
+        resp.json.return_value = {"state": "CANCELING"}
+
+        assert client.check_poll(resp) is True
+
     def test_check_poll_fail(self):
         """ Asserts the check poll function to be False for status code not equal to 200"""
 
