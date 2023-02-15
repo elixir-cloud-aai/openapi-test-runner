@@ -38,7 +38,7 @@ status from `["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR"]`, then its successfu
 A task must be present in order to be canceled. Hence, creating a task beforehand is necessary. A simple logical
 test would be just sending the request to cancel the task. However, a more detailed validation will be GET this
 task by ID and monitor the task status inside the TES server. If the task returns an appropriate status
-from `["CANCELED"]`, then its successful.
+from `["CANCELED", "CANCELING"]`, then its successful.
 
 1. Create a new task  `POST /tasks`. The ID will be stored in auxiliary space.
 2. Cancel the task `POST /tasks/{id}:cancel`
