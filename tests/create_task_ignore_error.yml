@@ -1,5 +1,5 @@
-name: Create Tes Task Job
-description: Job to create a new TES Task
+name: Create Tes Task Job With Ignore Error Flag
+description: Job to create a new TES Task with ignore_error flag
 service: TES
 compatible_versions:
   - v1.1
