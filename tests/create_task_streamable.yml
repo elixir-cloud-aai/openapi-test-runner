@@ -1,0 +1,48 @@
+name: Create Tes Task Job
+description: Job to create a new TES Task
+service: TES
+compatible_versions:
+  - v1.1
+tags:
+  - logical
+  - create task
+  - create task test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString1",
+              "TestString2"
+            ]
+          },
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString3",
+              "TestString4"
+            ]
+          }
+        ],
+        "input": [
+          {
+            "name": "access-file",
+            "description": "Access file resource via streaming",
+            "url": "s3://my-object-store/file1",
+            "path": "/data/file1",
+            "streamable": true
+          }
+        ]
+      }
+
+    response:
+      200: {}
