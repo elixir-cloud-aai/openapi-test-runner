@@ -250,19 +250,24 @@ class TestRunner():
             request_body: str = self.job_data["request_body"]
             self.validate_request_body(request_body)
 
-        client = Client(service=self.service, server=self.server, version=self.version)
-        client.set_endpoint_data(endpoint=self.job_data["endpoint"], uri_params=uri_params, query_params=query_params,
-                                 operation=self.job_data["operation"], request_body=request_body)
+        client = Client()
 
         if "polling" in self.job_data.keys():
+
             check_cancel: bool = False
             if "env_vars" in self.job_data.keys() and "check_cancel" in self.job_data["env_vars"].keys():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
-            response = client.poll_request(polling_interval=self.job_data["polling"]["interval"],
+            response = client.poll_request(service=self.service, server=self.server, version=self.version,
+                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           query_params=query_params, operation=self.job_data["operation"],
+                                           polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
-            response = client.send_request()
+            response = client.send_request(service=self.service, server=self.server, version=self.version,
+                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           query_params=query_params, operation=self.job_data["operation"],
+                                           request_body=request_body)
 
         self.validate_response(response)

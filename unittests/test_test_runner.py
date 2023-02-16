@@ -161,7 +161,7 @@ class TestTestRunner(unittest.TestCase):
         mock_validate_response.return_value = {}
         mock_client.return_value = MagicMock()
 
-        test_runner = TestRunner("TES", "test", "1.0.0")
+        test_runner = TestRunner("test", "test", "v1.0")
         job_data = {
             "name": "get_task",
             "description": "test",
@@ -189,7 +189,7 @@ class TestTestRunner(unittest.TestCase):
         resp = MagicMock(status_code=200, text='{"id": "1234"}')
         mock_client.return_value = resp
 
-        test_runner = TestRunner("TES", "test", "1.0.0")
+        test_runner = TestRunner("test", "test", "v1.0")
         job_data = {
             "name": "create_task",
             "description": "test",

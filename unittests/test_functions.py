@@ -23,10 +23,6 @@ from compliance_suite.functions.report import Report
 
 class TestFunctions(unittest.TestCase):
 
-    def setUp(self) -> None:
-        """ Setup client object """
-        self.client = Client(service="TES", server="test-server", version="1.0.0")
-
     def test_set_logging(self):
         """ Checks if the logger is set up properly """
 
@@ -46,19 +42,21 @@ class TestFunctions(unittest.TestCase):
         """ Asserts the Get endpoint response status to be 200"""
 
         mock_get.return_value = MagicMock(status_code=200)
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={"test": "test"},
-                                      query_params={"test": "test"}, operation="GET", request_body="")
+        client = Client()
 
-        get_response = self.client.send_request()
+        get_response = client.send_request(service="TES", server="test-server", version="test-version",
+                                           endpoint="test-endpoint", uri_params={"test": "test"},
+                                           query_params={"test": "test"}, operation="GET", request_body="")
         assert get_response.status_code == 200
 
     def test_send_request_get_failure(self):
         """ Asserts the Get endpoint to throw Connection error due to invalid server URL"""
 
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={}, query_params={},
-                                      operation="GET", request_body="")
+        client = Client()
         with self.assertRaises(TestRunnerException):
-            self.client.send_request()
+            client.send_request(service="TES", server="test-server", version="test-version",
+                                endpoint="test-endpoint", uri_params={}, query_params={},
+                                operation="GET", request_body="")
 
     @patch('requests.post')
     def test_send_request_post(self, mock_post):
@@ -66,9 +64,10 @@ class TestFunctions(unittest.TestCase):
 
         mock_post.return_value = MagicMock(status_code=200)
 
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={}, query_params={},
-                                      operation="POST", request_body="{}")
-        response = self.client.send_request()
+        client = Client()
+        response = client.send_request(service="TES", server="test-server", version="test-version",
+                                       endpoint="test-endpoint", uri_params={}, query_params={},
+                                       operation="POST", request_body="{}")
         assert response.status_code == 200
 
     @patch('polling2.poll')
@@ -77,9 +76,12 @@ class TestFunctions(unittest.TestCase):
 
         mock_get.return_value = MagicMock(status_code=200)
 
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={"test": "test"},
-                                      query_params={"test": "test"}, operation="test", request_body="")
-        get_response = self.client.poll_request(polling_interval=10, polling_timeout=3600, check_cancel_val=False)
+        client = Client()
+        get_response = client.poll_request(service="TES", server="test-server", version="test-version",
+                                           endpoint="test-endpoint", uri_params={"test": "test"},
+                                           query_params={"test": "test"}, operation="test",
+                                           polling_interval=10, polling_timeout=3600,
+                                           check_cancel_val=False)
         assert get_response.status_code == 200
 
     @patch('polling2.poll')
@@ -88,48 +90,54 @@ class TestFunctions(unittest.TestCase):
 
         mock_get.side_effect = polling2.TimeoutException(MagicMock())
 
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={"test": "test"},
-                                      query_params={"test": "test"}, operation="test", request_body="")
+        client = Client()
         with self.assertRaises(TestFailureException):
-            self.client.poll_request(polling_interval=10, polling_timeout=5, check_cancel_val=False)
+            client.poll_request(service="TES", server="test-server", version="test-version",
+                                endpoint="test-endpoint", uri_params={"test": "test"}, query_params={"test": "test"},
+                                operation="test", polling_interval=10, polling_timeout=5, check_cancel_val=False)
 
     def test_polling_request_failure(self):
         """ Asserts the polling request to throw Timeout Exception"""
 
-        self.client.set_endpoint_data(endpoint="test-endpoint", uri_params={"test": "test"},
-                                      query_params={"test": "test"}, operation="test", request_body="")
+        client = Client()
         with self.assertRaises(TestRunnerException):
-            self.client.poll_request(polling_interval=10, polling_timeout=3600, check_cancel_val=False)
+            client.poll_request(service="TES", server="invalid-url", version="test-version",
+                                endpoint="test-endpoint", uri_params={"test": "test"}, query_params={"test": "test"},
+                                operation="test", polling_interval=10, polling_timeout=3600, check_cancel_val=False)
 
     def test_check_poll_create(self):
         """ Asserts the check poll function to be True for status code 200 and COMPLETE state"""
 
+        client = Client()
         resp = MagicMock(status_code=200)
         resp.json.return_value = {"state": "COMPLETE"}
 
-        assert self.client.check_poll(resp) is True
+        assert client.check_poll(resp) is True
 
     def test_check_poll_cancel(self):
         """ Asserts the check poll function to be True for status code 200 and CANCELED state"""
 
-        self.client.check_cancel = True
+        client = Client()
+        client.check_cancel = True
         resp = MagicMock(status_code=200)
         resp.json.return_value = {"state": "CANCELED"}
 
-        assert self.client.check_poll(resp) is True
+        assert client.check_poll(resp) is True
 
     def test_check_poll_fail(self):
         """ Asserts the check poll function to be False for status code not equal to 200"""
 
+        client = Client()
         resp = Response
         resp.status_code = 400
 
-        assert self.client.check_poll(resp) is False
+        assert client.check_poll(resp) is False
 
     def test_check_poll_retry(self):
         """ Asserts the check poll function to be False and retry for status code 200 and RANDOM state"""
 
+        client = Client()
         resp = MagicMock(status_code=200)
         resp.json.return_value = {"state": "RANDOM"}
 
-        assert self.client.check_poll(resp) is False
+        assert client.check_poll(resp) is False
