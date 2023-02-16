@@ -8,6 +8,7 @@ tags:
   - create task
   - create task test
   - all
+  - dev
 jobs:
   - name: create_task
     description: Create a new TES task
@@ -34,12 +35,16 @@ jobs:
           }
         ],
         "inputs": [
-          "url": "s3://my-object-store/file-1",
-          "path": "/data/file1",
-        ]
+          {
+            "url": "s3://my-object-store/file-1",
+            "path": "/data/file1"
+          }
+        ],
         "outputs": [
-          "url": "s3://my-object-store/outfile-1",
-          "path": "/data/outfile",
+          {
+            "url": "s3://my-object-store/outfile-1",
+            "path": "/data/outfile"
+          }
         ]
       }
 
