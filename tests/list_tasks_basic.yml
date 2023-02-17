@@ -3,7 +3,6 @@ description: Job to retrieve the list of Basic view of TES tasks
 service: TES
 versions:
   - 1.0.0
-  - 1.1.0
 tags:
   - logical
   - list tasks

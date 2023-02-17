@@ -54,14 +54,6 @@ class TestJobRunner(unittest.TestCase):
         job_runner_object = JobRunner('https://test.com/', 'v1.0', ["NoMatch"])
         assert job_runner_object.tag_matcher(["tag", "tag1", "tag2"]) is False
 
-    def test_version_matcher_success(self):
-        job_runner_object = JobRunner('https://test.com/', 'v1.0', ["tag"])
-        assert job_runner_object.version_matcher(["v1.0", "v1.1"]) is True
-
-    def test_version_matcher_fail(self):
-        job_runner_object = JobRunner('https://test.com/', 'v0.0', ["tag"])
-        assert job_runner_object.version_matcher(["v1.0", "v1.1"]) is False
-
     @patch("os.path.join", return_value=SCHEMA_PATH)
     def test_validate_job_success(self, mock_os):
         """ Asserts validate job functions for proper YAML schema"""

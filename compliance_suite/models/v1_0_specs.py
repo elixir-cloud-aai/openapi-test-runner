@@ -429,7 +429,6 @@ class TesListTasksResponse(BaseModel):
     )
 
 
-# Extra models manually added for Minimal View
 class TesTaskMinimal(BaseModel):
     id: str = Field(
         ...,
