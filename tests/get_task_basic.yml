@@ -1,6 +1,8 @@
 name: Get Basic Task Job
 description: Job to retrieve the Basic view of TES Task
 service: TES
+versions:
+  - 1.0.0
 tags:
   - logical
   - get task

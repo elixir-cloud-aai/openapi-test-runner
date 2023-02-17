@@ -1,6 +1,8 @@
 name: Create Tes Task Functional Job
 description: Job to create a new TES Task and test functionality
 service: TES
+versions:
+  - 1.0.0
 tags:
   - functional
   - create task

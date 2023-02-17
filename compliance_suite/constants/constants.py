@@ -13,13 +13,6 @@ from compliance_suite.models.v1_0_specs import (
     TesTaskMinimal,
 )
 
-# YAML Constants
-
-VERSION_INFO = {
-    'v1.0': 'v1',
-    'v1.1': 'v1'
-}
-
 # Utility Constants
 
 LOGGING_LEVEL = {

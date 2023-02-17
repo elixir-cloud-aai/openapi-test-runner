@@ -15,10 +15,7 @@ from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
 
-from compliance_suite.constants.constants import (
-    ENDPOINT_TO_MODEL,
-    VERSION_INFO,
-)
+from compliance_suite.constants.constants import ENDPOINT_TO_MODEL
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
@@ -43,7 +40,7 @@ class TestRunner():
 
         self.service: str = service
         self.server: str = server
-        self.version: str = VERSION_INFO[version]
+        self.version: str = version
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
         self.report_test: Any = None        # Test object to store the result

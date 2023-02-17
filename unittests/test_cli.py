@@ -33,6 +33,13 @@ class TestJobRunner(unittest.TestCase):
         result = runner.invoke(report, [])
         assert result.exit_code == 1
 
+    def test_report_no_version(self):
+        """ asserts if the application raises Exception if no server is provided"""
+
+        runner = CliRunner()
+        result = runner.invoke(report, ['--server', 'https://test.com/'])
+        assert result.exit_code == 1
+
     @patch.object(JobRunner, "generate_report")
     @patch.object(JobRunner, "run_jobs")
     def test_report_no_tag(self, mock_run_jobs, mock_generate_reports):
@@ -42,7 +49,7 @@ class TestJobRunner(unittest.TestCase):
             mock_run_jobs.return_value = {}
             mock_generate_reports.return_value = '{"test": "test"}'
             runner = CliRunner()
-            result = runner.invoke(report, ['--server', 'https://test.com/'])
+            result = runner.invoke(report, ['--server', 'https://test.com/', '--version', '1.0.0'])
             assert result.exit_code == 0
 
     @patch.object(ReportServer, 'serve_thread')
@@ -56,6 +63,7 @@ class TestJobRunner(unittest.TestCase):
             mock_generate_reports.return_value = '{"test": "test"}'
             mock_report_server.return_value = MagicMock()
             runner = CliRunner()
-            result = runner.invoke(report, ['--server', 'https://test.com/', '--tag', 'All', '--output_path',
-                                            "path/to/output", '--serve', '--port', 9090, '--uptime', 1000])
+            result = runner.invoke(report, ['--server', 'https://test.com/', '--version', '1.0.0', '--tag', 'All',
+                                            '--output_path', "path/to/output", '--serve', '--port', 9090,
+                                            '--uptime', 1000])
             assert result.exit_code == 0
