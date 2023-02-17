@@ -59,6 +59,7 @@ class Client():
         for key in uri_params.keys():
             endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
 
+        version = "v" + version.split(".")[0]  # Convert SemVer into Major API version
         base_url: str = str(server) + version + endpoint
         request_headers: dict = REQUEST_HEADERS[service]
         response = None
@@ -137,7 +138,9 @@ class Client():
 
         for key in uri_params.keys():
             endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
+
         self.check_cancel = check_cancel_val
+        version = "v" + version.split(".")[0]  # Convert SemVer into Major API version
         base_url: str = str(server) + version + endpoint
         request_headers: dict = REQUEST_HEADERS[service]
 

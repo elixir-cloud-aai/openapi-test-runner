@@ -67,15 +67,15 @@ env_vars:
 
 The following command line parameters can be run:
 
-| Parameter     | Short Name | Required |Description |
-|---------------|------------|----------|---|
-| --server      | -s         | Yes      |The server URL on which the compliance suite will be run. Format - `https://<url>/`|
-| --version     | -v         | No       |The compliance suite will be run against this TES version. Default - Latest version. Example - `"v1.0"`|
-| --tag         | -t         | No       |Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"` |
-| --output_path | -o         | No       |The output path to store the JSON compliance report |
-| --serve       | NA         | No       |If set, runs a local server and displays the JSON report in HTML web page |
-| --port        | NA         | No       |The port at which the local server is run. Default - 15800 |
-| --uptime      | -u         | No       |The local server duration in seconds. Default - 3600 seconds |
+| Parameter     | Short Name | Required | Description                                                                                     |
+|---------------|------------|----------|-------------------------------------------------------------------------------------------------|
+| --server      | -s         | Yes      | The server URL on which the compliance suite will be run. Format - `https://<url>/`             |
+| --version     | -v         | Yes      | The compliance suite will be run against this TES version. Format - SemVer. Example - `"1.0.0"` |
+| --tag         | -t         | No       | Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"`       |
+| --output_path | -o         | No       | The output path to store the JSON compliance report                                             |
+| --serve       | NA         | No       | If set, runs a local server and displays the JSON report in HTML web page                       |
+| --port        | NA         | No       | The port at which the local server is run. Default - 15800                                      |
+| --uptime      | -u         | No       | The local server duration in seconds. Default - 3600 seconds                                    |
 
 Multiple tags can be set by providing multiple `--tag` or `-t` parameter.
 ```base  
@@ -87,7 +87,7 @@ tes-compliance-suite report --server "https://test.com/" --tag "cancel task" --t
 1. Some examples for command line are:
 ```base  
 tes-compliance-suite report --server "https://test.com/" --tag "all" 
-tes-compliance-suite report --server "https://test.com/" --version "v1.0" --tag "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
+tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --tag "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
 ``` 
 
 2.  If the HOME python version is different than 3.8, then absolute path with reference to 3.8 should be used.
@@ -96,4 +96,25 @@ path/to/python3.8/python setup.py install
 path/to/python3.8/Scripts/tes-compliance-suite report
 ```
 
+## Docker image
+
+The project has a [Dockerfile][dockerfile] that creates a ubuntu based container image ready to run tes-compliance-suite. It uses [entrypoint.sh][entrypoint] as an entrypoint, which is most useful if the url of the server changes each time the test suite is run or if only specific tests need to be run. Also, if the server requires basic authentication to connect to, entrypoint.sh can be edited to accept not just the endpoint url, but the username and password as well. 
+
+```base  
+http://$tesuser:$tespassword@$teshostname/
+```
+
+Currently the TES endpoint url in entrypoint.sh will grab the value from an enviormental variable in the image. However, entrypoint.sh gives flexibility to define how that value can be populated. For example, a file can be copied over to the image containing the endpoint url, username and password which could then be read and parsed to pass into tes-compliance suite. Refer to the example below. 
+
+```base  
+#!/bin/sh
+teshostname=$(jq -r '.TesHostname' TesCredentials.json)
+tesuser=$(jq -r '.TesUsername' TesCredentials.json)
+tespassword=$(jq -r '.TesPassword' TesCredentials.json)
+
+tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --tag all --output_path results
+```
+
 [res-test-template]: ../tests/template/test_template.yml
+[dockerfile]: ../docker/Dockerfile
+[entrypoint]: ../docker/entrypoint.sh

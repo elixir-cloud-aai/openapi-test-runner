@@ -1,9 +1,9 @@
 name: Cancel Tes Task Job
 description: Job to cancel a TES Task
 service: TES
-compatible_versions:
-  - v1.0
-  - v1.1
+versions:
+  - 1.0.0
+  - 1.1.0
 tags:
   - functional
   - cancel task

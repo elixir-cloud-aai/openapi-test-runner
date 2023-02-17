@@ -18,9 +18,9 @@
         "TES"
       ]
     },
-    "compatible_versions": {
+    "versions": {
       "type": "array",
-      "description": "The list of versions for which the test file will be run",
+      "description": "The list of API versions against which the test file can be run",
       "items": {
         "type": "string"
       }
@@ -130,7 +130,7 @@
   "required": [
     "name",
     "service",
-    "compatible_versions",
+    "versions",
     "tags",
     "jobs"
   ]

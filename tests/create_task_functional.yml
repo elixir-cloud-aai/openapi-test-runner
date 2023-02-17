@@ -1,9 +1,9 @@
 name: Create Tes Task Functional Job
 description: Job to create a new TES Task and test functionality
 service: TES
-compatible_versions:
-  - v1.0
-  - v1.1
+versions:
+  - 1.0.0
+  - 1.1.0
 tags:
   - functional
   - create task

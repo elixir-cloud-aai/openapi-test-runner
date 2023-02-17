@@ -1,7 +1,7 @@
 name: <Job Name>
 description: <Job Description>    # Optional
 service: <GA4GH Service Name>   # enum - [TES]
-compatible_versions:
+versions:
   - <Version>
 tags:
   - <Tag Name>                # Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and "All" tag
