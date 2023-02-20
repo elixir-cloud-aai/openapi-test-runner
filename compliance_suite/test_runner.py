@@ -3,6 +3,7 @@
 This module contains class definition for Test Runner to run the individual jobs, validate them and store their result
 """
 
+import importlib
 import json
 from typing import (
     Any,
@@ -94,7 +95,10 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            ENDPOINT_TO_MODEL[endpoint_model](**json_data)
+            pydantic_module: Any = importlib.import_module(
+                "compliance_suite.models.v" + self.version.replace('.', '_') + "_specs")
+            pydantic_model_class: Any = getattr(pydantic_module, ENDPOINT_TO_MODEL[endpoint_model])
+            pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
             ReportUtility.case_pass(case=report_case_schema,
