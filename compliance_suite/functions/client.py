@@ -35,7 +35,7 @@ class Client():
             server: str,
             version: str,
             endpoint: str,
-            uri_params: Dict,
+            path_params: Dict,
             query_params: Dict,
             operation: str,
             request_body: str
@@ -47,7 +47,7 @@ class Client():
             server (str): The server URL to send the request
             version (str): The version of the deployed server
             endpoint (str): The endpoint of the given server
-            uri_params (dict): URI parameters in the endpoint
+            path_params (dict): URI parameters in the endpoint
             query_params (dict): The query parameters to be sent along with the request
             operation (str): The HTTP operation for the endpoint
             request_body (str): The request body for the request
@@ -56,8 +56,8 @@ class Client():
             (Response): The response from the server is returned
         """
 
-        for key in uri_params.keys():
-            endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
+        for key in path_params.keys():
+            endpoint = endpoint.replace(f"{{{key}}}", path_params[key])
 
         version = "v" + version.split(".")[0]  # Convert SemVer into Major API version
         base_url: str = str(server) + version + endpoint
@@ -94,11 +94,17 @@ class Client():
             return False
 
         response_json: Any = response.json()
-        if self.check_cancel and response_json["state"] in ["CANCELED"]:
+<<<<<<< HEAD
+        if self.check_cancel and response_json["state"] in ["CANCELED", "CANCELING"]:
             logger.info("Expected response received. Polling request successful")
             return True
 
-        elif not self.check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR"]:
+        elif not self.check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR", "PREEMPTED"]:
+=======
+        valid_states = ["CANCELED", "CANCELING"] if self.check_cancel else ["COMPLETE", "EXECUTOR_ERROR",
+                                                                            "SYSTEM_ERROR", "PREEMPTED"]
+        if response_json["state"] in valid_states:
+>>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
             logger.info("Expected response received. Polling request successful")
             return True
 
@@ -111,7 +117,7 @@ class Client():
             server: str,
             version: str,
             endpoint: str,
-            uri_params: Dict,
+            path_params: Dict,
             query_params: Dict,
             operation: str,
             polling_interval: int,
@@ -125,7 +131,7 @@ class Client():
             server (str): The server URL to send the request
             version (str): The version of the deployed server
             endpoint (str): The endpoint of the given server
-            uri_params (dict): URI parameters in the endpoint
+            path_params (dict): URI parameters in the endpoint
             query_params (dict): The query parameters to be sent along with the request
             operation (str): The HTTP operation for the endpoint
             polling_interval (int): The duration between polling
@@ -136,8 +142,8 @@ class Client():
             (Response): The response from the server is returned
         """
 
-        for key in uri_params.keys():
-            endpoint = endpoint.replace(f"{{{key}}}", uri_params[key])
+        for key in path_params.keys():
+            endpoint = endpoint.replace(f"{{{key}}}", path_params[key])
 
         self.check_cancel = check_cancel_val
         version = "v" + version.split(".")[0]  # Convert SemVer into Major API version

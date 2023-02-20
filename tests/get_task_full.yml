@@ -3,6 +3,7 @@ description: Job to retrieve the Full view of TES Task
 service: TES
 versions:
   - 1.0.0
+  - 1.1.0
 tags:
   - logical
   - get task
@@ -35,6 +36,8 @@ jobs:
     description: Retrieve the task details for TES task
     endpoint: /tasks/{id}
     operation: GET
+    path_parameters:
+      id: "{id}"
     query_parameters:
       - view: FULL
     response:

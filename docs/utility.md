@@ -44,14 +44,15 @@ python setup.py install
 
 The test files provide multiple features for better operability and extensibility. 
 
-1. Storage Variables - Persist response values to be used in subsequent jobs. 
-   Refer the [test template][res-test-template] for syntax details.
+1. Storage Variables - Persist response values to be used in subsequent jobs. When using a storage variable, it should
+   be enclosed in curly brackets and quotes to denote its usage. Refer the [test template][res-test-template] for syntax details. 
    Example - "$response.id" is extracted from the CreateTask response and stored in the key "id" for later
    GetTask or CancelTask jobs.
 
 ```base
 storage_vars:
       id: $response.id
+key: "{id}"
 ```
 
 2. Environment Variables - Define key-value pairs to be referenced inside the code.
@@ -61,6 +62,16 @@ storage_vars:
 ```base
 env_vars:
       check_cancel: True
+```
+
+3. Path Parameters - Define multiple endpoint path parameters values by using either storage variables or exact values.
+   Refer the [test template][res-test-template] for syntax details.
+   Example -
+
+```base
+path_parameters:
+      foo: 1234
+      lorem: "{ipsum}"
 ```
 
 ## Usage

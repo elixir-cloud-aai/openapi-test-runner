@@ -1,13 +1,12 @@
-name: Create Tes Task Job
-description: Job to create a new TES Task
+name: Create Tes Task Job Without Filetypes
+description: Job to create a new TES Task intentionally without input and output filetypes
 service: TES
 versions:
-  - 1.0.0
   - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task optional filetypes test
   - all
 jobs:
   - name: create_task
@@ -30,7 +29,23 @@ jobs:
 =======
           }
 >>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
+        ],
+        "inputs": [
+          {
+            "url": "s3://my-object-store/file-1",
+            "path": "/data/file1"
+          }
+        ],
+        "outputs": [
+          {
+            "url": "s3://my-object-store/outfile-1",
+            "path": "/data/outfile"
+          }
         ]
       }
+<<<<<<< HEAD
+
+=======
+>>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
     response:
       200: {}

@@ -3,6 +3,7 @@ description: Job to create a new TES Task and test functionality
 service: TES
 versions:
   - 1.0.0
+  - 1.1.0
 tags:
   - functional
   - create task
@@ -35,6 +36,8 @@ jobs:
     description: Retrieve the task details for TES task
     endpoint: /tasks/{id}
     operation: GET
+    path_parameters:
+      id: "{id}"
     query_parameters:
       - view: MINIMAL
     polling:

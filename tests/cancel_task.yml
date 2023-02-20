@@ -3,6 +3,7 @@ description: Job to cancel a TES Task
 service: TES
 versions:
   - 1.0.0
+  - 1.1.0
 tags:
   - logical
   - cancel task
@@ -35,5 +36,7 @@ jobs:
     description: Cancel a TES task
     endpoint: /tasks/{id}:cancel
     operation: POST
+    path_parameters:
+      id: "{id}"
     response:
       200:

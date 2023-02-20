@@ -3,11 +3,12 @@
 This module contains class definition for Test Runner to run the individual jobs, validate them and store their result
 """
 
+import importlib
 import json
+import re
 from typing import (
     Any,
-    Dict,
-    List
+    Dict
 )
 
 from dotmap import DotMap
@@ -94,7 +95,10 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            ENDPOINT_TO_MODEL[endpoint_model](**json_data)
+            pydantic_module: Any = importlib.import_module(
+                "compliance_suite.models.v" + self.version.replace('.', '_') + "_specs")
+            pydantic_model_class: Any = getattr(pydantic_module, ENDPOINT_TO_MODEL[endpoint_model])
+            pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
             ReportUtility.case_pass(case=report_case_schema,
@@ -170,7 +174,7 @@ class TestRunner():
                                description="Check if response status code is 200")
 
         if response.status_code == response_status:
-            logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful Response status code')
+            logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} response status code matched')
             ReportUtility.case_pass(case=report_case_status,
                                     message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful '
                                             f'Response status code',
@@ -178,28 +182,105 @@ class TestRunner():
 
         else:
             ReportUtility.case_fail(case=report_case_status,
-                                    message=f'Unsuccessful Response status code for '
-                                            f'{self.job_data["operation"]} {self.job_data["endpoint"]}',
+                                    message=f'Response status code for {self.job_data["operation"]}'
+                                            f' {self.job_data["endpoint"]} did not match',
                                     log_message="")
 
             raise TestFailureException(name="Incorrect HTTP Response Status",
-                                       message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} '
-                                               f'Response status code is not 200',
+                                       message=f'Response status code for {self.job_data["operation"]}'
+                                               f' {self.job_data["endpoint"]} did not match',
                                        details=None)
 
         # Logical Schema Validation
-        if not response.text:
-            response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
-        else:
-            response_json: Any = response.json()
+        if response_status == 200:               # Further response checks only if successful response body
+            if not response.text:
+                response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
+            else:
+                response_json: Any = response.json()
 
-        if self.job_data["name"] in ["list_tasks", "get_task"]:
-            view_query: List[str] = [item["view"] for item in self.job_data["query_parameters"]]
-            endpoint_model: str = self.job_data["name"] + "_" + view_query[0]
-        else:
-            endpoint_model: str = self.job_data["name"]
-        self.validate_logic(endpoint_model, response_json, "Response")
-        self.save_storage_vars(response_json)
+            if self.job_data["name"] in ["list_tasks", "get_task"]:
+                view_query: str = ""
+                for query_param in self.job_data["query_parameters"]:
+                    if "view" in query_param:
+                        view_query = query_param["view"]
+                endpoint_model: str = self.job_data["name"] + "_" + view_query
+            else:
+                endpoint_model: str = self.job_data["name"]
+            self.validate_logic(endpoint_model, response_json, "Response")
+            self.validate_filters(response_json)
+            self.save_storage_vars(response_json)
+
+    def validate_filters(self, json_data: Any) -> None:
+        """Extract the API data key values and compare with the filter value
+
+        Args:
+            json_data: The request/response data in JSON format
+        """
+
+        if "filter" in self.job_data.keys():
+            for index, job_filter in enumerate(self.job_data["filter"], start=1):
+
+                report_case_filter = self.report_test.add_case()
+                report_case_result: bool = True
+                ReportUtility.set_case(case=report_case_filter,
+                                       name=f'Filter-{index}',
+                                       description=f'Validate the response against filter-{index}')
+
+                filtered_value: Any = ""   # Retrieve the API data value through DotMap parser
+                dot_dict = DotMap(json_data)
+                if dot_dict is not None:
+                    filtered_value = eval("dot_dict." + job_filter["path"].split('.', maxsplit=1)[1])
+
+                # Check if provided filter type matches with the filtered value class
+                if not ((job_filter["type"] == "string" and isinstance(filtered_value, str)) or
+                        (job_filter["type"] == "array" and isinstance(filtered_value, list)) or
+                        (job_filter["type"] == "object" and isinstance(filtered_value, DotMap))):
+                    logger.info(f'Filter-{index} failed due to invalid filter type')
+                    ReportUtility.case_fail(case=report_case_filter,
+                                            message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]} due to invalid filter type',
+                                            log_message="")
+                    raise JobValidationException(name="Failed filtering",
+                                                 message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                         f'{self.job_data["endpoint"]} due to invalid filter type',
+                                                 details=None)
+
+                # Individual data type conditions
+                if "value" in job_filter:
+                    if job_filter["type"] == "string":
+                        if "regex" in job_filter and job_filter["regex"]:
+                            report_case_result = bool(re.search(job_filter["value"], filtered_value))
+                        else:
+                            report_case_result = job_filter["value"] == filtered_value
+
+                    elif job_filter["type"] == "array":
+                        report_case_result = job_filter["value"] in filtered_value
+
+                    elif job_filter["type"] == "object":
+                        filtered_dict: Dict = filtered_value.toDict()
+                        report_case_result = json.loads(job_filter["value"]).items() <= filtered_dict.items()
+
+                # Check size if specified
+                if "size" in job_filter:
+                    report_case_result = report_case_result and len(filtered_value) == job_filter["size"]
+
+                # Update report case status
+                if report_case_result:
+                    logger.info(f'Filter-{index} passed')
+                    ReportUtility.case_pass(case=report_case_filter,
+                                            message=f'Filter-{index} passed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]}',
+                                            log_message="No logs for success")
+                else:
+                    logger.info(f'Filter-{index} failed')
+                    ReportUtility.case_fail(case=report_case_filter,
+                                            message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]}',
+                                            log_message="")
+                    raise TestFailureException(name="Failed filtering",
+                                               message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                       f'{self.job_data["endpoint"]}',
+                                               details=None)
 
     def save_storage_vars(self, json_data: Any) -> None:
         """ Extract the keys mentioned in the YAML job from the request/response and save them in the auxiliary space.
@@ -216,6 +297,29 @@ class TestRunner():
                     if key not in self.auxiliary_space.keys() or self.auxiliary_space[key] == "DotMap()":
                         dot_value = str(eval("dot_dict." + value.split('.', maxsplit=1)[1]))
                         self.set_auxiliary_space(key, dot_value)
+
+    def transform_parameters(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Transform the parameters by replacing the storage variables with their exact values.
+
+        Args:
+            params: The parameters dictionary to be transformed
+
+        Returns:
+            The transformed dictionary after replacing values
+        """
+
+        for param in params:
+            if str(params[param]).startswith("{") and str(params[param]).endswith("}"):
+                storage_key: str = params[param][1:-1]
+                if storage_key in self.auxiliary_space:
+                    params[param] = self.auxiliary_space[storage_key]
+                else:
+                    raise JobValidationException(name="Path param not found in storage vars",
+                                                 message=f'Param {param} not found in storage vars.'
+                                                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}'
+                                                         f' failed',
+                                                 details=None)
+        return params
 
     def run_tests(
             self,
@@ -235,16 +339,19 @@ class TestRunner():
                                description=job_data["description"])
         self.set_report_test(report_test)
 
-        uri_params: Dict = {}
+        path_params: Dict = {}
         query_params: Dict = {}
         request_body: str = "{}"
 
-        if self.job_data["name"] in ["get_task", "cancel_task"]:
-            uri_params["id"] = self.auxiliary_space["id"]
+        if "path_parameters" in self.job_data:
+            for path_param in self.job_data["path_parameters"]:
+                path_params[path_param] = self.job_data["path_parameters"][path_param]
+        self.transform_parameters(path_params)
 
-        if self.job_data["name"] in ["get_task", "list_tasks"]:
+        if "query_parameters" in self.job_data:
             for param in self.job_data["query_parameters"]:
                 query_params.update(param)
+        self.transform_parameters(query_params)
 
         if self.job_data["name"] in ["create_task"]:
             request_body: str = self.job_data["request_body"]
@@ -259,14 +366,14 @@ class TestRunner():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
             response = client.poll_request(service=self.service, server=self.server, version=self.version,
-                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
             response = client.send_request(service=self.service, server=self.server, version=self.version,
-                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            request_body=request_body)
 

@@ -73,6 +73,10 @@ def report(server: str,
         report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"))
         report_server.serve_thread(port, uptime)
 
+    # If report has failed tests, exit with error code
+    if len(job_runner.test_status["failed"]) > 0:
+        exit(1)
+
 
 if __name__ == "__main__":
     main()

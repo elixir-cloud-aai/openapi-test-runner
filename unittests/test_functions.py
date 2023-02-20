@@ -45,7 +45,7 @@ class TestFunctions(unittest.TestCase):
         client = Client()
 
         get_response = client.send_request(service="TES", server="test-server", version="test-version",
-                                           endpoint="test-endpoint", uri_params={"test": "test"},
+                                           endpoint="test-endpoint", path_params={"test": "test"},
                                            query_params={"test": "test"}, operation="GET", request_body="")
         assert get_response.status_code == 200
 
@@ -55,7 +55,7 @@ class TestFunctions(unittest.TestCase):
         client = Client()
         with self.assertRaises(TestRunnerException):
             client.send_request(service="TES", server="test-server", version="test-version",
-                                endpoint="test-endpoint", uri_params={}, query_params={},
+                                endpoint="test-endpoint", path_params={}, query_params={},
                                 operation="GET", request_body="")
 
     @patch('requests.post')
@@ -66,7 +66,7 @@ class TestFunctions(unittest.TestCase):
 
         client = Client()
         response = client.send_request(service="TES", server="test-server", version="test-version",
-                                       endpoint="test-endpoint", uri_params={}, query_params={},
+                                       endpoint="test-endpoint", path_params={}, query_params={},
                                        operation="POST", request_body="{}")
         assert response.status_code == 200
 
@@ -78,7 +78,7 @@ class TestFunctions(unittest.TestCase):
 
         client = Client()
         get_response = client.poll_request(service="TES", server="test-server", version="test-version",
-                                           endpoint="test-endpoint", uri_params={"test": "test"},
+                                           endpoint="test-endpoint", path_params={"test": "test"},
                                            query_params={"test": "test"}, operation="test",
                                            polling_interval=10, polling_timeout=3600,
                                            check_cancel_val=False)
@@ -93,7 +93,7 @@ class TestFunctions(unittest.TestCase):
         client = Client()
         with self.assertRaises(TestFailureException):
             client.poll_request(service="TES", server="test-server", version="test-version",
-                                endpoint="test-endpoint", uri_params={"test": "test"}, query_params={"test": "test"},
+                                endpoint="test-endpoint", path_params={"test": "test"}, query_params={"test": "test"},
                                 operation="test", polling_interval=10, polling_timeout=5, check_cancel_val=False)
 
     def test_polling_request_failure(self):
@@ -102,7 +102,7 @@ class TestFunctions(unittest.TestCase):
         client = Client()
         with self.assertRaises(TestRunnerException):
             client.poll_request(service="TES", server="invalid-url", version="test-version",
-                                endpoint="test-endpoint", uri_params={"test": "test"}, query_params={"test": "test"},
+                                endpoint="test-endpoint", path_params={"test": "test"}, query_params={"test": "test"},
                                 operation="test", polling_interval=10, polling_timeout=3600, check_cancel_val=False)
 
     def test_check_poll_create(self):
@@ -121,6 +121,16 @@ class TestFunctions(unittest.TestCase):
         client.check_cancel = True
         resp = MagicMock(status_code=200)
         resp.json.return_value = {"state": "CANCELED"}
+
+        assert client.check_poll(resp) is True
+
+    def test_check_poll_canceling(self):
+        """ Asserts the check poll function to be True for status code 200 and CANCELING state"""
+
+        client = Client()
+        client.check_cancel = True
+        resp = MagicMock(status_code=200)
+        resp.json.return_value = {"state": "CANCELING"}
 
         assert client.check_poll(resp) is True
 
