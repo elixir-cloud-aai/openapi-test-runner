@@ -94,7 +94,7 @@ class Client():
             return False
 
         response_json: Any = response.json()
-        if self.check_cancel and response_json["state"] in ["CANCELED"]:
+        if self.check_cancel and response_json["state"] in ["CANCELED", "CANCELING"]:
             logger.info("Expected response received. Polling request successful")
             return True
 
