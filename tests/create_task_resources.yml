@@ -1,0 +1,49 @@
+name: Create Tes Task Job With Resources
+description: Job to create a new TES Task with resources
+service: TES
+compatible_versions:
+  - v1.0
+  - v1.1
+tags:
+  - logical
+  - create task
+  - create task test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString1",
+              "TestString2"
+            ]
+          },
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString3",
+              "TestString4"
+            ]
+          }
+        ],
+        "resources": {
+          "cpu_cores": 4,
+          "preemptible": false,
+          "ram_gb": 8,
+          "disk_gb": 40,
+          "zones": [
+            "us-west-1"
+          ]
+        }
+      }
+
+    response:
+      200: {}
