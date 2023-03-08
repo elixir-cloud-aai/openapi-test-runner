@@ -1,0 +1,45 @@
+name: Create Tes Task Job With Output
+description: Job to create a new TES Task with output
+service: TES
+compatible_versions:
+  - v1.0
+  - v1.1
+tags:
+  - logical
+  - create task
+  - create task test
+  - all
+jobs:
+  - name: create_task
+    description: Create a new TES task
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString1",
+              "TestString2"
+            ]
+          },
+          {
+            "image": "ubuntu:20.04",
+            "command": [
+              "TestString3",
+              "TestString4"
+            ]
+          }
+        ],
+        "outputs": [
+          "url": "s3://my-object-store/outfile-1",
+          "path": "/data/outfile",
+          "type": "FILE"
+        ]
+      }
+
+    response:
+      200: {}
