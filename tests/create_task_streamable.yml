@@ -1,5 +1,5 @@
-name: Create Tes Task Job
-description: Job to create a new TES Task
+name: Create Tes Task Job With Input Streamable Flag
+description: Job to create a new TES Task with streamable flag set in input
 service: TES
 compatible_versions:
   - v1.1
