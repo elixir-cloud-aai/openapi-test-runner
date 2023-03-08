@@ -1,12 +1,12 @@
 name: Create Tes Task Job Without Filetypes
 description: Job to create a new TES Task intentionally without input and output filetypes
 service: TES
-compatible_versions:
-  - v1.1
+versions:
+  - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task optional filetypes test
   - all
 jobs:
   - name: create_task
@@ -19,27 +19,24 @@ jobs:
         "description": "CompTest",
         "executors": [
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "TestString1",
-              "TestString2"
+              "echo",
+              "hello"
             ]
           },
-          {
-            "image": "ubuntu:20.04",
-            "command": [
-              "TestString3",
-              "TestString4"
-            ]
-          }
         ],
         "inputs": [
-          "url": "s3://my-object-store/file-1",
-          "path": "/data/file1",
-        ]
+          {
+            "url": "s3://my-object-store/file-1",
+            "path": "/data/file1"
+          }
+        ],
         "outputs": [
-          "url": "s3://my-object-store/outfile-1",
-          "path": "/data/outfile",
+          {
+            "url": "s3://my-object-store/outfile-1",
+            "path": "/data/outfile"
+          }
         ]
       }
 

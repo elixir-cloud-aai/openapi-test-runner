@@ -20,19 +20,12 @@ jobs:
         "description": "CompTest",
         "executors": [
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "TestString1",
-              "TestString2"
+              "echo",
+              "hello"
             ]
           },
-          {
-            "image": "ubuntu:20.04",
-            "command": [
-              "TestString3",
-              "TestString4"
-            ]
-          }
         ]
       }
 

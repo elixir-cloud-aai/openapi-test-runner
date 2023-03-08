@@ -98,7 +98,7 @@ class Client():
             logger.info("Expected response received. Polling request successful")
             return True
 
-        elif not self.check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR"]:
+        elif not self.check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR", "PREEMPTED"]:
             logger.info("Expected response received. Polling request successful")
             return True
 

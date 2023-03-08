@@ -1,12 +1,12 @@
 name: Create Tes Task Job With Ignore Error Flag
 description: Job to create a new TES Task with ignore_error flag
 service: TES
-compatible_versions:
-  - v1.1
+versions:
+  - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task ignore error test
   - all
 jobs:
   - name: create_task
@@ -19,21 +19,34 @@ jobs:
         "description": "CompTest",
         "executors": [
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "error",
+              "ERROR"
             ],
             "ignore_error": true
           },
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "TestString",
-              "TestString4"
+              "echo",
+              "hello"
             ]
           }
         ]
       }
-
+    storage_vars:
+      id: $response.id
     response:
       200: {}
+  response:
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    query_parameters:
+      - view: BASIC
+    response:
+      200: |
+        {
+          "state": "COMPLETE"
+        }

@@ -1,13 +1,12 @@
 name: Create Tes Task Job With Output
 description: Job to create a new TES Task with output
 service: TES
-compatible_versions:
-  - v1.0
-  - v1.1
+versions:
+  - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task output test
   - all
 jobs:
   - name: create_task
@@ -20,24 +19,19 @@ jobs:
         "description": "CompTest",
         "executors": [
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "TestString1",
-              "TestString2"
+              "echo",
+              "hello"
             ]
           },
-          {
-            "image": "ubuntu:20.04",
-            "command": [
-              "TestString3",
-              "TestString4"
-            ]
-          }
         ],
         "outputs": [
-          "url": "s3://my-object-store/outfile-1",
-          "path": "/data/outfile",
-          "type": "FILE"
+          {
+            "url": "s3://my-object-store/outfile-1",
+            "path": "/data/outfile",
+            "type": "FILE"
+          }
         ]
       }
 

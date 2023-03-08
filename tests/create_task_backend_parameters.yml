@@ -1,12 +1,12 @@
 name: Create Tes Task Job With Backend Parameters
 description: Job to create a new TES Task with backend parameters
 service: TES
-compatible_versions:
-  - v1.1
+versions:
+  - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task backend parameters test
   - all
 jobs:
   - name: create_task
@@ -19,27 +19,22 @@ jobs:
         "description": "CompTest",
         "executors": [
           {
-            "image": "ubuntu:20.04",
+            "image": "alpine",
             "command": [
-              "TestString1",
-              "TestString2"
-            ]
-          },
-          {
-            "image": "ubuntu:20.04",
-            "command": [
-              "TestString3",
-              "TestString4"
+              "echo",
+              "hello"
             ]
           }
         ],
         "resources": {
           "backend_parameters": {
-            "VmSize" : "Standard_D64_v3"
+            "INVALID" : "PARAMETER"
           },
-          "backend_parameters_strict": false
+          "backend_parameters_strict": true
         }
       }
 
     response:
-      200: {}
+      # Keeping response code as 400 to test intentionally wrong backend parameters
+      # https://github.com/elixir-cloud-aai/tes-compliance-suite/pull/29#discussion_r1108893420
+      400: {}
