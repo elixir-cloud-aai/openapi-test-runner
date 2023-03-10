@@ -18,6 +18,10 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.test_runner import TestRunner
+from unittests.data.constants import (
+    TEST_URL,
+    TEST_VERSIONS
+)
 
 
 SCHEMA_PATH = os.path.join(os.getcwd(), "tests", "template", "test_template_schema.json")
@@ -27,9 +31,6 @@ YAML_TEST_PATH_INVALID = os.path.join(os.getcwd(), "unittests", "data", "run_job
 YAML_TEST_PATH_SKIP = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "skip_01.yml")
 YAML_TEST_PATH_FAIL = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests", "fail_service_info.yml")
 YAML_WRONG_SCHEMA = os.path.join(os.getcwd(), "unittests", "data", "tests", "wrong_schema_yaml.yml")
-
-TEST_URL = "https://test.com/"
-TEST_VERSIONS = ["1.0.0", "1.1.0"]
 
 
 class TestJobRunner:

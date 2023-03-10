@@ -15,10 +15,10 @@ import pytest
 from compliance_suite.cli import main, report
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.report_server import ReportServer
-
-
-TEST_URL = "https://test.com/"
-TEST_VERSIONS = ["1.0.0", "1.1.0"]
+from unittests.data.constants import (
+    TEST_URL,
+    TEST_VERSIONS
+)
 
 
 class TestJobRunner:

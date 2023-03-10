@@ -16,9 +16,11 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.functions.client import Client
 from compliance_suite.test_runner import TestRunner
-
-
-TEST_VERSIONS = ["1.0.0", "1.1.0"]
+from unittests.data.constants import (
+    TEST_SERVICE,
+    TEST_URL,
+    TEST_VERSIONS
+)
 
 
 class TestTestRunner:
@@ -27,7 +29,7 @@ class TestTestRunner:
     def test_validate_logic_success(self, version):
         """ Asserts validate_logic() function for successful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -54,7 +56,7 @@ class TestTestRunner:
     def test_validate_logic_failure(self, version):
         """ Asserts validate_logic() function for unsuccessful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -72,7 +74,7 @@ class TestTestRunner:
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -87,7 +89,7 @@ class TestTestRunner:
     def test_validate_request_body_failure(self, version):
         """ Asserts validate_request_body() function for unsuccessful JSON format"""
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -105,7 +107,7 @@ class TestTestRunner:
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "list_tasks",
@@ -127,7 +129,7 @@ class TestTestRunner:
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -145,7 +147,7 @@ class TestTestRunner:
     def test_validate_response_failure(self, version):
         """ Asserts validate_response() function for unsuccessful response"""
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -168,7 +170,7 @@ class TestTestRunner:
         mock_validate_response.return_value = {}
         mock_client.return_value = MagicMock()
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         job_data = {
             "name": "get_task",
             "description": "test",
@@ -195,7 +197,7 @@ class TestTestRunner:
         resp = MagicMock(status_code=200, text='{"id": "1234"}')
         mock_client.return_value = resp
 
-        test_runner = TestRunner("test", "test", version)
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         job_data = {
             "name": "create_task",
             "description": "test",
