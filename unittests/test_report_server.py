@@ -22,8 +22,7 @@ class TestReportServer(unittest.TestCase):
         """Asserts if successfully able to render HTML from Jinja2 templates"""
 
         report_server = ReportServer(web_dir=WEB_DIR)
-        report_server.render_html()
-        assert True
+        assert report_server.render_html() is None
 
     @patch('socketserver.TCPServer')
     @patch('webbrowser.open')
@@ -34,8 +33,7 @@ class TestReportServer(unittest.TestCase):
         mock_serve.return_value = MagicMock()
 
         report_server = ReportServer(WEB_DIR)
-        report_server.start_local_server(9090, 10)
-        assert True
+        assert report_server.start_local_server(9090, 10) is None
 
     @patch.object(ReportServer, 'render_html')
     @patch('threading.Thread')
@@ -47,8 +45,7 @@ class TestReportServer(unittest.TestCase):
 
         report_server = ReportServer(web_dir=WEB_DIR)
         report_server.local_server = MagicMock()
-        report_server.serve_thread(9090, 1)
-        assert True
+        assert report_server.serve_thread(9090, 1) is None
 
     @patch.object(ReportServer, 'render_html')
     @patch('threading.Thread')
@@ -60,6 +57,4 @@ class TestReportServer(unittest.TestCase):
 
         report_server = ReportServer(web_dir=WEB_DIR)
         report_server.local_server = MagicMock()
-        report_server.serve_thread(9090, 100)
-
-        assert True
+        assert report_server.serve_thread(9090, 100) is None
