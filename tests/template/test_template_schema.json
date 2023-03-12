@@ -112,6 +112,24 @@
             "description": "Extract values from response and store into provided keys. Provide location of key from response root in dot notation",
             "additionalProperties": true
           },
+          "filter": {
+            "type": "object",
+            "description": "Filter the API data",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "The value to be filtered"
+              },
+              "path": {
+                "type": "string",
+                "description": "The API data key path to filter the value. Provide location of key from root in dot notation"
+              }
+            },
+            "required": [
+              "value",
+              "path"
+            ]
+          },
           "response": {
             "type": "object",
             "description": "The expected response status for the given endpoint details",

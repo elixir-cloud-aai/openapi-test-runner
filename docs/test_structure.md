@@ -25,19 +25,24 @@ and return a response while storing necessary details in the auxiliary space.
 The following checks are implemented on it.
 
  - If job contains a request body -
-	 1. JSON validation - This checks if the request body is in proper JSON format and parseable
-	 2. Request body schema validation - The request body is compared against the model to verify its conformance.
+     1. JSON validation - This checks if the request body is in proper JSON format and parseable
+     2. Request body schema validation - The request body is compared against the model to verify its conformance.
 
-- The response validation includes - 
-    1. Status validation - The response HTTP status is validated against the HTTP status defined in the YAML test file
-    2. Logical response validation - The response body is compared against the model to verify its conformance.
-    3. Functional response validation - The response is validated to assess the TES server functionality. 
-       It verifies that the cloud features such as S3 storage work as intended. (This feature is in works and will be completed soon)
+ - The response validation includes - 
+     1. Status validation - The response HTTP status is validated against the HTTP status defined in the YAML test file
+     2. Logical response validation - The response body is compared against the model to verify its conformance.
+     3. Functional response validation - The response is validated to assess the TES server functionality. 
+        It verifies that the cloud features such as S3 storage work as intended. (This feature is in works and will be completed soon)
 
-- Polling validations - 
+ - Polling validations - 
 While monitoring the task status in case of Create/Cancel task, the request is polled at the user-provided interval
-	1. Task status validation - It verifies that the returned task status is appropriate depending on whether its Create/Cancel task.
-	2. Timeout - If the polling timeout limit is exceeded, a Timeout Exception is thrown.
+     1. Task status validation - It verifies that the returned task status is appropriate depending on whether its Create/Cancel task.
+     2. Timeout - If the polling timeout limit is exceeded, a Timeout Exception is thrown.
+
+ - Filter validations (Optional) - 
+The suite offers an API data validation based on specific API data path and filter value. If no filtered data is found,
+then `TestFailureException` is thrown.
+
 
 ## Step 5 - Summary and Report Generation
 

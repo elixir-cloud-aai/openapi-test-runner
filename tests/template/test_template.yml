@@ -21,6 +21,9 @@ jobs:
       <request body to be sent in request>
     storage_vars:       # Optional
       <Key>: <Value>    # Value should start with "$response" and comply with "dot" notation
+    filter:             # Optional
+      value: <Value to be filtered>
+      path: <Path to filter>
     response:
       <response status>: |
         <data to be matched against the response>
@@ -39,6 +42,9 @@ jobs:
       <request body to be sent in request>
     storage_vars:       # Optional
       <Key>: <Value>    # Value should start with "$response" and comply with "dot" notation
+    filter:             # Optional
+      value: <Value to be filtered>
+      path: <Path to filter>
     response:
       <response status>: |
         <data to be matched against the response>
