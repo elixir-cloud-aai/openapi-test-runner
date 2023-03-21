@@ -40,9 +40,36 @@ While monitoring the task status in case of Create/Cancel task, the request is p
      2. Timeout - If the polling timeout limit is exceeded, a Timeout Exception is thrown.
 
  - Filter validations (Optional) - 
-The suite offers an API data validation based on specific API data path and filter value. If no filtered data is found,
-then `TestFailureException` is thrown.
+The suite offers an API data validation based on specific API data path and filter conditions.
+     1. The suite will extract the response value from the given data path and validate it against the provided filter conditions. 
+     2. If no filtered data is found, then `TestFailureException` is thrown. 
+     3. Parameters like `type`, `value`, `regex` and `size` are available. Refer the [test schema][res-test-schema] for details.  
+<br>
+Example - The filter parameters are defined as follows in YAML test file.
 
+```yaml
+filter:
+  - path: $response.name
+    type: string
+    value: test_name
+    size: 9
+```
+
+This response value will be **successfully** validated against the filter conditions.
+```json
+{
+    "name": "test_name",
+    "id": "test_id"
+}
+```
+
+This response value will **fail** when validated against the filter conditions.
+```json
+{
+    "name": "wrong_test_name",
+    "id": "test_id"
+}
+```
 
 ## Step 5 - Summary and Report Generation
 
@@ -54,3 +81,5 @@ about the test status and corresponding tests.
 A JSON report is published at the end according to the `ga4gh-testbed-lib` standards. It contains the phases, tests and cases details.
 
 ![Json_Report](/docs/images/json_report.JPG)
+
+[res-test-schema]: ../tests/template/test_template_schema.json
