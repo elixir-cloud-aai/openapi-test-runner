@@ -113,22 +113,42 @@
             "additionalProperties": true
           },
           "filter": {
-            "type": "object",
-            "description": "Filter the API data",
-            "properties": {
-              "value": {
-                "type": "string",
-                "description": "The value to be filtered"
+            "type": "array",
+            "description": "The list of filters to be applied on API data",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The API data key path to filter the value. Provide location of key from root in dot notation"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The data type of the response field to filter",
+                  "enum": [
+                    "string",
+                    "array",
+                    "object"
+                  ]
+                },
+                "regex": {
+                  "type": "boolean",
+                  "description": "Filter the string value via regex. Should be used only with \"string\" type"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The value to be filtered. For object, it checks if provided value is subset of filtered response field, regardless of the key-value pairs order."
+                },
+                "size": {
+                  "type": "integer",
+                  "description": "The size of the response field is interpreted differently for each type of data. For a string, it refers to the length of the string; for an array, it refers to the size of the array; and for an object, it refers to the number of key-value pairs in the object."
+                }
               },
-              "path": {
-                "type": "string",
-                "description": "The API data key path to filter the value. Provide location of key from root in dot notation"
-              }
+              "required": [
+                "path",
+                "type"
+              ]
             },
-            "required": [
-              "value",
-              "path"
-            ]
           },
           "response": {
             "type": "object",

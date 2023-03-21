@@ -22,8 +22,11 @@ jobs:
     storage_vars:       # Optional
       <Key>: <Value>    # Value should start with "$response" and comply with "dot" notation
     filter:             # Optional
-      value: <Value to be filtered>
-      path: <Path to filter>
+      - path: <Path to filter>
+        type: <Type>                    # enum - [string, array, object]
+        regex: <Boolean value>          # Optional, to be used with "string" only
+        value: <Value to be filtered>   # Optional
+        size: <Size>                    # Optional
     response:
       <response status>: |
         <data to be matched against the response>
@@ -43,8 +46,11 @@ jobs:
     storage_vars:       # Optional
       <Key>: <Value>    # Value should start with "$response" and comply with "dot" notation
     filter:             # Optional
-      value: <Value to be filtered>
-      path: <Path to filter>
+      - path: <Path to filter>
+        type: <Type>                    # enum - [string, array, object]
+        regex: <Boolean value>          # Optional, to be used with "string" only
+        value: <Value to be filtered>   # Optional
+        size: <Size>                    # Optional
     response:
       <response status>: |
         <data to be matched against the response>

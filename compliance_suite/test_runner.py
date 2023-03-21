@@ -4,6 +4,7 @@ This module contains class definition for Test Runner to run the individual jobs
 """
 
 import json
+import re
 from typing import (
     Any,
     Dict,
@@ -210,38 +211,71 @@ class TestRunner():
         """
 
         if "filter" in self.job_data.keys():
-            report_case_filter = self.report_test.add_case()
-            report_case_result: bool = False
-            ReportUtility.set_case(case=report_case_filter,
-                                   name="filter",
-                                   description="Check if the response is filtered as configured in test")
+            for index, job_filter in enumerate(self.job_data["filter"], start=1):
 
-            filtered_value: Any = ""   # Retrieve the API data value through DotMap parser
-            dot_dict = DotMap(json_data)
-            if dot_dict is not None:
-                filtered_value = eval("dot_dict." + self.job_data["filter"]["path"].split('.', maxsplit=1)[1])
+                report_case_filter = self.report_test.add_case()
+                report_case_result: bool = False
+                ReportUtility.set_case(case=report_case_filter,
+                                       name=f'Filter-{index}',
+                                       description=f'Validate the response against filter-{index}')
 
-            if isinstance(filtered_value, str) and filtered_value.startswith(self.job_data["filter"]["value"]):
-                report_case_result = True
-            elif isinstance(filtered_value, DotMap):
-                filtered_dict: Dict = filtered_value.toDict()
-                report_case_result = json.loads(self.job_data["filter"]["value"]).items() <= filtered_dict.items()
+                filtered_value: Any = ""   # Retrieve the API data value through DotMap parser
+                dot_dict = DotMap(json_data)
+                if dot_dict is not None:
+                    filtered_value = eval("dot_dict." + job_filter["path"].split('.', maxsplit=1)[1])
 
-            if report_case_result:
-                logger.info("Filtering successful")
-                ReportUtility.case_pass(case=report_case_filter,
-                                        message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} returned '
-                                                f'filtered results',
-                                        log_message="No logs for success")
-            else:
-                ReportUtility.case_fail(case=report_case_filter,
-                                        message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} '
-                                                f'did not return filtered results',
-                                        log_message="")
-                raise TestFailureException(name="Invalid filtering",
-                                           message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} '
-                                                   f'did not return filtered results',
-                                           details=None)
+                # Check if provided filter type matches with the filtered value class
+                if not ((job_filter["type"] == "string" and isinstance(filtered_value, str)) or
+                        (job_filter["type"] == "array" and isinstance(filtered_value, list)) or
+                        (job_filter["type"] == "object" and isinstance(filtered_value, DotMap))):
+                    logger.info(f'Filter-{index} failed due to invalid filter type')
+                    ReportUtility.case_fail(case=report_case_filter,
+                                            message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]} due to invalid filter type',
+                                            log_message="")
+                    raise JobValidationException(name="Failed filtering",
+                                                 message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                         f'{self.job_data["endpoint"]} due to invalid filter type',
+                                                 details=None)
+
+                # Individual data type conditions
+                if job_filter["type"] == "string":
+                    if "regex" in job_filter and job_filter["regex"]:
+                        report_case_result = bool(re.search(job_filter["value"], filtered_value))
+                    else:
+                        report_case_result = job_filter["value"] == filtered_value
+
+                    if "size" in job_filter and len(filtered_value) != job_filter["size"]:
+                        report_case_result = False
+
+                elif job_filter["type"] == "array":
+                    if "size" in job_filter and len(filtered_value) == job_filter["size"]:
+                        report_case_result = True
+
+                elif job_filter["type"] == "object":
+                    filtered_dict: Dict = filtered_value.toDict()
+                    report_case_result = json.loads(self.job_data["filter"]["value"]).items() <= filtered_dict.items()
+
+                    if "size" in job_filter.keys() and len(filtered_value) != job_filter["size"]:
+                        report_case_result = False
+
+                # Update report case status
+                if report_case_result:
+                    logger.info(f'Filter-{index} passed')
+                    ReportUtility.case_pass(case=report_case_filter,
+                                            message=f'Filter-{index} passed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]}',
+                                            log_message="No logs for success")
+                else:
+                    logger.info(f'Filter-{index} failed')
+                    ReportUtility.case_fail(case=report_case_filter,
+                                            message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                    f'{self.job_data["endpoint"]}',
+                                            log_message="")
+                    raise TestFailureException(name="Failed filtering",
+                                               message=f'Filter-{index} failed for {self.job_data["operation"]} '
+                                                       f'{self.job_data["endpoint"]}',
+                                               details=None)
 
     def save_storage_vars(self, json_data: Any) -> None:
         """ Extract the keys mentioned in the YAML job from the request/response and save them in the auxiliary space.

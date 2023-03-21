@@ -50,7 +50,8 @@ jobs:
       - view: MINIMAL
       - state: COMPLETE
     filter:
-      value: COMPLETE
-      path: $response.tasks[0].state
+      - path: $response.tasks[0].state
+        type: string
+        value: COMPLETE
     response:
       200:
