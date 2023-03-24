@@ -152,7 +152,6 @@ class JobRunner():
                 logger.log(LOGGING_LEVEL['SUMMARY'], "\n{:#^100}".format(f"     Initiating Test-{self.test_count}"
                                                                          f" for {yaml_file}     "))
 
-                report_phase = self.report.add_phase(yaml_file.split("/")[-1])
                 yaml_data: Any = None
                 report_job_test: Any = None
                 try:
@@ -169,6 +168,8 @@ class JobRunner():
 
                     if self.report.platform_name == "":
                         self.report.set_platform_details(self.server)
+
+                    report_phase = self.report.add_phase(yaml_file.split("/")[-1], yaml_data["description"])
 
                     if self.tag_matcher(yaml_data["tags"]):
                         test_runner = TestRunner(yaml_data["service"], self.server, self.version)
