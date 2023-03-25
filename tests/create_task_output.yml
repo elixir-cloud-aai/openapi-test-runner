@@ -1,13 +1,12 @@
-name: Create Tes Task Job
-description: Job to create a new TES Task
+name: Create Tes Task Job With Output
+description: Job to create a new TES Task with output
 service: TES
 versions:
-  - 1.0.0
   - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task output test
   - all
 jobs:
   - name: create_task
@@ -26,6 +25,13 @@ jobs:
               "hello"
             ]
           },
+        ],
+        "outputs": [
+          {
+            "url": "s3://my-object-store/outfile-1",
+            "path": "/data/outfile",
+            "type": "FILE"
+          }
         ]
       }
 
