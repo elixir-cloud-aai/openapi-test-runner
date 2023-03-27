@@ -174,7 +174,7 @@ class TestRunner():
                                description="Check if response status code is 200")
 
         if response.status_code == response_status:
-            logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful Response status code')
+            logger.info(f'{self.job_data["operation"]} {self.job_data["endpoint"]} response status code matched')
             ReportUtility.case_pass(case=report_case_status,
                                     message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} Successful '
                                             f'Response status code',
@@ -182,28 +182,29 @@ class TestRunner():
 
         else:
             ReportUtility.case_fail(case=report_case_status,
-                                    message=f'Unsuccessful Response status code for '
-                                            f'{self.job_data["operation"]} {self.job_data["endpoint"]}',
+                                    message=f'Response status code for {self.job_data["operation"]}'
+                                            f' {self.job_data["endpoint"]} did not match',
                                     log_message="")
 
             raise TestFailureException(name="Incorrect HTTP Response Status",
-                                       message=f'{self.job_data["operation"]} {self.job_data["endpoint"]} '
-                                               f'Response status code is not 200',
+                                       message=f'Response status code for {self.job_data["operation"]}'
+                                               f' {self.job_data["endpoint"]} did not match',
                                        details=None)
 
         # Logical Schema Validation
-        if not response.text:
-            response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
-        else:
-            response_json: Any = response.json()
+        if response_status == 200:               # Further response checks only if successful response body
+            if not response.text:
+                response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
+            else:
+                response_json: Any = response.json()
 
-        if self.job_data["name"] in ["list_tasks", "get_task"]:
-            view_query: List[str] = [item["view"] for item in self.job_data["query_parameters"]]
-            endpoint_model: str = self.job_data["name"] + "_" + view_query[0]
-        else:
-            endpoint_model: str = self.job_data["name"]
-        self.validate_logic(endpoint_model, response_json, "Response")
-        self.save_storage_vars(response_json)
+            if self.job_data["name"] in ["list_tasks", "get_task"]:
+                view_query: List[str] = [item["view"] for item in self.job_data["query_parameters"]]
+                endpoint_model: str = self.job_data["name"] + "_" + view_query[0]
+            else:
+                endpoint_model: str = self.job_data["name"]
+            self.validate_logic(endpoint_model, response_json, "Response")
+            self.save_storage_vars(response_json)
 
     def save_storage_vars(self, json_data: Any) -> None:
         """ Extract the keys mentioned in the YAML job from the request/response and save them in the auxiliary space.

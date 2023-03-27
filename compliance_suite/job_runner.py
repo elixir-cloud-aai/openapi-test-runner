@@ -201,8 +201,8 @@ class JobRunner():
                                                              f' for {yaml_file} successful.')
                     else:
                         self.test_status["skipped"].append(str(self.test_count))
-                        logger.log(LOGGING_LEVEL['SKIP'], f"No Tag matched. Skipping Test-{self.test_count}"
-                                                          f" for {yaml_file}")
+                        logger.log(LOGGING_LEVEL['SKIP'], f"Version or tag did not match. Skipping "
+                                                          f"Test-{self.test_count} for {yaml_file}")
 
                 except (JobValidationException, TestFailureException) as err:
                     self.test_status["failed"].append(str(self.test_count))
