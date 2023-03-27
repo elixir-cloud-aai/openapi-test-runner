@@ -24,7 +24,7 @@ jobs:
               "echo",
               "hello"
             ]
-          },
+          }
         ],
         "inputs": [
           {
@@ -39,6 +39,5 @@ jobs:
           }
         ]
       }
-
     response:
       200: {}

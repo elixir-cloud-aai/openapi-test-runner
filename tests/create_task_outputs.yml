@@ -1,12 +1,13 @@
-name: Create Tes Task Job With Output
-description: Job to create a new TES Task with output
+name: Create Tes Task Job With Outputs
+description: Job to create a new TES Task with outputs
 service: TES
 versions:
+  - 1.0.0
   - 1.1.0
 tags:
   - logical
   - create task
-  - create task output test
+  - create task outputs test
   - all
 jobs:
   - name: create_task
@@ -24,7 +25,7 @@ jobs:
               "echo",
               "hello"
             ]
-          },
+          }
         ],
         "outputs": [
           {
@@ -34,6 +35,5 @@ jobs:
           }
         ]
       }
-
     response:
       200: {}

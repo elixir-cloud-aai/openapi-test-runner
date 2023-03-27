@@ -25,9 +25,8 @@ jobs:
               "echo",
               "hello"
             ]
-          },
+          }
         ]
       }
-
     response:
       200: {}

@@ -36,6 +36,5 @@ jobs:
           }
         ]
       }
-
     response:
       200: {}
