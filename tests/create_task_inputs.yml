@@ -1,12 +1,13 @@
-name: Create Tes Task Job With Backend Parameters
-description: Job to create a new TES Task with backend parameters
+name: Create Tes Task Job With Inputs
+description: Job to create a new TES Task with inputs
 service: TES
 versions:
+  - 1.0.0
   - 1.1.0
 tags:
   - logical
   - create task
-  - create task backend parameters test
+  - create task inputs test
   - all
 jobs:
   - name: create_task
@@ -26,13 +27,13 @@ jobs:
             ]
           }
         ],
-        "resources": {
-          "backend_parameters": {
-            "VmSize" : "Standard_D64_v3",
-            "Caching" : "ReadWrite"
-          },
-          "backend_parameters_strict": false
-        }
+        "inputs": [
+          {
+            "url": "s3://my-object-store/file-1",
+            "path": "/data/file1",
+            "type": "FILE"
+          }
+        ]
       }
     response:
       200: {}
