@@ -3,11 +3,12 @@
 This module is to test the Test Runner class and its methods
 """
 
-import unittest
 from unittest.mock import (
     MagicMock,
     patch
 )
+
+import pytest
 
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
@@ -15,14 +16,20 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.functions.client import Client
 from compliance_suite.test_runner import TestRunner
+from unittests.data.constants import (
+    TEST_SERVICE,
+    TEST_URL,
+    TEST_VERSIONS
+)
 
 
-class TestTestRunner(unittest.TestCase):
+class TestTestRunner:
 
-    def test_validate_logic_success(self):
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
+    def test_validate_logic_success(self, version):
         """ Asserts validate_logic() function for successful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -43,14 +50,13 @@ class TestTestRunner(unittest.TestCase):
             "version": "test"
         }
 
-        test_runner.validate_logic("service_info", service_info_response, "Response")
+        assert test_runner.validate_logic("service_info", service_info_response, "Response") is None
 
-        assert True
-
-    def test_validate_logic_failure(self):
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
+    def test_validate_logic_failure(self, version):
         """ Asserts validate_logic() function for unsuccessful schema validation to API Model"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -58,16 +64,17 @@ class TestTestRunner(unittest.TestCase):
             }
         )
         test_runner.report_test = MagicMock()
-        with self.assertRaises(TestFailureException):
+        with pytest.raises(TestFailureException):
             test_runner.validate_logic("service_info", {}, "Response")
 
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
     @patch.object(TestRunner, "validate_logic")
-    def test_validate_request_body_success(self, mock_validate_job):
+    def test_validate_request_body_success(self, mock_validate_job, version):
         """ Asserts validate_request_body() function for successful JSON format and schema validation to API Model"""
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -76,13 +83,13 @@ class TestTestRunner(unittest.TestCase):
             }
         )
         test_runner.report_test = MagicMock()
-        test_runner.validate_request_body("{}")
-        assert True
+        assert test_runner.validate_request_body("{}") is None
 
-    def test_validate_request_body_failure(self):
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
+    def test_validate_request_body_failure(self, version):
         """ Asserts validate_request_body() function for unsuccessful JSON format"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -90,16 +97,17 @@ class TestTestRunner(unittest.TestCase):
             }
         )
         test_runner.report_test = MagicMock()
-        with self.assertRaises(JobValidationException):
+        with pytest.raises(JobValidationException):
             test_runner.validate_request_body("{")
 
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
     @patch.object(TestRunner, "validate_logic")
-    def test_validate_response_success_get(self, mock_validate_job):
+    def test_validate_response_success_get(self, mock_validate_job, version):
         """ Asserts validate_response() function for successful response and schema validation to API Model"""
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "list_tasks",
@@ -112,16 +120,16 @@ class TestTestRunner(unittest.TestCase):
         test_runner.report_test = MagicMock()
 
         resp = MagicMock(status_code=200, text="")
-        test_runner.validate_response(resp)
-        assert True
+        assert test_runner.validate_response(resp) is None
 
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
     @patch.object(TestRunner, "validate_logic")
-    def test_validate_response_success(self, mock_validate_job):
+    def test_validate_response_success(self, mock_validate_job, version):
         """ Asserts validate_response() function for successful response and schema validation to API Model"""
 
         mock_validate_job.return_value = {}
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "name": "test",
@@ -133,13 +141,13 @@ class TestTestRunner(unittest.TestCase):
         test_runner.report_test = MagicMock()
 
         resp = MagicMock(status_code=200)
-        test_runner.validate_response(resp)
-        assert True
+        assert test_runner.validate_response(resp) is None
 
-    def test_validate_response_failure(self):
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
+    def test_validate_response_failure(self, version):
         """ Asserts validate_response() function for unsuccessful response"""
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         test_runner.set_job_data(
             {
                 "operation": "test",
@@ -150,18 +158,19 @@ class TestTestRunner(unittest.TestCase):
         test_runner.report_test = MagicMock()
 
         resp = MagicMock(status_code=400)
-        with self.assertRaises(TestFailureException):
+        with pytest.raises(TestFailureException):
             test_runner.validate_response(resp)
 
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
     @patch.object(Client, "poll_request")
     @patch.object(TestRunner, "validate_response")
-    def test_run_jobs_get_task(self, mock_validate_response, mock_client):
+    def test_run_jobs_get_task(self, mock_validate_response, mock_client, version):
         """Assert the run job method for get task to be successful"""
 
         mock_validate_response.return_value = {}
         mock_client.return_value = MagicMock()
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         job_data = {
             "name": "get_task",
             "description": "test",
@@ -174,14 +183,13 @@ class TestTestRunner(unittest.TestCase):
             }
         }
         test_runner.set_auxiliary_space("id", "1234")
-        test_runner.run_tests(job_data, MagicMock())
+        assert test_runner.run_tests(job_data, MagicMock()) is None
 
-        assert True
-
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
     @patch.object(Client, "send_request")
     @patch.object(TestRunner, "validate_request_body")
     @patch.object(TestRunner, "validate_logic")
-    def test_run_jobs_create_task(self, mock_validate_logic, mock_validate_request_body, mock_client):
+    def test_run_jobs_create_task(self, mock_validate_logic, mock_validate_request_body, mock_client, version):
         """Assert the run job method for create task to be successful"""
 
         mock_validate_logic.return_value = {}
@@ -189,7 +197,7 @@ class TestTestRunner(unittest.TestCase):
         resp = MagicMock(status_code=200, text='{"id": "1234"}')
         mock_client.return_value = resp
 
-        test_runner = TestRunner("test", "test", "v1.0")
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, version)
         job_data = {
             "name": "create_task",
             "description": "test",
@@ -201,6 +209,4 @@ class TestTestRunner(unittest.TestCase):
             },
             "response": {"200": ""}
         }
-        test_runner.run_tests(job_data, MagicMock())
-
-        assert True
+        assert test_runner.run_tests(job_data, MagicMock()) is None
