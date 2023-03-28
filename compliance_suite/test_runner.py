@@ -250,19 +250,16 @@ class TestRunner():
                     else:
                         report_case_result = job_filter["value"] == filtered_value
 
-                    if "size" in job_filter and len(filtered_value) != job_filter["size"]:
-                        report_case_result = False
-
                 elif job_filter["type"] == "array":
-                    if "size" in job_filter and len(filtered_value) == job_filter["size"]:
-                        report_case_result = True
+                    report_case_result = job_filter["value"] in filtered_value
 
                 elif job_filter["type"] == "object":
                     filtered_dict: Dict = filtered_value.toDict()
-                    report_case_result = json.loads(self.job_data["filter"]["value"]).items() <= filtered_dict.items()
+                    report_case_result = json.loads(job_filter["value"]).items() <= filtered_dict.items()
 
-                    if "size" in job_filter.keys() and len(filtered_value) != job_filter["size"]:
-                        report_case_result = False
+                # Check size if specified
+                if "size" in job_filter:
+                    report_case_result = report_case_result and len(filtered_value) == job_filter["size"]
 
                 # Update report case status
                 if report_case_result:

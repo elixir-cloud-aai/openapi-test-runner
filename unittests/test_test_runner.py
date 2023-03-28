@@ -3,6 +3,11 @@
 This module is to test the Test Runner class and its methods
 """
 
+from typing import (
+    Dict,
+    List,
+    Union
+)
 from unittest.mock import (
     MagicMock,
     patch
@@ -24,6 +29,20 @@ from unittests.data.constants import (
 
 
 class TestTestRunner:
+
+    @pytest.fixture
+    def default_test_runner(self):
+        """Pytest fixture for default test runner with required job fields"""
+
+        test_runner = TestRunner(TEST_SERVICE, TEST_URL, "x.y.z")
+        test_runner.report_test = MagicMock()
+        test_runner.job_data = {
+            "name": "test",
+            "operation": "test",
+            "endpoint": "test",
+            "response": {"200": ""}
+        }
+        return test_runner
 
     @pytest.mark.parametrize("version", TEST_VERSIONS)
     def test_validate_logic_success(self, version):
@@ -210,3 +229,122 @@ class TestTestRunner:
             "response": {"200": ""}
         }
         assert test_runner.run_tests(job_data, MagicMock()) is None
+
+    def test_validate_filters_string_success(self, default_test_runner):
+        """Assert validate filters to be successful for string type"""
+
+        default_test_runner.job_data["filter"] = [
+            {
+                "path": "$response.root",
+                "type": "string",
+                "value": "hello world",
+                "size": 11
+            },
+            {
+                "path": "$response.name",
+                "type": "string",
+                "regex": "true",
+                "value": "^pre"
+            }
+        ]
+        json_data = {
+            "root": "hello world",
+            "name": "prefix"
+        }
+        assert default_test_runner.validate_filters(json_data) is None
+
+    def test_validate_filters_string_failure(self, default_test_runner):
+        """Assert validate filters to fail for string type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "string",
+            "value": "hello world",
+            "size": 100
+        }]
+        json_data = {
+            "root": "hello world",
+            "name": "prefix"
+        }
+        with pytest.raises(TestFailureException):
+            default_test_runner.validate_filters(json_data)
+
+    def test_validate_filters_array_success(self, default_test_runner):
+        """Assert validate filters to be successful for array type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "array",
+            "value": "hello",
+            "size": 4
+        }]
+        json_data = {
+            "root": ["hello", "world", "lorem", "ipsum"]
+        }
+        assert default_test_runner.validate_filters(json_data) is None
+
+    def test_validate_filters_array_failure(self, default_test_runner):
+        """Assert validate filters to fail for array type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "array",
+            "value": "hello",
+            "size": 100
+        }]
+        json_data = {
+            "root": ["hello", "world", "lorem", "ipsum"]
+        }
+        with pytest.raises(TestFailureException):
+            default_test_runner.validate_filters(json_data)
+
+    def test_validate_filters_object_success(self, default_test_runner):
+        """Assert validate filters to be successful for object type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "object",
+            "value": '{"foo": "bar", "hello": "world"}',
+            "size": 3
+        }]
+        json_data = {
+            "root": {
+                "hello": "world",
+                "lorem": "ipsum",
+                "foo": "bar"
+            }
+        }
+        assert default_test_runner.validate_filters(json_data) is None
+
+    def test_validate_filters_object_failure(self, default_test_runner):
+        """Assert validate filters to fail for object type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "object",
+            "value": '{"foo": "bar", "hello": "world"}',
+            "size": 100
+        }]
+        json_data = {
+            "root": {
+                "hello": "world",
+                "lorem": "ipsum",
+                "foo": "bar"
+            }
+        }
+        with pytest.raises(TestFailureException):
+            default_test_runner.validate_filters(json_data)
+
+    def test_validate_filters_type_failure(self, default_test_runner):
+        """Assert validate filters to fail for invalid type"""
+
+        default_test_runner.job_data["filter"] = [{
+            "path": "$response.root",
+            "type": "array",
+            "value": "hello world",
+        }]
+        json_data = {
+            "root": "hello world"
+        }
+        with pytest.raises(JobValidationException):
+            default_test_runner.validate_filters(json_data)
