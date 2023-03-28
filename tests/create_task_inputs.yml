@@ -1,13 +1,13 @@
-name: Get Basic Task Job
-description: Job to retrieve the Basic view of TES Task
+name: Create Tes Task Job With Inputs
+description: Job to create a new TES Task with inputs
 service: TES
 versions:
   - 1.0.0
   - 1.1.0
 tags:
   - logical
-  - get task
-  - get basic task test
+  - create task
+  - create task inputs test
   - all
 jobs:
   - name: create_task
@@ -26,20 +26,14 @@ jobs:
               "hello"
             ]
           }
+        ],
+        "inputs": [
+          {
+            "url": "s3://my-object-store/file-1",
+            "path": "/data/file1",
+            "type": "FILE"
+          }
         ]
       }
-    storage_vars:
-      id: $response.id
     response:
-      200: { }
-  - name: get_task
-    description: Retrieve the task details for TES task
-    endpoint: /tasks/{id}
-    operation: GET
-    query_parameters:
-      - view: BASIC
-    response:
-      200: |
-        {
-          "state": "COMPLETE"
-        }
+      200: {}

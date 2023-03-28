@@ -1,13 +1,12 @@
-name: Create Tes Task Job
-description: Job to create a new TES Task
+name: Create Tes Task Job With Input Streamable Flag
+description: Job to create a new TES Task with streamable flag set in input
 service: TES
 versions:
-  - 1.0.0
   - 1.1.0
 tags:
   - logical
   - create task
-  - create task test
+  - create task streamable test
   - all
 jobs:
   - name: create_task
@@ -25,6 +24,15 @@ jobs:
               "echo",
               "hello"
             ]
+          }
+        ],
+        "input": [
+          {
+            "name": "access-file",
+            "description": "Access file resource via streaming",
+            "url": "s3://my-object-store/file1",
+            "path": "/data/file1",
+            "streamable": true
           }
         ]
       }
