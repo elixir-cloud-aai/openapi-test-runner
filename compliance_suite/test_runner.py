@@ -200,8 +200,11 @@ class TestRunner():
                 response_json: Any = response.json()
 
             if self.job_data["name"] in ["list_tasks", "get_task"]:
-                view_query: List[str] = [item["view"] for item in self.job_data["query_parameters"]]
-                endpoint_model: str = self.job_data["name"] + "_" + view_query[0]
+                view_query: str = ""
+                for query_param in self.job_data["query_parameters"]:
+                    if "view" in query_param:
+                        view_query = query_param["view"]
+                endpoint_model: str = self.job_data["name"] + "_" + view_query
             else:
                 endpoint_model: str = self.job_data["name"]
             self.validate_logic(endpoint_model, response_json, "Response")

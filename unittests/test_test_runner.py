@@ -3,11 +3,6 @@
 This module is to test the Test Runner class and its methods
 """
 
-from typing import (
-    Dict,
-    List,
-    Union
-)
 from unittest.mock import (
     MagicMock,
     patch
