@@ -39,11 +39,12 @@ class Report():
         self.report.set_platform_name(platform_server)
         self.report.set_platform_description(f"TES service deployed on the {platform_server}")
 
-    def add_phase(self, filename: str) -> Any:
+    def add_phase(self, filename: str, description: str) -> Any:
         """Add a phase which is individual YAML test file
 
         Args:
             filename (str): The YAML Testfile name. The phase will be identified via this name.
+            description: The YAML Testfile description for a more detailed explanation.
 
         Returns:
             (Any): Returns a new phase object
@@ -51,7 +52,7 @@ class Report():
 
         phase = self.report.add_phase()
         phase.set_phase_name(f"phase_{filename}")
-        phase.set_phase_description(f"Running tests for {filename} test file")
+        phase.set_phase_description(description)
         return phase
 
     def generate(self) -> Any:
