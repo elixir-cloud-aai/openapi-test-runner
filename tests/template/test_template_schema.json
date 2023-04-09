@@ -72,6 +72,11 @@
               "POST"
             ]
           },
+          "path_parameters": {
+            "type": "object",
+            "description": "The endpoint path parameters. Storage variables or exact values can be used.",
+            "additionalProperties": true
+          },
           "query_parameters": {
             "type": "array",
             "description": "The query parameters to be sent along with the request",

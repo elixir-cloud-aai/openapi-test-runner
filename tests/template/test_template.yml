@@ -10,6 +10,8 @@ jobs:
     description: <individual job description>       # Optional
     endpoint: <API endpoint>    # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
     operation: <HTTP operation>
+    path_parameters:                                # Required when path parameter present in endpoint
+      <Path Param name> : <value>
     query_parameters:                               # Optional
       <Query Param name> : <value>
     polling:                                        # Optional
@@ -34,6 +36,8 @@ jobs:
     description: <individual job description>       # Optional
     endpoint: <API endpoint>      # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
     operation: <HTTP operation>
+    path_parameters:                                # Required when path parameter present in endpoint
+      <Path Param name>: <value>
     query_parameters:                               # Optional
       <Query Param name> : <value>
     polling:                                        # Optional

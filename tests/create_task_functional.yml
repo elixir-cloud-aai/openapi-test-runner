@@ -36,6 +36,8 @@ jobs:
     description: Retrieve the task details for TES task
     endpoint: /tasks/{id}
     operation: GET
+    path_parameters:
+      id: "{id}"
     query_parameters:
       - view: MINIMAL
     polling:
