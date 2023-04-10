@@ -297,6 +297,29 @@ class TestRunner():
                         dot_value = str(eval("dot_dict." + value.split('.', maxsplit=1)[1]))
                         self.set_auxiliary_space(key, dot_value)
 
+    def transform_path_parameters(self, path_params: Dict[str, str]) -> Dict[str, str]:
+        """Transform the path parameters by replacing the storage variables with their exact values.
+
+        Args:
+            path_params: The path parameters dictionary to be transformed
+
+        Returns:
+            The transformed dictionary after replacing values
+        """
+
+        for path_param in path_params:
+            if path_params[path_param].startswith("{") and path_params[path_param].endswith("}"):
+                storage_key: str = path_params[path_param][1:-1]
+                if storage_key in self.auxiliary_space:
+                    path_params[path_param] = self.auxiliary_space[storage_key]
+                else:
+                    raise JobValidationException(name="Path param not found in storage vars",
+                                                 message=f'Path param {path_param} not found in storage vars.'
+                                                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}'
+                                                         f' failed',
+                                                 details=None)
+        return path_params
+
     def run_tests(
             self,
             job_data: Any,
@@ -315,12 +338,14 @@ class TestRunner():
                                description=job_data["description"])
         self.set_report_test(report_test)
 
-        uri_params: Dict = {}
+        path_params: Dict = {}
         query_params: Dict = {}
         request_body: str = "{}"
 
-        if self.job_data["name"] in ["get_task", "cancel_task"]:
-            uri_params["id"] = self.auxiliary_space["id"]
+        if "path_parameters" in self.job_data:
+            for path_param in self.job_data["path_parameters"]:
+                path_params[path_param] = str(self.job_data["path_parameters"][path_param])  # Typecast to string
+        self.transform_path_parameters(path_params)
 
         if self.job_data["name"] in ["get_task", "list_tasks"]:
             for param in self.job_data["query_parameters"]:
@@ -339,14 +364,14 @@ class TestRunner():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
             response = client.poll_request(service=self.service, server=self.server, version=self.version,
-                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
             response = client.send_request(service=self.service, server=self.server, version=self.version,
-                                           endpoint=self.job_data["endpoint"], uri_params=uri_params,
+                                           endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            request_body=request_body)
 

@@ -343,3 +343,25 @@ class TestTestRunner:
         }
         with pytest.raises(JobValidationException):
             default_test_runner.validate_filters(json_data)
+
+    def test_transform_path_parameters_success(self, default_test_runner):
+        """Assert transform_path_parameters to be successful"""
+
+        default_test_runner.set_auxiliary_space("storage_key", "value")
+        path_params = {
+            "path_key": "{storage_key}"
+        }
+        transformed_path_params = default_test_runner.transform_path_parameters(path_params)
+        assert transformed_path_params["path_key"] == "value"
+
+    def test_transform_path_parameters_failure(self, default_test_runner):
+        """Assert transform_path_parameters to fail due to invalid storage variable"""
+
+        default_test_runner.set_auxiliary_space("wrong_storage_key", "value")
+        default_test_runner.job_data["description"] = "Description"
+        default_test_runner.job_data["path_parameters"] = {
+            "path_key": "{storage_key}"
+        }
+
+        with pytest.raises(JobValidationException):
+            default_test_runner.run_tests(default_test_runner.job_data, default_test_runner.report_test)
