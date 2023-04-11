@@ -1,0 +1,97 @@
+name: Create Tes Task Job With Ignore Error Flag
+description: Job to create a new TES Task with ignore_error flag
+service: TES
+versions:
+  - 1.1.0
+tags:
+  - logical
+  - create task
+  - create task ignore error negative test
+  - all
+jobs:
+  - name: create_task
+    description: Ignore error flag as false, so executor should fail at first command
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "ERROR"
+            ],
+            "ignore_error": false
+          },
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
+    storage_vars:
+      id1: $response.id
+    response:
+      200: {}
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    path_parameters:
+      id: "{id1}"
+    query_parameters:
+      - view: FULL
+    filter:
+      - path: $response.logs[0].logs
+        type: array
+        size: 1
+    response:
+      200: {}
+  - name: create_task
+    description: Ignore error flag as true, so executor should fail at second command
+    endpoint: /tasks
+    operation: POST
+    request_body: |
+      {
+        "name": "CompTest",
+        "description": "CompTest",
+        "executors": [
+          {
+            "image": "alpine",
+            "command": [
+              "ERROR"
+            ],
+            "ignore_error": true
+          },
+          {
+            "image": "alpine",
+            "command": [
+              "echo",
+              "hello"
+            ]
+          }
+        ]
+      }
+    storage_vars:
+      id2: $response.id
+    response:
+      200: {}
+  - name: get_task
+    description: Retrieve the task details for TES task
+    endpoint: /tasks/{id}
+    operation: GET
+    path_parameters:
+      id: "{id2}"
+    query_parameters:
+      - view: FULL
+    filter:
+      - path: $response.logs[0].logs
+        type: array
+        size: 2
+    response:
+      200: {}
