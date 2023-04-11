@@ -221,7 +221,7 @@ class TestRunner():
             for index, job_filter in enumerate(self.job_data["filter"], start=1):
 
                 report_case_filter = self.report_test.add_case()
-                report_case_result: bool = False
+                report_case_result: bool = True
                 ReportUtility.set_case(case=report_case_filter,
                                        name=f'Filter-{index}',
                                        description=f'Validate the response against filter-{index}')
@@ -246,18 +246,19 @@ class TestRunner():
                                                  details=None)
 
                 # Individual data type conditions
-                if job_filter["type"] == "string":
-                    if "regex" in job_filter and job_filter["regex"]:
-                        report_case_result = bool(re.search(job_filter["value"], filtered_value))
-                    else:
-                        report_case_result = job_filter["value"] == filtered_value
+                if "value" in job_filter:
+                    if job_filter["type"] == "string":
+                        if "regex" in job_filter and job_filter["regex"]:
+                            report_case_result = bool(re.search(job_filter["value"], filtered_value))
+                        else:
+                            report_case_result = job_filter["value"] == filtered_value
 
-                elif job_filter["type"] == "array":
-                    report_case_result = job_filter["value"] in filtered_value
+                    elif job_filter["type"] == "array":
+                        report_case_result = job_filter["value"] in filtered_value
 
-                elif job_filter["type"] == "object":
-                    filtered_dict: Dict = filtered_value.toDict()
-                    report_case_result = json.loads(job_filter["value"]).items() <= filtered_dict.items()
+                    elif job_filter["type"] == "object":
+                        filtered_dict: Dict = filtered_value.toDict()
+                        report_case_result = json.loads(job_filter["value"]).items() <= filtered_dict.items()
 
                 # Check size if specified
                 if "size" in job_filter:
@@ -297,28 +298,28 @@ class TestRunner():
                         dot_value = str(eval("dot_dict." + value.split('.', maxsplit=1)[1]))
                         self.set_auxiliary_space(key, dot_value)
 
-    def transform_path_parameters(self, path_params: Dict[str, str]) -> Dict[str, str]:
-        """Transform the path parameters by replacing the storage variables with their exact values.
+    def transform_parameters(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Transform the parameters by replacing the storage variables with their exact values.
 
         Args:
-            path_params: The path parameters dictionary to be transformed
+            params: The parameters dictionary to be transformed
 
         Returns:
             The transformed dictionary after replacing values
         """
 
-        for path_param in path_params:
-            if path_params[path_param].startswith("{") and path_params[path_param].endswith("}"):
-                storage_key: str = path_params[path_param][1:-1]
+        for param in params:
+            if str(params[param]).startswith("{") and str(params[param]).endswith("}"):
+                storage_key: str = params[param][1:-1]
                 if storage_key in self.auxiliary_space:
-                    path_params[path_param] = self.auxiliary_space[storage_key]
+                    params[param] = self.auxiliary_space[storage_key]
                 else:
                     raise JobValidationException(name="Path param not found in storage vars",
-                                                 message=f'Path param {path_param} not found in storage vars.'
+                                                 message=f'Param {param} not found in storage vars.'
                                                          f'{self.job_data["operation"]} {self.job_data["endpoint"]}'
                                                          f' failed',
                                                  details=None)
-        return path_params
+        return params
 
     def run_tests(
             self,
@@ -344,12 +345,13 @@ class TestRunner():
 
         if "path_parameters" in self.job_data:
             for path_param in self.job_data["path_parameters"]:
-                path_params[path_param] = str(self.job_data["path_parameters"][path_param])  # Typecast to string
-        self.transform_path_parameters(path_params)
+                path_params[path_param] = self.job_data["path_parameters"][path_param]
+        self.transform_parameters(path_params)
 
-        if self.job_data["name"] in ["get_task", "list_tasks"]:
+        if "query_parameters" in self.job_data:
             for param in self.job_data["query_parameters"]:
                 query_params.update(param)
+        self.transform_parameters(query_params)
 
         if self.job_data["name"] in ["create_task"]:
             request_body: str = self.job_data["request_body"]
