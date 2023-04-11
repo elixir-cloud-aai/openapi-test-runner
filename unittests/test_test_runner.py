@@ -351,7 +351,7 @@ class TestTestRunner:
         path_params = {
             "path_key": "{storage_key}"
         }
-        transformed_path_params = default_test_runner.transform_path_parameters(path_params)
+        transformed_path_params = default_test_runner.transform_parameters(path_params)
         assert transformed_path_params["path_key"] == "value"
 
     def test_transform_path_parameters_failure(self, default_test_runner):
