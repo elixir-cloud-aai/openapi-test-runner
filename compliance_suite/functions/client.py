@@ -94,17 +94,9 @@ class Client():
             return False
 
         response_json: Any = response.json()
-<<<<<<< HEAD
-        if self.check_cancel and response_json["state"] in ["CANCELED", "CANCELING"]:
-            logger.info("Expected response received. Polling request successful")
-            return True
-
-        elif not self.check_cancel and response_json["state"] in ["COMPLETE", "EXECUTOR_ERROR", "SYSTEM_ERROR", "PREEMPTED"]:
-=======
         valid_states = ["CANCELED", "CANCELING"] if self.check_cancel else ["COMPLETE", "EXECUTOR_ERROR",
                                                                             "SYSTEM_ERROR", "PREEMPTED"]
         if response_json["state"] in valid_states:
->>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
             logger.info("Expected response received. Polling request successful")
             return True
 

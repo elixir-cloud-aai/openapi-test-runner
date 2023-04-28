@@ -28,18 +28,6 @@ jobs:
         ],
         "resources": {
           "backend_parameters": {
-<<<<<<< HEAD
-            "INVALID" : "PARAMETER"
-          },
-          "backend_parameters_strict": true
-        }
-      }
-
-    response:
-      # Keeping response code as 400 to test intentionally wrong backend parameters
-      # https://github.com/elixir-cloud-aai/tes-compliance-suite/pull/29#discussion_r1108893420
-      400: {}
-=======
             "VmSize" : "Standard_D64_v3",
             "Caching" : "ReadWrite"
           },
@@ -48,4 +36,3 @@ jobs:
       }
     response:
       200: {}
->>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))

@@ -24,11 +24,7 @@ jobs:
               "echo",
               "hello"
             ]
-<<<<<<< HEAD
-          },
-=======
           }
->>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
         ],
         "inputs": [
           {
@@ -43,9 +39,5 @@ jobs:
           }
         ]
       }
-<<<<<<< HEAD
-
-=======
->>>>>>> c8a4515 (feat: add support for TES v1.1.0 (#31))
     response:
       200: {}

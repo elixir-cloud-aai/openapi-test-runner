@@ -1,9 +1,8 @@
-{% include "partials/header.html" %}
-{% include "partials/navbar.html" %}
-
+{% extends "views/base.html" %}
+{% block report %}
 <div class="container">
 
-  <h2>TES Compliance Report</h2>
+  <h2>TES v{{version}} Compliance Report</h2>
   <h3>Server: {{data.platform_name}}</h3>
   <br><h4>Report Specifications</h4>
   <p class="tab1">Compliance suite definition: {{data.testbed_name}} {{data.testbed_version}}. {{data.testbed_description}}</p>
@@ -142,5 +141,4 @@
       </div>
   </div>
 </div>
-
-{% include "partials/footer.html" %}
+{% endblock %}
