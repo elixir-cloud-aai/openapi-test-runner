@@ -72,9 +72,11 @@ def report(server: str,
                 output.write(json_report)
 
         # Writing a report copy to web dir for local server
-        with open(os.path.join(os.getcwd(), "compliance_suite", "web", f"web_report-tes-{version}.json"), "w+") as output:
+        with open(
+            os.path.join(os.getcwd(), "compliance_suite", "web", f"web_report-tes-{version}.json"), "w+"
+        ) as output:
             output.write(json_report)
-
+ 
     if serve is True:
         report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"), versions)
         report_server.serve_thread(port, uptime)
