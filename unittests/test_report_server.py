@@ -14,6 +14,7 @@ from compliance_suite.report_server import ReportServer
 
 
 WEB_DIR = os.path.join(os.getcwd(), "unittests", "data", "web")
+VERSIONS = ["1.0.0", "1.1.0"]
 
 
 class TestReportServer(unittest.TestCase):
@@ -21,7 +22,7 @@ class TestReportServer(unittest.TestCase):
     def test_render_html(self):
         """Asserts if successfully able to render HTML from Jinja2 templates"""
 
-        report_server = ReportServer(web_dir=WEB_DIR)
+        report_server = ReportServer(web_dir=WEB_DIR, versions=VERSIONS)
         assert report_server.render_html() is None
 
     @patch('socketserver.TCPServer')
@@ -32,7 +33,7 @@ class TestReportServer(unittest.TestCase):
         mock_web.return_value = {}
         mock_serve.return_value = MagicMock()
 
-        report_server = ReportServer(WEB_DIR)
+        report_server = ReportServer(WEB_DIR, versions=VERSIONS)
         assert report_server.start_local_server(9090, 10) is None
 
     @patch.object(ReportServer, 'render_html')
@@ -43,7 +44,7 @@ class TestReportServer(unittest.TestCase):
         mock_server.return_value = MagicMock()
         mock_render_html.return_value = None
 
-        report_server = ReportServer(web_dir=WEB_DIR)
+        report_server = ReportServer(web_dir=WEB_DIR, versions=VERSIONS)
         report_server.local_server = MagicMock()
         assert report_server.serve_thread(9090, 1) is None
 
@@ -55,6 +56,6 @@ class TestReportServer(unittest.TestCase):
         mock_server.side_effect = [KeyboardInterrupt]
         mock_render_html.return_value = None
 
-        report_server = ReportServer(web_dir=WEB_DIR)
+        report_server = ReportServer(web_dir=WEB_DIR, versions=VERSIONS)
         report_server.local_server = MagicMock()
         assert report_server.serve_thread(9090, 100) is None

@@ -34,10 +34,10 @@ class ReportServer():
         self.web_dir: str = web_dir
         self.versions: List[str] = versions
 
-    def render_html(self, versions: List[str]) -> None:
+    def render_html(self) -> None:
         """Renders HTML dynamically at runtime via Jinja2 templates"""
 
-        for version in versions:
+        for version in self.versions:
             with open(os.path.join(self.web_dir, f"web_report-tes-{version}.json"), "r") as f:
                 report_data = json.load(f)
 
@@ -45,9 +45,9 @@ class ReportServer():
             view_loader = j2.FileSystemLoader(searchpath=self.web_dir)
             view_env = j2.Environment(loader=view_loader)
             report_template = view_env.get_template("views/report.html")
-            report_rendered = report_template.render(data=report_data, version=version, versions=versions)
+            report_rendered = report_template.render(data=report_data, version=version, versions=self.versions)
 
-            # Update index.html which will be home Web page
+            # Update report-tes-<version>.html which will be home Web page
             with open(os.path.join(self.web_dir, f"report-tes-{version}.html"), "w+") as output:
                 output.write(report_rendered)
 
@@ -84,7 +84,7 @@ class ReportServer():
         """
 
         try:
-            self.render_html(self.versions)
+            self.render_html()
             server_thread = threading.Thread(target=self.start_local_server, args=(port, uptime,))
             server_thread.start()
             time.sleep(uptime)
