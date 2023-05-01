@@ -20,7 +20,8 @@ def main() -> None:
 
 @main.command(help='Run TES compliance tests against the servers')
 @click.option('--server', '-s', help='server URL on which the compliance tests are run. Format - https://<url>/')
-@click.option('--version', '-v', 'versions', multiple=True, help='TES version. Example - "1.0.0"')
+@click.option('--version', '-v', 'versions', multiple=True, help='One or more TES versions. Example - "1.1.0"')
+@click.option('--name', '-n', default="TES", help='Name of the API under test. Default - "TES"')
 @click.option('--tag', '-t', multiple=True, help='Tag', default=['All'])
 @click.option('--output_path', '-o', help='path to output the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
@@ -28,6 +29,7 @@ def main() -> None:
 @click.option('--uptime', '-u', default=3600, help='time that server will remain up in seconds')
 def report(server: str,
            versions: List[str],
+           name: str,
            tag: List[str],
            output_path: str,
            serve: bool,
@@ -38,11 +40,12 @@ def report(server: str,
 
     Args:
         server (str): The server URL on which the compliance suite will be run. Format - https://<url>/
-        version (List[str]): The compliance suite will be run against this TES version. Example - "1.0.0"
+        version (List[str]): The compliance suite will be run against these TES versions. Example - "[1.0.0, 1.1.0]"
+        name (str): The name of the API to be tested. Default - "TES"
         tag (List[str]): The list of the tags for which the compliance suite will be run. Default - All
         output_path (str): The output path to store the JSON compliance report
         serve (bool): If true, runs a local server and displays the JSON report in webview
-        port (int): Set the local server port. Default - 15800
+        port (int): Set the local server port. Default - 16800
         uptime (int): The local server duration in seconds. Default - 3600 seconds
     """
 
@@ -56,8 +59,9 @@ def report(server: str,
     logger.info(f"Input tag is - {tag}")
 
     versions = list(versions)
-    versions.sort()
     logger.info(f"Input version(s) - {versions}")
+
+    logger.info(f"Input name - {name}")
 
     for version in versions:
         job_runner = JobRunner(server, version, tag)
@@ -68,17 +72,17 @@ def report(server: str,
         # Store the report in given output path
         if output_path is not None:
             logger.info(f"Writing JSON Report on directory {output_path}")
-            with open(os.path.join(output_path, f"report-tes-{version}.json"), "w+") as output:
+            with open(os.path.join(output_path, f"report-{name}-{version}.json"), "w+") as output:
                 output.write(json_report)
 
         # Writing a report copy to web dir for local server
         with open(
-            os.path.join(os.getcwd(), "compliance_suite", "web", f"web_report-tes-{version}.json"), "w+"
+            os.path.join(os.getcwd(), "compliance_suite", "web", f"web_report-{name}-{version}.json"), "w+"
         ) as output:
             output.write(json_report)
 
     if serve is True:
-        report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"), versions)
+        report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"), versions, name)
         report_server.serve_thread(port, uptime)
 
         exit()

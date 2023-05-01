@@ -1,6 +1,6 @@
 <nav id="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
-    <a id="navbar-title" class="navbar-brand" href="#">GA4GH TES Compliance Report</a>
+    <a id="navbar-title" class="navbar-brand" href="#">{{name}} Test Report</a>
     {% for version in versions %}
-        <a id="navbar-title" class="navbar-brand" href="report-tes-{{version}}.html">TES v{{version}}</a>
+        <a id="navbar-title" class="navbar-brand" href="report-{{name}}-{{version}}.html">{{name}} {{version}}</a>
     {% endfor %}
 </nav>

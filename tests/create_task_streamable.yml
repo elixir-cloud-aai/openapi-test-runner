@@ -26,7 +26,7 @@ jobs:
             ]
           }
         ],
-        "inputs": [
+        "input": [
           {
             "name": "access-file",
             "description": "Access file resource via streaming",
