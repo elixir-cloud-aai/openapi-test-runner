@@ -3,13 +3,13 @@
 This module is to test the project functions
 """
 
-import unittest
 from unittest.mock import (
     MagicMock,
     patch
 )
 
 import polling2
+import pytest
 from requests.models import Response
 
 from compliance_suite.exceptions.compliance_exception import (
@@ -21,7 +21,7 @@ from compliance_suite.functions.log import set_logging
 from compliance_suite.functions.report import Report
 
 
-class TestFunctions(unittest.TestCase):
+class TestFunctions():
 
     def test_set_logging(self):
         """ Checks if the logger is set up properly """
@@ -53,7 +53,7 @@ class TestFunctions(unittest.TestCase):
         """ Asserts the Get endpoint to throw Connection error due to invalid server URL"""
 
         client = Client()
-        with self.assertRaises(TestRunnerException):
+        with pytest.raises(TestRunnerException):
             client.send_request(service="TES", server="test-server", version="test-version",
                                 endpoint="test-endpoint", path_params={}, query_params={},
                                 operation="GET", request_body="")
@@ -91,7 +91,7 @@ class TestFunctions(unittest.TestCase):
         mock_get.side_effect = polling2.TimeoutException(MagicMock())
 
         client = Client()
-        with self.assertRaises(TestFailureException):
+        with pytest.raises(TestFailureException):
             client.poll_request(service="TES", server="test-server", version="test-version",
                                 endpoint="test-endpoint", path_params={"test": "test"}, query_params={"test": "test"},
                                 operation="test", polling_interval=10, polling_timeout=5, check_cancel_val=False)
@@ -100,7 +100,7 @@ class TestFunctions(unittest.TestCase):
         """ Asserts the polling request to throw Timeout Exception"""
 
         client = Client()
-        with self.assertRaises(TestRunnerException):
+        with pytest.raises(TestRunnerException):
             client.poll_request(service="TES", server="invalid-url", version="test-version",
                                 endpoint="test-endpoint", path_params={"test": "test"}, query_params={"test": "test"},
                                 operation="test", polling_interval=10, polling_timeout=3600, check_cancel_val=False)
