@@ -1,0 +1,407 @@
+{
+    "schema_name": "ga4gh-testbed-report",
+    "schema_version": "0.1.0",
+    "testbed_name": "TES Compliance Suite",
+    "testbed_version": "0.1.0",
+    "testbed_description": "TES Compliance Suite tests the platform against the GA4GH TES API specs. Its an automated tool system testing against YAML-based test files along with the ability to validate cloud service/functionality.",
+    "platform_name": "http://localhost:8000/",
+    "platform_description": "TES service deployed on the http://localhost:8000/",
+    "input_parameters": {},
+    "start_time": "2023-05-01T23:27:10Z",
+    "end_time": "2023-05-01T23:27:10Z",
+    "status": "PASS",
+    "summary": {
+        "unknown": 0,
+        "passed": 2,
+        "warned": 0,
+        "failed": 0,
+        "skipped": 0
+    },
+    "phases": [
+        {
+            "phase_name": "phase_list_tasks_minimal.yml",
+            "phase_description": "Job to retrieve the list of Minimal view of TES tasks",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_cancel_task.yml",
+            "phase_description": "Job to cancel a TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_filter_task_by_name.yml",
+            "phase_description": "Job to test the filter task by name feature",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_outputs.yml",
+            "phase_description": "Job to create a new TES Task with outputs",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_streamable.yml",
+            "phase_description": "Job to create a new TES Task with streamable flag set in input",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_inputs.yml",
+            "phase_description": "Job to create a new TES Task with inputs",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_service_info.yml",
+            "phase_description": "Job to retrieve the service info",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "PASS",
+            "summary": {
+                "unknown": 0,
+                "passed": 2,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": [
+                {
+                    "test_name": "service_info",
+                    "test_description": "Retrieve the TES server info",
+                    "start_time": "2023-05-01T23:27:10Z",
+                    "end_time": "2023-05-01T23:27:10Z",
+                    "status": "PASS",
+                    "summary": {
+                        "unknown": 0,
+                        "passed": 2,
+                        "warned": 0,
+                        "failed": 0,
+                        "skipped": 0
+                    },
+                    "message": "",
+                    "cases": [
+                        {
+                            "case_name": "status_code",
+                            "case_description": "Check if response status code is 200",
+                            "log_messages": [
+                                "No logs for success"
+                            ],
+                            "start_time": "2023-05-01T23:27:10Z",
+                            "end_time": "2023-05-01T23:27:10Z",
+                            "status": "PASS",
+                            "message": "GET /service-info Successful Response status code"
+                        },
+                        {
+                            "case_name": "response_schema_validation",
+                            "case_description": "Check if response matches the model schema",
+                            "log_messages": [
+                                "No logs for success"
+                            ],
+                            "start_time": "2023-05-01T23:27:10Z",
+                            "end_time": "2023-05-01T23:27:10Z",
+                            "status": "PASS",
+                            "message": "Response Schema validation successful for GET /service-info"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "phase_name": "phase_create_task_functional.yml",
+            "phase_description": "Job to create a new TES Task and test functionality",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_filter_task_by_tag.yml",
+            "phase_description": "Job to test the filter task by tag feature",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_get_task_full.yml",
+            "phase_description": "Job to retrieve the Full view of TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_list_tasks_page_size.yml",
+            "phase_description": "Job to validate page size in list tasks",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_backend_parameters_negative.yml",
+            "phase_description": "Job to create a new TES Task with backend parameters (Negative case)",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_get_task_basic.yml",
+            "phase_description": "Job to retrieve the Basic view of TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_filter_task_by_state.yml",
+            "phase_description": "Job to test the filter task by state feature",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_get_task_minimal.yml",
+            "phase_description": "Job to retrieve the Minimal view of TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_optional_filetype.yml",
+            "phase_description": "Job to create a new TES Task intentionally without input and output filetypes",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_cancel_task_functional.yml",
+            "phase_description": "Job to cancel a TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_backend_parameters.yml",
+            "phase_description": "Job to create a new TES Task with backend parameters",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task_ignore_error.yml",
+            "phase_description": "Job to create a new TES Task with ignore_error flag",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_list_tasks_full.yml",
+            "phase_description": "Job to retrieve the list of Full view of TES tasks",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_create_task.yml",
+            "phase_description": "Job to create a new TES Task",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_list_tasks_page_token.yml",
+            "phase_description": "Job to validate page token in list tasks",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        },
+        {
+            "phase_name": "phase_list_tasks_basic.yml",
+            "phase_description": "Job to retrieve the list of Basic view of TES tasks",
+            "start_time": "2023-05-01T23:27:10Z",
+            "end_time": "2023-05-01T23:27:10Z",
+            "status": "SKIP",
+            "summary": {
+                "unknown": 0,
+                "passed": 0,
+                "warned": 0,
+                "failed": 0,
+                "skipped": 0
+            },
+            "tests": []
+        }
+    ]
+}
