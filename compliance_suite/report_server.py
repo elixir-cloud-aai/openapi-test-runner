@@ -7,6 +7,7 @@ a webview via a local server
 import http.server
 import json
 import os
+import shutil
 import socketserver
 import threading
 import time
@@ -19,6 +20,7 @@ import webbrowser
 import jinja2 as j2
 
 from compliance_suite.functions.log import logger
+from pathlib import Path
 
 
 class ReportServer():
@@ -55,6 +57,10 @@ class ReportServer():
             with open(os.path.join(self.web_dir, f"report-{self.name}-{version}.html"), "w+") as output:
                 output.write(report_rendered)
 
+        latest_version = sorted(self.versions)[-1]
+        shutil.copyfile(Path(self.web_dir, f"report-{self.name}-{latest_version}.html"),
+                        Path(self.web_dir, "index.html"))
+
     def start_local_server(
             self,
             port: int,
@@ -71,8 +77,7 @@ class ReportServer():
         http_handler = http.server.SimpleHTTPRequestHandler
         self.local_server = socketserver.TCPServer(("", port), http_handler)
         logger.info(f"Starting a local server at  http://localhost:{port}")
-        latest_version = sorted(self.versions)[-1]
-        webbrowser.open(f"http://localhost:{port}/report-{self.name}-{latest_version}.html")
+        webbrowser.open(f"http://localhost:{port}/index.html")
         logger.info(f"Server will shut down after {uptime} seconds, press CTRL+C to shut down manually")
         self.local_server.serve_forever()
 
