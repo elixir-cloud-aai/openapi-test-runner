@@ -73,3 +73,18 @@ class TestJobRunner:
                                             '--output_path', "path/to/output", '--serve', '--port', 9090,
                                             '--uptime', 1000])
             assert result.exit_code == 0
+
+    @pytest.mark.parametrize("version", TEST_VERSIONS)
+    @patch.object(JobRunner, "get_test_status")
+    @patch.object(JobRunner, "generate_report")
+    @patch.object(JobRunner, "run_jobs")
+    def test_report_failed_tests(self, mock_run_jobs, mock_generate_reports, mock_test_status, version):
+        """ asserts if the application exits with error code 1 if any tests fail """
+
+        with patch('builtins.open', mock_open()):
+            mock_run_jobs.return_value = {}
+            mock_generate_reports.return_value = '{"test": "test"}'
+            mock_test_status.return_value = {"failed": [str(1)]}
+            runner = CliRunner()
+            result = runner.invoke(report, ['--server', TEST_URL, '--version', version])
+            assert result.exit_code == 1

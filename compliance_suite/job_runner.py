@@ -54,6 +54,9 @@ class JobRunner():
             "skipped": []
         }
         self.report: Any = None
+    
+    def get_test_status(self) -> Dict[str, List[str]]:
+        return self.test_status
 
     def set_report(self, report: Any) -> None:
         """Set the report data member

@@ -63,9 +63,12 @@ def report(server: str,
 
     logger.info(f"Input name - {name}")
 
+    any_fail = False
     for version in versions:
         job_runner = JobRunner(server, version, tag)
         job_runner.run_jobs()
+        if len(job_runner.get_test_status()["failed"]) > 0:
+            any_fail = True
 
         json_report = job_runner.generate_report()
 
@@ -88,7 +91,7 @@ def report(server: str,
         exit()
 
     # If report has failed tests, exit with error code
-    if len(job_runner.test_status["failed"]) > 0:
+    if any_fail is True:
         exit(1)
 
 
