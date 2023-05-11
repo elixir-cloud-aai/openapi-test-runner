@@ -7,7 +7,9 @@
   <br><h4>Report Specifications</h4>
   <p class="tab1">Compliance suite definition: {{data.testbed_name}} {{data.testbed_version}}. {{data.testbed_description}}</p>
   <p class="tab1">Platform definition: {{data.platform_description}}</p>
-  <p class="tab1">GA4GH Report standard: {{data.schema_name}} {{data.schema_version}}</p><br>
+  <p class="tab1">GA4GH Report standard: {{data.schema_name}} {{data.schema_version}}</p>
+  <p class="tab1">Created: {{date}} UTC</p>
+  <br>
   
   <h4>Summary</h4>
   <p class="tab1">Total test cases: {{ data.summary.passed + data.summary.warned + data.summary.skipped + data.summary.failed + data.summary.unknown }}</p>

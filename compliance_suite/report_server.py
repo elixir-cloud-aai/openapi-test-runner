@@ -4,6 +4,7 @@ This module contains class definition for Report Server which reads the JSON com
 a webview via a local server
 """
 
+import datetime
 import http.server
 import json
 import os
@@ -49,14 +50,15 @@ class ReportServer():
             # Render the HTML via Jinja templates
             view_loader = j2.FileSystemLoader(searchpath=self.web_dir)
             view_env = j2.Environment(loader=view_loader)
+            date = datetime.datetime.utcnow().isoformat(timespec="seconds")
             report_template = view_env.get_template("views/report.html")
             report_rendered = report_template.render(data=report_data, version=version,
-                                                     versions=self.versions, name=self.name)
+                                                     versions=self.versions, name=self.name, date=date)
 
-            # Update report-tes-<version>.html which will be home Web page
             with open(os.path.join(self.web_dir, f"report-{self.name}-{version}.html"), "w+") as output:
                 output.write(report_rendered)
 
+        # Copy the latest test report to the default landing page
         latest_version = sorted(self.versions)[-1]
         shutil.copyfile(Path(self.web_dir, f"report-{self.name}-{latest_version}.html"),
                         Path(self.web_dir, "index.html"))
