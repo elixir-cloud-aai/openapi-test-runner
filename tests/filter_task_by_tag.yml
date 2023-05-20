@@ -134,7 +134,7 @@ jobs:
     operation: GET
     query_parameters:
       - view: BASIC
-      - tag_key: random
+      - tag_key: abcxyz
     filter:
       - path: $response.tasks[0].tags
         type: object

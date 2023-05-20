@@ -184,12 +184,12 @@ class TestRunner():
             ReportUtility.case_fail(case=report_case_status,
                                     message=f'Response status code for {self.job_data["operation"]}'
                                             f' {self.job_data["endpoint"]} did not match',
-                                    log_message="")
+                                    log_message=f'Expected {response_status} but got {response.status_code}')
 
             raise TestFailureException(name="Incorrect HTTP Response Status",
                                        message=f'Response status code for {self.job_data["operation"]}'
                                                f' {self.job_data["endpoint"]} did not match',
-                                       details=None)
+                                       details=f'Expected {response_status} but got {response.status_code}')
 
         # Logical Schema Validation
         if response_status == 200:               # Further response checks only if successful response body
