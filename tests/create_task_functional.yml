@@ -41,7 +41,7 @@ jobs:
     query_parameters:
       - view: MINIMAL
     polling:
-      interval: 10
+      interval: 1
       timeout: 3600
     response:
       200: |

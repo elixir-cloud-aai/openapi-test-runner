@@ -276,11 +276,11 @@ class TestRunner():
                     ReportUtility.case_fail(case=report_case_filter,
                                             message=f'Filter-{index} failed for {self.job_data["operation"]} '
                                                     f'{self.job_data["endpoint"]}',
-                                            log_message="")
+                                            log_message=f'Expected {job_filter["size"]} but got {len(filtered_value)}')
                     raise TestFailureException(name="Failed filtering",
                                                message=f'Filter-{index} failed for {self.job_data["operation"]} '
                                                        f'{self.job_data["endpoint"]}',
-                                               details=None)
+                                               details=f'Expected {job_filter["size"]} but got {len(filtered_value)}')
 
     def save_storage_vars(self, json_data: Any) -> None:
         """ Extract the keys mentioned in the YAML job from the request/response and save them in the auxiliary space.

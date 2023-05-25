@@ -46,6 +46,9 @@ jobs:
       id: "{id1}"
     query_parameters:
       - view: FULL
+    polling:
+      interval: 1
+      timeout: 360
     filter:
       - path: $response.logs[0].logs
         type: array
@@ -89,6 +92,9 @@ jobs:
       id: "{id2}"
     query_parameters:
       - view: FULL
+    polling:
+      interval: 1
+      timeout: 360
     filter:
       - path: $response.logs[0].logs
         type: array
