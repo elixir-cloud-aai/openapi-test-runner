@@ -34,19 +34,21 @@ from compliance_suite.test_runner import TestRunner
 class JobRunner():
     """Class to run the individual YAML Tests"""
 
-    def __init__(self, server: str, version: str, tags: List[str]):
+    def __init__(self, server: str, version: str, include_tags: List[str], exclude_tags: List[str]):
         """Initialize the Job Runner object
 
         Args:
             server (str): The server URL on which the compliance suite will be run
             version (str): The compliance suite will be run against this TES version
-            tags (List[str]): The list of tags for which the compliance suite will be run
+            include_tags (List[str]): The list of tags for which the compliance suite will be run
+            exclude_tags (List[str]): The list of tags for which the compliance suite will not be run
         """
 
         self.path: str = os.getcwd()
         self.server: str = server
         self.version: str = version
-        self.tags: List[str] = tags
+        self.include_tags: List[str] = include_tags
+        self.exclude_tags: List[str] = exclude_tags
         self.test_count: int = 0
         self.test_status: Dict = {        # To store the status of each test
             "passed": [],
@@ -112,18 +114,24 @@ class JobRunner():
             self,
             yaml_tags: List[str]
     ) -> bool:
-        """ Checks if any user provided tags match with the YAML Testfile tags. Skips the test if tag not matched
+        """ Checks if the given conditions are met based on the provided tags. Skips the test if tag is not matched.
 
         Args:
             yaml_tags (List[str]): The tags defined for a YAML test file
 
         Returns:
-            (bool): If the user tags match the YAML test file tags, return True
+            True if none of exclude_tags match any of the yaml_tags, and at least one of the include_tags is
+            present in the yaml_tags. Otherwise, False.
         """
 
-        for user_tag in self.tags:
-            if user_tag in yaml_tags:
+        for exclude_tag in self.exclude_tags:
+            if exclude_tag in yaml_tags:
+                return False
+
+        for include_tag in self.include_tags:
+            if include_tag in yaml_tags:
                 return True
+
         return False
 
     def version_matcher(
