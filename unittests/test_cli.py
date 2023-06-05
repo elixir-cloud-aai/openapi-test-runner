@@ -10,15 +10,11 @@ from unittest.mock import (
 )
 
 from click.testing import CliRunner
-import pytest
 
 from compliance_suite.cli import main, report
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.report_server import ReportServer
-from unittests.data.constants import (
-    TEST_URL,
-    TEST_VERSIONS
-)
+from unittests.data.constants import TEST_URL
 
 
 class TestJobRunner:
