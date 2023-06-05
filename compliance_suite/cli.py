@@ -61,7 +61,8 @@ def report(server: str,
     include_tags = [val.lower() for val in include_tags]
     exclude_tags = [val.lower() for val in exclude_tags]
     logger.info(f"Provided tags - include: {include_tags} exclude: {exclude_tags}")
-    job_runner = JobRunner(server, version, include_tags, exclude_tags)
+    job_runner = JobRunner(server, version)
+    job_runner.set_tags(include_tags, exclude_tags)
     job_runner.run_jobs()
 
     json_report = job_runner.generate_report()

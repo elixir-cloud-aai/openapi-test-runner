@@ -29,26 +29,25 @@ from compliance_suite.functions.report import (
     ReportUtility
 )
 from compliance_suite.test_runner import TestRunner
+from compliance_suite.utils.test_utils import TestUtils
 
 
 class JobRunner():
     """Class to run the individual YAML Tests"""
 
-    def __init__(self, server: str, version: str, include_tags: List[str], exclude_tags: List[str]):
+    def __init__(self, server: str, version: str):
         """Initialize the Job Runner object
 
         Args:
             server (str): The server URL on which the compliance suite will be run
             version (str): The compliance suite will be run against this TES version
-            include_tags (List[str]): The list of tags for which the compliance suite will be run
-            exclude_tags (List[str]): The list of tags for which the compliance suite will not be run
         """
 
         self.path: str = os.getcwd()
         self.server: str = server
         self.version: str = version
-        self.include_tags: List[str] = include_tags
-        self.exclude_tags: List[str] = exclude_tags
+        self.include_tags: List[str] = []
+        self.exclude_tags: List[str] = []
         self.test_count: int = 0
         self.test_status: Dict = {        # To store the status of each test
             "passed": [],
@@ -64,6 +63,17 @@ class JobRunner():
             report (Any): The report object to be defined for use inside the class
         """
         self.report = report
+
+    def set_tags(self, include_tags: List[str], exclude_tags: List[str]) -> None:
+        """ Set the tags to determine which tests will be run
+
+        Args:
+            include_tags: User-provided list of tags for which the compliance suite will be run
+            exclude_tags: User-provided list of tags for which the compliance suite will not be run
+        """
+
+        self.include_tags = include_tags
+        self.exclude_tags = exclude_tags
 
     def generate_summary(self) -> None:
         """Generate test summary at the completion"""
@@ -110,48 +120,6 @@ class JobRunner():
                                          message=f"YAML file {yaml_file} does not match the Test template/schema",
                                          details=err.message)
 
-    def tag_matcher(
-            self,
-            yaml_tags: List[str]
-    ) -> bool:
-        """ Checks if the given conditions are met based on the provided tags. Skips the test if tag is not matched.
-
-        Args:
-            yaml_tags (List[str]): The tags defined for a YAML test file
-
-        Returns:
-            True if none of exclude_tags match any of the yaml_tags, and at least one of the include_tags is
-            present in the yaml_tags. Otherwise, False.
-        """
-
-        for exclude_tag in self.exclude_tags:
-            if exclude_tag in yaml_tags:
-                return False
-
-        for include_tag in self.include_tags:
-            if include_tag in yaml_tags:
-                return True
-
-        return False
-
-    def version_matcher(
-            self,
-            versions: List[str]
-    ) -> bool:
-        """ Matches the user provided spec version with the YAML test versions.
-         Skips the test if versions are not matched.
-
-        Args:
-            versions: The versions defined for a YAML test
-
-        Returns:
-            True, if the versions match. Otherwise, false.
-        """
-
-        if self.version in versions:
-            return True
-        return False
-
     def generate_report(self) -> Any:
         """Generates the report via ga4gh-testbed-lib and returns it
 
@@ -197,7 +165,8 @@ class JobRunner():
 
                     report_phase = self.report.add_phase(yaml_file.split("/")[-1], yaml_data["description"])
 
-                    if self.version_matcher(yaml_data["versions"]) and self.tag_matcher(yaml_data["tags"]):
+                    if (TestUtils.version_matcher(self.version, yaml_data["versions"]) and
+                            TestUtils.tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
                         test_runner = TestRunner(yaml_data["service"], self.server, self.version)
                         job_count: int = 0
                         for job in yaml_data["jobs"]:
