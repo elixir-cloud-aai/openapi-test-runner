@@ -17,7 +17,10 @@ from jsonschema import (
 )
 import yaml
 
-from compliance_suite.constants.constants import LOGGING_LEVEL
+from compliance_suite.constants.constants import (
+    PATTERN_HASH_CENTERED,
+    PATTERN_HASH_SPACED
+)
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException,
@@ -73,16 +76,16 @@ class JobRunner():
         failed_tests_count: int = len(self.test_status["failed"])
         skipped_tests_count: int = len(self.test_status["skipped"])
 
-        logger.log(LOGGING_LEVEL['SUMMARY'], "\n\n\n")
-        logger.log(LOGGING_LEVEL['SUMMARY'], "{:#^90}".format("   Compliance Testing Summary   "))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(""))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(f"Total Tests - {self.test_count}"))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(f'Passed - {passed_tests_count} ({passed_tests})'))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(f'Failed - {failed_tests_count} ({failed_tests})'))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(f'Skipped - {skipped_tests_count} ({skipped_tests})'))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "#{:^88}#".format(""))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "{:#^90}".format(""))
-        logger.log(LOGGING_LEVEL['SUMMARY'], "\n\n\n")
+        logger.summary("\n\n\n")
+        logger.summary(PATTERN_HASH_CENTERED.format("   Compliance Testing Summary   "))
+        logger.summary(PATTERN_HASH_SPACED.format(""))
+        logger.summary(PATTERN_HASH_SPACED.format(f"Total Tests - {self.test_count}"))
+        logger.summary(PATTERN_HASH_SPACED.format(f'Passed - {passed_tests_count} ({passed_tests})'))
+        logger.summary(PATTERN_HASH_SPACED.format(f'Failed - {failed_tests_count} ({failed_tests})'))
+        logger.summary(PATTERN_HASH_SPACED.format(f'Skipped - {skipped_tests_count} ({skipped_tests})'))
+        logger.summary(PATTERN_HASH_SPACED.format(""))
+        logger.summary(PATTERN_HASH_CENTERED.format(""))
+        logger.summary("\n\n\n")
 
     def validate_job(
             self,
@@ -167,8 +170,8 @@ class JobRunner():
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 self.test_count += 1
-                logger.log(LOGGING_LEVEL['SUMMARY'], "\n{:#^100}".format(f"     Initiating Test-{self.test_count}"
-                                                                         f" for {yaml_file}     "))
+                logger.summary("\n" + PATTERN_HASH_CENTERED.format(
+                    f"     Initiating Test-{self.test_count} for {yaml_file}     "))
 
                 yaml_data: Any = None
                 report_job_test: Any = None
@@ -198,11 +201,11 @@ class JobRunner():
                             report_job_test = report_phase.add_test()
                             test_runner.run_tests(job, report_job_test)
                         self.test_status["passed"].append(str(self.test_count))
-                        logger.log(LOGGING_LEVEL['SUCCESS'], f'Compliance Test-{self.test_count}'
+                        logger.success(f'Compliance Test-{self.test_count}'
                                                              f' for {yaml_file} successful.')
                     else:
                         self.test_status["skipped"].append(str(self.test_count))
-                        logger.log(LOGGING_LEVEL['SKIP'], f"Version or tag did not match. Skipping "
+                        logger.skip(f"Version or tag did not match. Skipping "
                                                           f"Test-{self.test_count} for {yaml_file}")
 
                 except (JobValidationException, TestFailureException) as err:
