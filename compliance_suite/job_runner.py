@@ -201,12 +201,10 @@ class JobRunner():
                             report_job_test = report_phase.add_test()
                             test_runner.run_tests(job, report_job_test)
                         self.test_status["passed"].append(str(self.test_count))
-                        logger.success(f'Compliance Test-{self.test_count}'
-                                                             f' for {yaml_file} successful.')
+                        logger.success(f'Compliance Test-{self.test_count} for {yaml_file} successful.')
                     else:
                         self.test_status["skipped"].append(str(self.test_count))
-                        logger.skip(f"Version or tag did not match. Skipping "
-                                                          f"Test-{self.test_count} for {yaml_file}")
+                        logger.skip(f"Version or tag did not match. Skipping Test-{self.test_count} for {yaml_file}")
 
                 except (JobValidationException, TestFailureException) as err:
                     self.test_status["failed"].append(str(self.test_count))
