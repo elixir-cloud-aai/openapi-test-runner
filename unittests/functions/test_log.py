@@ -8,10 +8,7 @@ import unittest.mock
 
 import pytest
 
-from compliance_suite.constants.constants import (
-    LOGGING_LEVEL,
-    PATTERN_HASH_CENTERED
-)
+from compliance_suite.constants.constants import LOGGING_LEVEL
 from compliance_suite.functions.log import CustomLogger
 
 
