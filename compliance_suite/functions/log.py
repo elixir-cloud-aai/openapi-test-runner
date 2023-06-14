@@ -40,13 +40,16 @@ class CustomLogger(logging.Logger):
         """
         self.log(LOGGING_LEVEL['SUCCESS'], message)
 
-    def summary(self, message: str):
+    def summary(self, message: str, pattern: str = ""):
         """Logs a message with the additional logging level SUMMARY.
 
         Args:
             message: The message to be logged.
+            pattern: The message pattern to be used. If no pattern is provided, the message will be logged without any
+                     formatting.
         """
-        self.log(LOGGING_LEVEL['SUMMARY'], message)
+
+        self.log(LOGGING_LEVEL['SUMMARY'], pattern.format(message) if pattern else message)
 
     @staticmethod
     def set_logging() -> logging.StreamHandler:

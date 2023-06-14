@@ -77,14 +77,14 @@ class JobRunner():
         skipped_tests_count: int = len(self.test_status["skipped"])
 
         logger.summary("\n\n\n")
-        logger.summary(PATTERN_HASH_CENTERED.format("   Compliance Testing Summary   "))
-        logger.summary(PATTERN_HASH_SPACED.format(""))
-        logger.summary(PATTERN_HASH_SPACED.format(f"Total Tests - {self.test_count}"))
-        logger.summary(PATTERN_HASH_SPACED.format(f'Passed - {passed_tests_count} ({passed_tests})'))
-        logger.summary(PATTERN_HASH_SPACED.format(f'Failed - {failed_tests_count} ({failed_tests})'))
-        logger.summary(PATTERN_HASH_SPACED.format(f'Skipped - {skipped_tests_count} ({skipped_tests})'))
-        logger.summary(PATTERN_HASH_SPACED.format(""))
-        logger.summary(PATTERN_HASH_CENTERED.format(""))
+        logger.summary("   Compliance Testing Summary   ", PATTERN_HASH_CENTERED)
+        logger.summary("", PATTERN_HASH_SPACED)
+        logger.summary(f"Total Tests - {self.test_count}", PATTERN_HASH_SPACED)
+        logger.summary(f'Passed - {passed_tests_count} ({passed_tests})', PATTERN_HASH_SPACED)
+        logger.summary(f'Failed - {failed_tests_count} ({failed_tests})', PATTERN_HASH_SPACED)
+        logger.summary(f'Skipped - {skipped_tests_count} ({skipped_tests})', PATTERN_HASH_SPACED)
+        logger.summary("", PATTERN_HASH_SPACED)
+        logger.summary("", PATTERN_HASH_CENTERED)
         logger.summary("\n\n\n")
 
     def validate_job(
@@ -170,8 +170,8 @@ class JobRunner():
         for yaml_file in os.listdir(yaml_path):
             if yaml_file.endswith(".yml"):
                 self.test_count += 1
-                logger.summary("\n" + PATTERN_HASH_CENTERED.format(
-                    f"     Initiating Test-{self.test_count} for {yaml_file}     "))
+                logger.summary("\n")
+                logger.summary(f"     Initiating Test-{self.test_count} for {yaml_file}     ", PATTERN_HASH_CENTERED)
 
                 yaml_data: Any = None
                 report_job_test: Any = None
