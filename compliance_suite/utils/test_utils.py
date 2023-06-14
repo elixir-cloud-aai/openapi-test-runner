@@ -27,8 +27,10 @@ class TestUtils:
             present in the yaml_tags. Otherwise, False.
         """
 
-        return not any(exclude_tag in yaml_tags for exclude_tag in exclude_tags) and \
-            any(include_tag in yaml_tags for include_tag in include_tags)
+        return (
+            not any(exclude_tag in yaml_tags for exclude_tag in exclude_tags)
+            and any(include_tag in yaml_tags for include_tag in include_tags)
+        )
 
     @staticmethod
     def version_matcher(
