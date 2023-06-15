@@ -33,3 +33,8 @@ REQUEST_HEADERS = {
         'Content-Type': 'application/json'
     }
 }
+
+# String Constants
+
+PATTERN_HASH_CENTERED = "{:#^120}"
+PATTERN_HASH_SPACED = "#{:^118}#"
