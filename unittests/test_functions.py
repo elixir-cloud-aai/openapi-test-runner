@@ -17,17 +17,10 @@ from compliance_suite.exceptions.compliance_exception import (
     TestRunnerException
 )
 from compliance_suite.functions.client import Client
-from compliance_suite.functions.log import set_logging
 from compliance_suite.functions.report import Report
 
 
 class TestFunctions(unittest.TestCase):
-
-    def test_set_logging(self):
-        """ Checks if the logger is set up properly """
-
-        set_logging()
-        assert True
 
     def test_report_generate(self):
         """Assert generate report method to be successful"""
