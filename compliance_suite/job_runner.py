@@ -32,7 +32,7 @@ from compliance_suite.functions.report import (
     ReportUtility
 )
 from compliance_suite.test_runner import TestRunner
-from compliance_suite.utils.test_utils import TestUtils
+from compliance_suite.utils.test_utils import tag_matcher
 
 
 class JobRunner():
@@ -168,8 +168,8 @@ class JobRunner():
 
                     report_phase = self.report.add_phase(yaml_file.split("/")[-1], yaml_data["description"])
 
-                    if (TestUtils.version_matcher(self.version, yaml_data["versions"]) and
-                            TestUtils.tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
+                    if (self.version in yaml_data["versions"]
+                            and tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
                         test_runner = TestRunner(yaml_data["service"], self.server, self.version)
                         job_count: int = 0
                         for job in yaml_data["jobs"]:

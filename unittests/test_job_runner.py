@@ -18,10 +18,7 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.test_runner import TestRunner
-from unittests.data.constants import (
-    TEST_URL,
-    TEST_VERSIONS
-)
+from unittests.data.constants import TEST_URL
 
 
 SCHEMA_PATH = os.path.join(os.getcwd(), "tests", "template", "test_template_schema.json")
