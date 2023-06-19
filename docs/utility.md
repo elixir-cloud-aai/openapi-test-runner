@@ -78,27 +78,36 @@ path_parameters:
 
 The following command line parameters can be run:
 
-| Parameter     | Short Name | Required | Description                                                                                     |
-|---------------|------------|----------|-------------------------------------------------------------------------------------------------|
-| --server      | -s         | Yes      | The server URL on which the compliance suite will be run. Format - `https://<url>/`             |
-| --version     | -v         | Yes      | The compliance suite will be run against this TES version. Format - SemVer. Example - `"1.0.0"` |
-| --tag         | -t         | No       | Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"`       |
-| --output_path | -o         | No       | The output path to store the JSON compliance report                                             |
-| --serve       | NA         | No       | If set, runs a local server and displays the JSON report in HTML web page                       |
-| --port        | NA         | No       | The port at which the local server is run. Default - 15800                                      |
-| --uptime      | -u         | No       | The local server duration in seconds. Default - 3600 seconds                                    |
+| Parameter      | Short Name | Required | Description                                                                                     |
+|----------------|------------|----------|-------------------------------------------------------------------------------------------------|
+| --server       | -s         | Yes      | The server URL on which the compliance suite will be run. Format - `https://<url>/`             |
+| --version      | -v         | Yes      | The compliance suite will be run against this TES version. Format - SemVer. Example - `"1.0.0"` |
+| --include-tags | -i         | No       | Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"`       |
+| --exclude-tags | -e         | No       | Tag for which the compliance suite will be skipped. It is case insensitive.                     |
+| --output_path  | -o         | No       | The output path to store the JSON compliance report                                             |
+| --serve        | NA         | No       | If set, runs a local server and displays the JSON report in HTML web page                       |
+| --port         | NA         | No       | The port at which the local server is run. Default - 15800                                      |
+| --uptime       | -u         | No       | The local server duration in seconds. Default - 3600 seconds                                    |
 
-Multiple tags can be set by providing multiple `--tag` or `-t` parameter.
-```base  
-tes-compliance-suite report --server "https://test.com/" --tag "cancel task" --tag "create task" --tag "get task"  
-```  
+### Tags
+
+- Multiple tags can be set by providing multiple `--include-tags` or `--exclude-tags` parameter.
+  ```base  
+  tes-compliance-suite report --server "https://test.com/" --include-tags "cancel task" --include-tags "create task" --include-tags "get task"  
+  ```  
+
+- A test is run if none of the `--exclude-tags` match any of the Yaml test tags, and at least one of the `--include-tags` is present in the Yaml test tags. Example -  
+  <br>
+  If `--include-tags` = `["tag1", "tag2"]` and `--exclude-tags` = `["tag3"]`, then   
+  `Test1.yaml` with tags = `["tag1", "tag4"]` will run  
+  `Test2.yaml` with tags = `["tag2", "tag3"]` will not run
 
 ## Notes
 
 1. Some examples for command line are:
 ```base  
-tes-compliance-suite report --server "https://test.com/" --tag "all" 
-tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --tag "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
+tes-compliance-suite report --server "https://test.com/" --include-tags "all" 
+tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --include-tags "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
 ``` 
 
 2.  If the HOME python version is different than 3.8, then absolute path with reference to 3.8 should be used.
@@ -123,7 +132,7 @@ teshostname=$(jq -r '.TesHostname' TesCredentials.json)
 tesuser=$(jq -r '.TesUsername' TesCredentials.json)
 tespassword=$(jq -r '.TesPassword' TesCredentials.json)
 
-tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --tag all --output_path results
+tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --include-tags all --output_path results
 ```
 
 [res-test-template]: ../tests/template/test_template.yml

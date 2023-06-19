@@ -63,7 +63,7 @@ class TestJobRunner:
             mock_generate_reports.return_value = '{"test": "test"}'
             mock_report_server.return_value = MagicMock()
             runner = CliRunner()
-            result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--tag', 'All',
+            result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--include-tags', 'All',
                                             '--output_path', "path/to/output", '--serve', '--port', 9090,
                                             '--uptime', 1000])
             assert result.exit_code == 0

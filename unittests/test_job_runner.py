@@ -18,10 +18,7 @@ from compliance_suite.exceptions.compliance_exception import (
 )
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.test_runner import TestRunner
-from unittests.data.constants import (
-    TEST_URL,
-    TEST_VERSIONS
-)
+from unittests.data.constants import TEST_URL
 
 
 SCHEMA_PATH = os.path.join(os.getcwd(), "tests", "template", "test_template_schema.json")
@@ -38,32 +35,16 @@ class TestJobRunner:
     def test_generate_summary(self):
         """ Checks if generate summary functions runs successfully"""
 
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", [])
+        job_runner_object = JobRunner(TEST_URL, "1.0.0")
         assert job_runner_object.generate_summary() is None
 
     def test_generate_report(self):
         """ Checks if generate summary functions runs successfully"""
 
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", [])
+        job_runner_object = JobRunner(TEST_URL, "1.0.0")
         job_runner_object.set_report(MagicMock())
         job_runner_object.generate_report()
         assert True
-
-    def test_tag_matcher_success(self):
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", ["tag"])
-        assert job_runner_object.tag_matcher(["tag", "tag1", "tag2"]) is True
-
-    def test_tag_matcher_fail(self):
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", ["NoMatch"])
-        assert job_runner_object.tag_matcher(["tag", "tag1", "tag2"]) is False
-
-    def test_version_matcher_success(self):
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", ["tag"])
-        assert job_runner_object.version_matcher(TEST_VERSIONS) is True
-
-    def test_version_matcher_fail(self):
-        job_runner_object = JobRunner(TEST_URL, '0.0.0', ["tag"])
-        assert job_runner_object.version_matcher(TEST_VERSIONS) is False
 
     @patch("os.path.join", return_value=SCHEMA_PATH)
     def test_validate_job_success(self, mock_os):
@@ -72,7 +53,7 @@ class TestJobRunner:
         with open(YAML_TEST_PATH_SUCCESS, "r") as f:
             yaml_data = yaml.safe_load(f)
 
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", [])
+        job_runner_object = JobRunner(TEST_URL, "1.0.0")
         assert job_runner_object.validate_job(yaml_data, "success_01.yml") is None
 
     @patch('os.path.join', return_value=SCHEMA_PATH)
@@ -83,7 +64,7 @@ class TestJobRunner:
             yaml_data = yaml.safe_load(f)
 
         with pytest.raises(JobValidationException):
-            job_runner_object = JobRunner(TEST_URL, "1.0.0", [])
+            job_runner_object = JobRunner(TEST_URL, "1.0.0")
             job_runner_object.validate_job(yaml_data, "wrong_schema_yaml.yml")
 
     @patch.object(JobRunner, 'validate_job')
@@ -97,5 +78,6 @@ class TestJobRunner:
 
         mock_os.side_effect = [YAML_TEST_PATH, YAML_TEST_PATH_FAIL, YAML_TEST_PATH_INVALID, YAML_TEST_PATH_SKIP,
                                YAML_TEST_PATH_SUCCESS]
-        job_runner_object = JobRunner(TEST_URL, "1.0.0", ["all"])
+        job_runner_object = JobRunner(TEST_URL, "1.0.0")
+        job_runner_object.set_tags(["all"], [])
         assert job_runner_object.run_jobs() is None
