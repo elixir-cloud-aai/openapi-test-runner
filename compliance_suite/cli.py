@@ -4,7 +4,11 @@ This module is the entry point for the compliance suite and contains a CLI funct
 """
 
 import os
-from typing import List
+import re
+from typing import (
+    Any,
+    List
+)
 
 import click
 
@@ -18,13 +22,35 @@ def main() -> None:
     pass
 
 
+def validate_regex(ctx: Any, param: Any, value: List[str]):
+    """Validate the regex for CLI arguments
+
+    Args:
+        ctx: The current click context
+        param: The click parameter
+        value: The value to validate
+
+    Returns:
+        The validated value if it passes the regular expression pattern.
+    """
+
+    regex_pattern: str = r"^[a-zA-Z0-9_]+$"
+
+    if not value or all(re.fullmatch(regex_pattern, val) for val in value):
+        return value
+    else:
+        raise click.BadParameter("Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.")
+
+
 @main.command(help='Run TES compliance tests against the servers')
-@click.option('--server', '-s', help='server URL on which the compliance tests are run. Format - https://<url>/')
-@click.option('--version', '-v', help='TES version. Example - "1.0.0"')
+@click.option('--server', '-s', required=True, type=str, prompt="Enter server",
+              help='server URL on which the compliance tests are run. Format - https://<url>/')
+@click.option('--version', '-v', required=True, type=str, prompt="Enter version",
+              help='TES version. Example - "1.0.0"')
 @click.option('--include-tags', '-i', 'include_tags', multiple=True,
-              help='run tests for provided tags', default=['All'])
+              help='run tests for provided tags', callback=validate_regex)
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
-              help='skip tests for provided tags')
+              help='skip tests for provided tags', callback=validate_regex)
 @click.option('--output_path', '-o', help='path to output the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
@@ -51,15 +77,11 @@ def report(server: str,
         uptime (int): The local server duration in seconds. Default - 3600 seconds
     """
 
-    if server is None:
-        raise Exception("No server provided. Please provide a server URL.")
-
-    if version is None:
-        raise Exception("No version provided. Please provide a version.")
-
     # Convert the tags into lowercase to allow case-insensitive tags
     include_tags = [val.lower() for val in include_tags]
     exclude_tags = [val.lower() for val in exclude_tags]
+
+    logger.info(f"Provided server: {server} version: {version}")
     logger.info(f"Provided tags - include: {include_tags} exclude: {exclude_tags}")
     job_runner = JobRunner(server, version)
     job_runner.set_tags(include_tags, exclude_tags)

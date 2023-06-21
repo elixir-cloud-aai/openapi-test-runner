@@ -1,4 +1,3 @@
-name: <Job Name>
 description: <Job Description>    # Optional
 service: <GA4GH Service Name>   # enum - [TES]
 versions:

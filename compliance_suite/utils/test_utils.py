@@ -23,7 +23,9 @@ def tag_matcher(
         present in the yaml_tags. Otherwise, False.
     """
 
+    # If include_tags is empty, all tests are considered included
+
     return (
         not any(exclude_tag in yaml_tags for exclude_tag in exclude_tags)
-        and any(include_tag in yaml_tags for include_tag in include_tags)
+        and (not include_tags or any(include_tag in yaml_tags for include_tag in include_tags))
     )

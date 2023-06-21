@@ -1,13 +1,9 @@
-name: Create Tes Task Job With Ignore Error Flag
 description: Job to create a new TES Task with ignore_error flag
 service: TES
 versions:
   - 1.1.0
 tags:
-  - logical
-  - create task
-  - create task ignore error negative test
-  - all
+  - schema_validation_only
 jobs:
   - name: create_task
     description: Ignore error flag as false, so executor should fail at first command
