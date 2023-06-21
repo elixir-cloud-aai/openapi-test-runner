@@ -1,14 +1,10 @@
 Invalid YAML
-name: Service Info Job
 description: Job to retrieve the service info
 service: TES
 versions:
   - 1.0.0
 tags:
-  - logical
-  - service info
-  - get service info test
-  - all
+  - schema_validation_only
 jobs:
   - name: service_info
     description: Retrieve the TES server info
