@@ -9,7 +9,7 @@ The report can also be viewed as HTML web page in local server.
 
 ## Installation  
 
-Python 3.8 is the supported Python version and should be installed as an pre-requisite.
+Python 3.8 is the supported Python version and should be installed as a pre-requisite.
 The following steps will guide you to install the suite.
 
 1.  Clone the latest codebase from  [https://github.com/elixir-cloud-aai/tes-compliance-suite](https://github.com/elixir-cloud-aai/tes-compliance-suite)
@@ -91,9 +91,11 @@ The following command line parameters can be run:
 
 ### Tags
 
+- Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.
+
 - Multiple tags can be set by providing multiple `--include-tags` or `--exclude-tags` parameter.
   ```base  
-  tes-compliance-suite report --server "https://test.com/" --include-tags "cancel task" --include-tags "create task" --include-tags "get task"  
+  tes-compliance-suite report --server "https://test.com/" --include-tags tag_1 --include-tags TAG2 --include-tags 123  
   ```  
 
 - A test is run if none of the `--exclude-tags` match any of the Yaml test tags, and at least one of the `--include-tags` is present in the Yaml test tags. Example -  
@@ -102,15 +104,17 @@ The following command line parameters can be run:
   `Test1.yaml` with tags = `["tag1", "tag4"]` will run  
   `Test2.yaml` with tags = `["tag2", "tag3"]` will not run
 
+- If `--include-tags` is not specified, all tests are assumed to be included by default and will be executed.
+
 ## Notes
 
 1. Some examples for command line are:
 ```base  
-tes-compliance-suite report --server "https://test.com/" --include-tags "all" 
-tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --include-tags "all" --output_path "path/to/store" --serve --port 9090 --uptime 1000
+tes-compliance-suite report --server "https://test.com/" --version "1.0.0"
+tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --include-tags "schema_validation_only" --output_path "path/to/store" --serve --port 9090 --uptime 1000
 ``` 
 
-2.  If the HOME python version is different than 3.8, then absolute path with reference to 3.8 should be used.
+2.  If the HOME python version is different from 3.8, then absolute path with reference to 3.8 should be used.
 ```base  
 path/to/python3.8/python setup.py install
 path/to/python3.8/Scripts/tes-compliance-suite report
@@ -118,13 +122,13 @@ path/to/python3.8/Scripts/tes-compliance-suite report
 
 ## Docker image
 
-The project has a [Dockerfile][dockerfile] that creates a ubuntu based container image ready to run tes-compliance-suite. It uses [entrypoint.sh][entrypoint] as an entrypoint, which is most useful if the url of the server changes each time the test suite is run or if only specific tests need to be run. Also, if the server requires basic authentication to connect to, entrypoint.sh can be edited to accept not just the endpoint url, but the username and password as well. 
+The project has a [Dockerfile][dockerfile] that creates an ubuntu based container image ready to run tes-compliance-suite. It uses [entrypoint.sh][entrypoint] as an entrypoint, which is most useful if the url of the server changes each time the test suite is run or if only specific tests need to be run. Also, if the server requires basic authentication to connect to, entrypoint.sh can be edited to accept not just the endpoint url, but the username and password as well. 
 
 ```base  
 http://$tesuser:$tespassword@$teshostname/
 ```
 
-Currently the TES endpoint url in entrypoint.sh will grab the value from an enviormental variable in the image. However, entrypoint.sh gives flexibility to define how that value can be populated. For example, a file can be copied over to the image containing the endpoint url, username and password which could then be read and parsed to pass into tes-compliance suite. Refer to the example below. 
+Currently, the TES endpoint url in entrypoint.sh will grab the value from an environmental variable in the image. However, entrypoint.sh gives flexibility to define how that value can be populated. For example, a file can be copied over to the image containing the endpoint url, username and password which could then be read and parsed to pass into tes-compliance suite. Refer to the example below. 
 
 ```base  
 #!/bin/sh

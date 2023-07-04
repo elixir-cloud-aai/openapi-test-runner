@@ -79,5 +79,5 @@ class TestJobRunner:
         mock_os.side_effect = [YAML_TEST_PATH, YAML_TEST_PATH_FAIL, YAML_TEST_PATH_INVALID, YAML_TEST_PATH_SKIP,
                                YAML_TEST_PATH_SUCCESS]
         job_runner_object = JobRunner(TEST_URL, "1.0.0")
-        job_runner_object.set_tags(["all"], [])
+        job_runner_object.set_tags(["schema_validation_only"], [])
         assert job_runner_object.run_jobs() is None

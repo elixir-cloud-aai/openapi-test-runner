@@ -1,13 +1,8 @@
-name: Filter Task by Tag Job
 description: Job to test the filter task by tag feature
 service: TES
 versions:
   - 1.1.0
-tags:
-  - logical
-  - filter
-  - filter task by tag test
-  - all
+tags: []
 jobs:
   - name: create_task
     description: Create a new TES task
