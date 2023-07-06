@@ -82,4 +82,4 @@ A JSON report is published at the end according to the `ga4gh-testbed-lib` stand
 
 ![Json_Report](/docs/images/json_report.JPG)
 
-[res-test-schema]: ../tests/template/test_template_schema.json
+[res-test-schema]: template/test_template_schema.json

@@ -78,16 +78,17 @@ path_parameters:
 
 The following command line parameters can be run:
 
-| Parameter      | Short Name | Required | Description                                                                                     |
-|----------------|------------|----------|-------------------------------------------------------------------------------------------------|
-| --server       | -s         | Yes      | The server URL on which the compliance suite will be run. Format - `https://<url>/`             |
-| --version      | -v         | Yes      | The compliance suite will be run against this TES version. Format - SemVer. Example - `"1.0.0"` |
-| --include-tags | -i         | No       | Tag for which the compliance suite will be run. It is case insensitive. Default - `"all"`       |
-| --exclude-tags | -e         | No       | Tag for which the compliance suite will be skipped. It is case insensitive.                     |
-| --output_path  | -o         | No       | The output path to store the JSON compliance report                                             |
-| --serve        | NA         | No       | If set, runs a local server and displays the JSON report in HTML web page                       |
-| --port         | NA         | No       | The port at which the local server is run. Default - 15800                                      |
-| --uptime       | -u         | No       | The local server duration in seconds. Default - 3600 seconds                                    |
+| Parameter      | Short Name | Required | Multiple? | Description                                                                                           |
+|----------------|------------|----------|-----------|-------------------------------------------------------------------------------------------------------|
+| --server       | -s         | Yes      | No        | The server URL on which the compliance suite will be run. Format - `https://<url>/`                   |
+| --version      | -v         | Yes      | No        | The compliance suite will be run against this TES version. Format - SemVer. Example - `"1.0.0"`       |
+| --include-tags | -i         | No       | Yes       | Tag for which the compliance suite will be run. It is case insensitive.                               |
+| --exclude-tags | -e         | No       | Yes       | Tag for which the compliance suite will be skipped. It is case insensitive.                           |
+| --test-path    | -tp        | No       | Yes       | The absolute or relative path from the project root of the test file/directory. Default - `["tests"]` |
+| --output_path  | -o         | No       | No        | The output path to store the JSON compliance report                                                   |
+| --serve        | N/A        | No       | N/A       | If set, runs a local server and displays the JSON report in HTML web page                             |
+| --port         | N/A        | No       | N/A       | The port at which the local server is run. Default - 15800                                            |
+| --uptime       | -u         | No       | No        | The local server duration in seconds. Default - 3600 seconds                                          |
 
 ### Tags
 
@@ -111,7 +112,7 @@ The following command line parameters can be run:
 1. Some examples for command line are:
 ```base  
 tes-compliance-suite report --server "https://test.com/" --version "1.0.0"
-tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --include-tags "schema_validation_only" --output_path "path/to/store" --serve --port 9090 --uptime 1000
+tes-compliance-suite report --server "https://test.com/" --version "1.0.0" --include-tags "schema_validation_only" --test-path "path/to/test" --output_path "path/to/store" --serve --port 9090 --uptime 1000
 ``` 
 
 2.  If the HOME python version is different from 3.8, then absolute path with reference to 3.8 should be used.
@@ -139,6 +140,6 @@ tespassword=$(jq -r '.TesPassword' TesCredentials.json)
 tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --include-tags all --output_path results
 ```
 
-[res-test-template]: ../tests/template/test_template.yml
+[res-test-template]: template/test_template.yml
 [dockerfile]: ../docker/Dockerfile
 [entrypoint]: ../docker/entrypoint.sh

@@ -51,7 +51,7 @@ class Report():
         """
 
         phase = self.report.add_phase()
-        phase.set_phase_name(f"phase_{filename}")
+        phase.set_phase_name(f"{filename}")
         phase.set_phase_description(description)
         return phase
 

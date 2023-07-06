@@ -61,3 +61,13 @@ class TestJobRunner:
         result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--exclude-tags', '%%INVALID%%'])
         assert result.exit_code == 2
         assert "Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed." in result.output
+
+    def test_invalid_test_path(self):
+        """Assert the application throws an exception if invalid test path is provided"""
+
+        runner = CliRunner()
+        result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--test-path', 'invalid/path'])
+
+        assert result.exit_code == 1
+        assert result.exception.__class__ == FileNotFoundError
+        assert "Test path: invalid/path not found" in result.exception.__str__()
