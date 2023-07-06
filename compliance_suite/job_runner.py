@@ -174,7 +174,7 @@ class JobRunner:
                     job_count += 1
                     logger.info(f'Running tests for sub-job-{job_count} -> {job["name"]}')
                     report_job_test = report_phase.add_test()
-                    # test_runner.run_tests(job, report_job_test)
+                    test_runner.run_tests(job, report_job_test)
                 self.test_status["passed"].append(str(self.test_count))
                 logger.success(f'Compliance Test-{self.test_count} for {yaml_file} successful.')
             else:
