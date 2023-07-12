@@ -3,7 +3,6 @@
 This module is to test the Job Runner class and its methods
 """
 
-import os
 from pathlib import Path
 from unittest.mock import (
     MagicMock,
@@ -23,13 +22,11 @@ from compliance_suite.test_runner import TestRunner
 from unittests.data.constants import TEST_URL
 
 
-SCHEMA_PATH = os.path.join(os.getcwd(), "tests", "template", "test_template_schema.json")
-YAML_TEST_PATH = os.path.join(os.getcwd(), "unittests", "data", "run_job_tests")
 YAML_TEST_PATH_SUCCESS = Path("unittests/data/run_job_tests/success_01.yml")
 YAML_TEST_PATH_INVALID = Path("unittests/data/run_job_tests/invalid_yaml.yml")
 YAML_TEST_PATH_SKIP = Path("unittests/data/run_job_tests/skip_01.yml")
 YAML_TEST_PATH_FAIL = Path("unittests/data/run_job_tests/fail_service_info.yml")
-YAML_WRONG_SCHEMA = os.path.join(os.getcwd(), "unittests", "data", "tests", "wrong_schema_yaml.yml")
+YAML_WRONG_SCHEMA = Path("unittests/data/tests/wrong_schema_yaml.yml")
 
 
 class TestJobRunner:
@@ -48,8 +45,7 @@ class TestJobRunner:
         job_runner_object.generate_report()
         assert True
 
-    @patch("os.path.join", return_value=SCHEMA_PATH)
-    def test_validate_job_success(self, mock_os):
+    def test_validate_job_success(self):
         """ Asserts validate job functions for proper YAML schema"""
 
         with open(YAML_TEST_PATH_SUCCESS, "r") as f:
@@ -58,8 +54,7 @@ class TestJobRunner:
         job_runner_object = JobRunner(TEST_URL, "1.0.0")
         assert job_runner_object.validate_job(yaml_data, "success_01.yml") is None
 
-    @patch('os.path.join', return_value=SCHEMA_PATH)
-    def test_validate_job_failure(self, mock_os):
+    def test_validate_job_failure(self):
         """ Asserts validate_job() function for incorrect YAML schema"""
 
         with open(YAML_WRONG_SCHEMA, "r") as f:
