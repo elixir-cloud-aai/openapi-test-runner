@@ -123,7 +123,7 @@ class JobRunner:
         """
 
         schema_path = Path("docs/test_config/test_schema.json")
-        schema_dir_path = Path("docs/test_config")
+        schema_dir_path = Path("docs/test_config").absolute()
         with open(str(schema_path), "r") as f:
             json_schema: Any = yaml.safe_load(f)
 
