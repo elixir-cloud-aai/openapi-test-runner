@@ -5,6 +5,7 @@
     "job": {
       "type": "object",
       "description": "The sub-job object",
+      "additionalProperties": false,
       "properties": {
           "name": {
             "type": "string",
@@ -55,6 +56,7 @@
           "polling": {
             "type": "object",
             "description": "The polling object containing polling configuration",
+            "additionalProperties": false,
             "properties": {
               "interval": {
                 "type": "number",
@@ -106,6 +108,8 @@
     },
     "filterDefinition": {
       "type": "object",
+      "description": "The filter object",
+      "additionalProperties": false,
       "properties": {
         "path": {
           "type": "string",
