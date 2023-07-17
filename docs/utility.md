@@ -45,7 +45,7 @@ python setup.py install
 The test files provide multiple features for better operability and extensibility. 
 
 1. Storage Variables - Persist response values to be used in subsequent jobs. When using a storage variable, it should
-   be enclosed in curly brackets and quotes to denote its usage. Refer the [test template][res-test-template] for syntax details. 
+   be enclosed in curly brackets and quotes to denote its usage. Refer the [test syntax][res-test-syntax] for syntax details. 
    Example - "$response.id" is extracted from the CreateTask response and stored in the key "id" for later
    GetTask or CancelTask jobs.
 
@@ -56,7 +56,7 @@ key: "{id}"
 ```
 
 2. Environment Variables - Define key-value pairs to be referenced inside the code.
-   Refer the [test template][res-test-template] for syntax details.
+   Refer the [test syntax][res-test-syntax] for syntax details.
    Example - 
 
 ```base
@@ -65,7 +65,7 @@ env_vars:
 ```
 
 3. Path Parameters - Define multiple endpoint path parameters values by using either storage variables or exact values.
-   Refer the [test template][res-test-template] for syntax details.
+   Refer the [test syntax][res-test-syntax] for syntax details.
    Example -
 
 ```base
@@ -140,6 +140,6 @@ tespassword=$(jq -r '.TesPassword' TesCredentials.json)
 tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --include-tags all --output_path results
 ```
 
-[res-test-template]: template/test_template.yml
+[res-test-syntax]: test_config/test_syntax.yml
 [dockerfile]: ../docker/Dockerfile
 [entrypoint]: ../docker/entrypoint.sh

@@ -1,41 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
-  "description": "The YAML test file object",
-  "properties": {
-    "description": {
-      "type": "string",
-      "description": "The description of the Test file"
-    },
-    "service": {
-      "type": "string",
-      "description": "The GA4GH service name",
-      "enum": [
-        "TES"
-      ]
-    },
-    "versions": {
-      "type": "array",
-      "description": "The list of API versions against which the test file can be run",
-      "items": {
-        "type": "string"
-      }
-    },
-    "tags": {
-      "type": "array",
-      "description": "The list of tags which define the test file. Example. Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and All tag",
-      "items": {
-        "type": "string"
-      },
-      "minItems": 0
-    },
-    "jobs": {
-      "type": "array",
-      "description": "The sub-job data containing request details",
-      "items": {
-        "type": "object",
-        "description": "The sub-job object",
-        "properties": {
+  "definitions": {
+    "job": {
+      "type": "object",
+      "description": "The sub-job object",
+      "additionalProperties": false,
+      "properties": {
           "name": {
             "type": "string",
             "description": "The sub-job name. It should be within the specified enum for consistency",
@@ -85,6 +56,7 @@
           "polling": {
             "type": "object",
             "description": "The polling object containing polling configuration",
+            "additionalProperties": false,
             "properties": {
               "interval": {
                 "type": "number",
@@ -118,39 +90,8 @@
             "type": "array",
             "description": "The list of filters to be applied on API data",
             "items": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string",
-                  "description": "The API data key path to filter the value. Provide location of key from root in dot notation"
-                },
-                "type": {
-                  "type": "string",
-                  "description": "The data type of the response field to filter",
-                  "enum": [
-                    "string",
-                    "array",
-                    "object"
-                  ]
-                },
-                "regex": {
-                  "type": "boolean",
-                  "description": "Filter the string value via regex. Should be used only with \"string\" type"
-                },
-                "value": {
-                  "type": "string",
-                  "description": "The value to be filtered. For object, it checks if provided value is subset of filtered response field, regardless of the key-value pairs order."
-                },
-                "size": {
-                  "type": "integer",
-                  "description": "The size of the response field is interpreted differently for each type of data. For a string, it refers to the length of the string; for an array, it refers to the size of the array; and for an object, it refers to the number of key-value pairs in the object."
-                }
-              },
-              "required": [
-                "path",
-                "type"
-              ]
-            },
+              "$ref": "#/definitions/filterDefinition"
+            }
           },
           "response": {
             "type": "object",
@@ -158,19 +99,48 @@
             "additionalProperties": true
           }
         },
-        "required": [
+      "required": [
           "name",
           "endpoint",
           "operation",
           "response"
         ]
-      }
+    },
+    "filterDefinition": {
+      "type": "object",
+      "description": "The filter object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The API data key path to filter the value. Provide location of key from root in dot notation"
+        },
+        "type": {
+          "type": "string",
+          "description": "The data type of the response field to filter",
+          "enum": [
+            "string",
+            "array",
+            "object"
+          ]
+        },
+        "regex": {
+          "type": "boolean",
+          "description": "Filter the string value via regex. Should be used only with \"string\" type"
+        },
+        "value": {
+          "type": "string",
+          "description": "The value to be filtered. For object, it checks if provided value is subset of filtered response field, regardless of the key-value pairs order."
+        },
+        "size": {
+          "type": "integer",
+          "description": "The size of the response field is interpreted differently for each type of data. For a string, it refers to the length of the string; for an array, it refers to the size of the array; and for an object, it refers to the number of key-value pairs in the object."
+        }
+      },
+      "required": [
+        "path",
+        "type"
+      ]
     }
-  },
-  "required": [
-    "service",
-    "versions",
-    "tags",
-    "jobs"
-  ]
+  }
 }

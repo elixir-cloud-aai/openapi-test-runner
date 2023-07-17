@@ -12,6 +12,7 @@ from typing import (
 )
 
 from jsonschema import (
+    RefResolver,
     validate,
     ValidationError
 )
@@ -114,23 +115,27 @@ class JobRunner:
             yaml_data: Any,
             yaml_file: str
     ) -> None:
-        """ Validates if the Test file is in conformance to the test template/schema
+        """ Validates if the Test file is in conformance to the test schema
 
         Args:
             yaml_data (Any): The parsed yaml data to perform the schema checks
             yaml_file (str): The yaml file name
         """
 
-        schema_path = Path("docs/template/test_template_schema.json")
+        schema_path = Path("docs/test_config/test_schema.json")
+        schema_dir_path = Path("docs/test_config").absolute()
         with open(str(schema_path), "r") as f:
             json_schema: Any = yaml.safe_load(f)
 
         try:
-            validate(yaml_data, json_schema)
+            # Python-jsonschema does not reference local files directly
+            # Refer solution from https://github.com/python-jsonschema/jsonschema/issues/98#issuecomment-105475109
+            resolver = RefResolver('file:///' + str(schema_dir_path).replace("\\", "/") + '/', None)
+            validate(yaml_data, json_schema, resolver=resolver)
             logger.info(f'Test YAML file valid for {yaml_file}')
         except ValidationError as err:
             raise JobValidationException(name="YAML Schema Validation Error",
-                                         message=f"YAML file {yaml_file} does not match the Test template/schema",
+                                         message=f"YAML file {yaml_file} does not match the Test schema",
                                          details=err.message)
 
     def generate_report(self) -> Any:
