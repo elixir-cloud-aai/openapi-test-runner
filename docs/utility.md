@@ -49,30 +49,68 @@ The test files provide multiple features for better operability and extensibilit
    Example - "$response.id" is extracted from the CreateTask response and stored in the key "id" for later
    GetTask or CancelTask jobs.
 
-```base
-storage_vars:
+    ```base
+    storage_vars:
       id: $response.id
-key: "{id}"
-```
+    key: "{id}"
+    ```
 
 2. Environment Variables - Define key-value pairs to be referenced inside the code.
    Refer the [test syntax][res-test-syntax] for syntax details.
    Example - 
 
-```base
-env_vars:
+    ```base
+    env_vars:
       check_cancel: True
-```
+    ```
 
 3. Path Parameters - Define multiple endpoint path parameters values by using either storage variables or exact values.
    Refer the [test syntax][res-test-syntax] for syntax details.
    Example -
 
-```base
-path_parameters:
+    ```base
+    path_parameters:
       foo: 1234
       lorem: "{ipsum}"
-```
+    ```
+
+4. Templates - Templates help eliminate the redundancy of creating the same tasks in multiple test files. 
+   A template consists of a list of jobs and undergoes validation against a schema check.
+   Additionally, templates can store variables that receive values from argument key-value pairs in the test file.
+   To use a stored variable, enclose it in curly brackets and quotes to indicate its usage.
+   Refer the [test syntax][res-test-syntax] for syntax details. 
+
+   <br>
+   
+   Few points to note:
+      1. Use unique names for variables.
+      2. The existing `storage_vars` and `parameters` will not be affected and continue to work as they are.
+
+   <br>
+   Example - 
+
+ - Template file
+    ```base 
+    - name: template_name
+      query_parameters:
+        id: "{id_value}"
+    ```
+   
+ - Test file 1
+    ```base
+    jobs:
+      - $ref: "path/to/template"
+        args:
+          id_value: "123"
+    ```
+   
+ - Test file 2
+    ```base
+    jobs:
+      - $ref: "path/to/template"
+        args:
+          id_value: "789"
+    ```
 
 ## Usage
 

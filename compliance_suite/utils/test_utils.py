@@ -3,7 +3,10 @@
 This module contains the utility functions to perform actions on test files
 """
 
-from typing import List
+from typing import (
+    Any,
+    List
+)
 
 
 def tag_matcher(
@@ -29,3 +32,27 @@ def tag_matcher(
         not any(exclude_tag in yaml_tags for exclude_tag in exclude_tags)
         and (not include_tags or any(include_tag in yaml_tags for include_tag in include_tags))
     )
+
+
+def replace_string(data: Any, search_str: str, replace_str: str) -> Any:
+    """Replace all occurrences of `search_str` in `data` with `replace_str`.
+
+    Args:
+        data: The data to be processed.
+        search_str: The string to search for.
+        replace_str: The string to replace the occurrences with.
+
+    Returns:
+        The data with the replacements made.
+    """
+
+    if isinstance(data, list):
+        for index, item in enumerate(data):
+            data[index] = replace_string(item, search_str, replace_str)
+        return data
+    elif isinstance(data, dict):
+        for key, value in data.items():
+            data[key] = replace_string(value, search_str, replace_str)
+        return data
+    elif isinstance(data, str):
+        return replace_str if data == search_str else data

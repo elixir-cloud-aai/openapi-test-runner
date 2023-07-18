@@ -20,7 +20,9 @@ import yaml
 
 from compliance_suite.constants.constants import (
     PATTERN_HASH_CENTERED,
-    PATTERN_HASH_SPACED
+    PATTERN_HASH_SPACED,
+    TEMPLATE,
+    TEST
 )
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
@@ -33,7 +35,10 @@ from compliance_suite.functions.report import (
     ReportUtility
 )
 from compliance_suite.test_runner import TestRunner
-from compliance_suite.utils.test_utils import tag_matcher
+from compliance_suite.utils.test_utils import (
+    replace_string,
+    tag_matcher
+)
 from ga4gh.testbed.report.test import Test
 
 
@@ -110,33 +115,45 @@ class JobRunner:
         logger.summary("", PATTERN_HASH_CENTERED)
         logger.summary("\n\n\n")
 
-    def validate_job(
-            self,
-            yaml_data: Any,
-            yaml_file: str
-    ) -> None:
-        """ Validates if the Test file is in conformance to the test schema
+    def load_and_validate_yaml_data(self, yaml_file: str, _type: str):
+        """
+        Load and validate YAML data from the file with the provided schema type.
 
         Args:
-            yaml_data (Any): The parsed yaml data to perform the schema checks
-            yaml_file (str): The yaml file name
+            yaml_file: The path to the YAML file.
+            _type: The type of YAML file, either "Test" or "Template".
+
+        Returns:
+            The loaded and validated YAML data.
         """
 
-        schema_path = Path("docs/test_config/test_schema.json")
+        # Load YAML data
+        try:
+            yaml_data = yaml.safe_load(open(yaml_file, "r"))
+        except yaml.YAMLError as err:
+            raise JobValidationException(name="YAML Error",
+                                         message=f"Invalid YAML file {yaml_file}",
+                                         details=err)
+
+        # Validate YAML data with schema
         schema_dir_path = Path("docs/test_config").absolute()
-        with open(str(schema_path), "r") as f:
-            json_schema: Any = yaml.safe_load(f)
+        test_schema_path = Path("docs/test_config/test_schema.json")
+        template_schema_path = Path("docs/test_config/template_schema.json")
+        schema_file_path = str(test_schema_path if _type == TEST else template_schema_path)
+        json_schema = yaml.safe_load(open(schema_file_path, "r"))
 
         try:
             # Python-jsonschema does not reference local files directly
             # Refer solution from https://github.com/python-jsonschema/jsonschema/issues/98#issuecomment-105475109
             resolver = RefResolver('file:///' + str(schema_dir_path).replace("\\", "/") + '/', None)
             validate(yaml_data, json_schema, resolver=resolver)
-            logger.info(f'Test YAML file valid for {yaml_file}')
+            logger.info(f'YAML file valid for {_type}: {yaml_file}')
         except ValidationError as err:
             raise JobValidationException(name="YAML Schema Validation Error",
-                                         message=f"YAML file {yaml_file} does not match the Test schema",
+                                         message=f"YAML file {yaml_file} does not match the {_type} schema",
                                          details=err.message)
+
+        return yaml_data
 
     def generate_report(self) -> Any:
         """Generates the report via ga4gh-testbed-lib and returns it
@@ -161,23 +178,25 @@ class JobRunner:
         logger.summary(f"     Initiating Test-{self.test_count} for {yaml_file}     ", PATTERN_HASH_CENTERED)
 
         try:
-            with open(str(yaml_file), "r") as f:
-                try:
-                    yaml_data: Any = yaml.safe_load(f)
-                except yaml.YAMLError as err:
-                    raise JobValidationException(name="YAML Error",
-                                                 message=f"Invalid YAML file {yaml_file}",
-                                                 details=err)
-            self.validate_job(yaml_data, str(yaml_file))
+            yaml_data = self.load_and_validate_yaml_data(str(yaml_file), TEST)
             report_phase = self.report.add_phase(str(yaml_file), yaml_data["description"])
 
             if (self.version in yaml_data["versions"]
                     and tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
                 test_runner = TestRunner(yaml_data["service"], self.server, self.version)
-                job_count: int = 0
+                job_list: List[Dict] = []
                 for job in yaml_data["jobs"]:
-                    job_count += 1
-                    logger.info(f'Running tests for sub-job-{job_count} -> {job["name"]}')
+                    if "$ref" in job:
+                        template_data = self.load_and_validate_yaml_data(job["$ref"], TEMPLATE)
+                        if "args" in job:
+                            for key, value in job["args"].items():
+                                template_data = replace_string(template_data, f"{{{key}}}", value)
+                        job_list.extend(template_data)
+                    else:
+                        job_list.append(job)
+
+                for index, job in enumerate(job_list, start=1):
+                    logger.info(f'Running tests for sub-job-{index} -> {job["name"]}')
                     report_job_test = report_phase.add_test()
                     test_runner.run_tests(job, report_job_test)
                 self.test_status["passed"].append(str(self.test_count))

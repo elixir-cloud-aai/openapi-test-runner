@@ -14,3 +14,6 @@ jobs:
         {
           "id": "uk.ac.ebi.tsc.tesk"
         }
+  - $ref: "unittests/data/templates/success_template.yml"
+    args:
+      view_value: "MINIMAL"
