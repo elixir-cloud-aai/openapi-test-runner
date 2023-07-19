@@ -5,46 +5,8 @@ versions:
   - 1.1.0
 tags: []
 jobs:
-  - name: create_task
-    description: Create a new TES task
-    endpoint: /tasks
-    operation: POST
-    request_body: |
-      {
-        "name": "CompTest",
-        "description": "CompTest",
-        "executors": [
-          {
-            "image": "alpine",
-            "command": [
-              "echo",
-              "hello"
-            ]
-          }
-        ]
-      }
-    response:
-      200: {}
-  - name: create_task
-    description: Create a new TES task
-    endpoint: /tasks
-    operation: POST
-    request_body: |
-      {
-        "name": "CompTest",
-        "description": "CompTest",
-        "executors": [
-          {
-            "image": "alpine",
-            "command": [
-              "echo",
-              "hello"
-            ]
-          }
-        ]
-      }
-    response:
-      200: {}
+  - $ref: "./templates/create_task_template.yml"
+  - $ref: "./templates/create_task_template.yml"
   - name: list_tasks
     description: Store the next_page_token
     endpoint: /tasks

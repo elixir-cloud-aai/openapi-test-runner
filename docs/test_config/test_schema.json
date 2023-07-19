@@ -34,7 +34,29 @@
       "type": "array",
       "description": "The sub-job data containing request details",
       "items": {
-        "$ref": "common_schema.json#/definitions/job"
+        "oneOf": [
+          {
+            "$ref": "common_schema.json#/definitions/job"
+          },
+          {
+            "type": "object",
+            "description": "The template object to be referenced",
+            "additionalProperties": false,
+            "properties": {
+              "$ref":{
+                "type": "string",
+                "description": "The relative path to a test template."
+              },
+              "args": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "required": [
+              "$ref"
+            ]
+          }
+        ]
       }
     }
   },

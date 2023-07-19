@@ -5,36 +5,8 @@ versions:
   - 1.1.0
 tags: []
 jobs:
-  - name: create_task
-    description: Create a new TES task
-    endpoint: /tasks
-    operation: POST
-    request_body: |
-      {
-        "name": "CompTest",
-        "description": "CompTest",
-        "executors": [
-          {
-            "image": "alpine",
-            "command": [
-              "echo",
-              "hello"
-            ]
-          }
-        ]
-      }
-    storage_vars:
-      id: $response.id
-    response:
-      200: { }
-  - name: cancel_task
-    description: Cancel a TES task
-    endpoint: /tasks/{id}:cancel
-    operation: POST
-    path_parameters:
-      id: "{id}"
-    response:
-      200:
+  - $ref: "./templates/create_task_template.yml"
+  - $ref: "./templates/cancel_task_template.yml"
   - name: get_task
     description: Retrieve the list of tasks tracked by the TES server
     endpoint: /tasks/{id}

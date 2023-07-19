@@ -59,12 +59,18 @@
             "additionalProperties": false,
             "properties": {
               "interval": {
-                "type": "number",
-                "description": "The polling interval between each request in seconds"
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ],
+                "description": "The polling interval between each request in seconds. String value allowed to define variable in template, otherwise numeric value."
               },
               "timeout": {
-                "type": "number",
-                "description": "The polling timeout in seconds"
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "number" }
+                ],
+                "description": "The polling timeout in seconds. String value allowed to define variable in template, otherwise numeric value."
               }
             },
             "required": [

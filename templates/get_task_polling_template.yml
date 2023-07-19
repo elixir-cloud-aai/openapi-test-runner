@@ -1,0 +1,13 @@
+- name: get_task
+  description: Retrieve the task details for TES task
+  endpoint: /tasks/{id}
+  operation: GET
+  path_parameters:
+    id: "{id}"
+  query_parameters:
+    - view: "{view_value}"
+  polling:
+    interval: "{polling_interval_value}"
+    timeout: "{polling_timeout_value}"
+  response:
+    200:
