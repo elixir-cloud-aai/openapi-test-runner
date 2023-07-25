@@ -1,0 +1,4 @@
+[submodule "compliance-tests-ga4gh-tes"]
+	path = compliance-tests-ga4gh-tes
+	url = https://github.com/ga4gh/compliance-tests-ga4gh-tes.git
+	branch = feature/tests
