@@ -13,7 +13,7 @@ import polling2
 import requests
 from requests.models import Response
 
-from compliance_suite.constants.constants import REQUEST_HEADERS
+from compliance_suite.constants import constants
 from compliance_suite.exceptions.compliance_exception import (
     TestFailureException,
     TestRunnerException
@@ -28,10 +28,10 @@ class Client():
         """ Initialize the Client object"""
 
         self.check_cancel = False   # Checks if the Cancel status is to be validated or not
+        self.request_headers: dict = constants.SERVICE_CONSTANTS["REQUEST_HEADERS"]
 
     def send_request(
             self,
-            service: str,
             server: str,
             version: str,
             endpoint: str,
@@ -43,7 +43,6 @@ class Client():
         """ Sends the REST request to provided server
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
             server (str): The server URL to send the request
             version (str): The version of the deployed server
             endpoint (str): The endpoint of the given server
@@ -61,15 +60,14 @@ class Client():
 
         version = "v" + version.split(".")[0]  # Convert SemVer into Major API version
         base_url: str = str(server) + version + endpoint
-        request_headers: dict = REQUEST_HEADERS[service]
         response = None
         logger.info(f"Sending {operation} request to {base_url}. Query Parameters - {query_params}")
         try:
             if operation == "GET":
-                response = requests.get(base_url, headers=request_headers, params=query_params)
+                response = requests.get(base_url, headers=self.request_headers, params=query_params)
             elif operation == "POST":
                 request_body = json.loads(request_body)
-                response = requests.post(base_url, headers=request_headers, json=request_body)
+                response = requests.post(base_url, headers=self.request_headers, json=request_body)
             return response
         except OSError as err:
             raise TestRunnerException(name="OS Error",
@@ -92,7 +90,7 @@ class Client():
         if response.status_code != 200:
             logger.info("Unexpected response from Polling request. Retrying...")
             return False
-
+        # TODO
         response_json: Any = response.json()
         valid_states = ["CANCELED", "CANCELING"] if self.check_cancel else ["COMPLETE", "EXECUTOR_ERROR",
                                                                             "SYSTEM_ERROR", "PREEMPTED"]
@@ -105,7 +103,6 @@ class Client():
 
     def poll_request(
             self,
-            service: str,
             server: str,
             version: str,
             endpoint: str,
@@ -119,7 +116,6 @@ class Client():
         """ This function polls a request to specified server with given interval and timeout
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
             server (str): The server URL to send the request
             version (str): The version of the deployed server
             endpoint (str): The endpoint of the given server
@@ -140,12 +136,11 @@ class Client():
         self.check_cancel = check_cancel_val
         version = "v" + version.split(".")[0]  # Convert SemVer into Major API version
         base_url: str = str(server) + version + endpoint
-        request_headers: dict = REQUEST_HEADERS[service]
 
         logger.info(f"Sending {operation} polling request to {base_url}. Query Parameters - {query_params}")
 
         try:
-            response = polling2.poll(lambda: requests.get(base_url, headers=request_headers, params=query_params),
+            response = polling2.poll(lambda: requests.get(base_url, headers=self.request_headers, params=query_params),
                                      step=polling_interval, timeout=polling_timeout,
                                      check_success=self.check_poll)
             return response

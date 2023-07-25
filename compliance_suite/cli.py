@@ -3,6 +3,7 @@
 This module is the entry point for the compliance suite and contains a CLI functionality
 """
 
+import importlib
 import os
 from pathlib import Path
 import re
@@ -13,6 +14,7 @@ from typing import (
 
 import click
 
+from compliance_suite.constants import constants
 from compliance_suite.functions.log import logger
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.report_server import ReportServer
@@ -43,22 +45,47 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
         raise click.BadParameter("Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.")
 
 
+def set_service_constants(ctx: Any, param: Any, value: str):
+    # TODO
+
+    if value == "TES":
+        constants_module_path = constants.TES_TESTS_DIR.replace("/", ".") + "constants.constants"
+        service_constants_module = importlib.import_module(constants_module_path)
+        service_constants = getattr(service_constants_module, "SERVICE_CONSTANTS")
+        constants.SERVICE_CONSTANTS = service_constants
+
+    return value
+
+
+def transform_test_path(ctx: Any, param: Any, value: List[str]):
+    # TODO
+
+    if ctx.params['service'] == "TES" and value == ("tests",):
+        modified_value = [constants.TES_TESTS_DIR + value[0]]
+        return modified_value
+
+    return value
+
 @main.command(help='Run TES compliance tests against the servers')
+@click.option('--service', '-sv', required=True, type=str,
+              help='the API service name to refer the compliance tests', callback=set_service_constants) #TODO
 @click.option('--server', '-s', required=True, type=str, prompt="Enter server",
               help='server URL on which the compliance tests are run. Format - https://<url>/')
 @click.option('--version', '-v', required=True, type=str, prompt="Enter version",
-              help='TES version. Example - "1.0.0"')
+              help='API version. Example - "1.0.0"')
 @click.option('--include-tags', '-i', 'include_tags', multiple=True,
               help='run tests for provided tags', callback=validate_regex)
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
               help='skip tests for provided tags', callback=validate_regex)
 @click.option('--test-path', '-tp', 'test_path', multiple=True,
-              help='the absolute or relative path of the tests to be run', default=["tests"])
+              help='the absolute or relative path of the tests to be run', default=["tests"],
+              callback=transform_test_path)
 @click.option('--output_path', '-o', help='path to output the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
 @click.option('--uptime', '-u', default=3600, help='time that server will remain up in seconds')
-def report(server: str,
+def report(service: str,
+           server: str,
            version: str,
            include_tags: List[str],
            exclude_tags: List[str],
@@ -71,8 +98,9 @@ def report(server: str,
     Run the compliance suite for the given tags.
 
     Args:
+        service: The API service name to refer the compliance tests
         server (str): The server URL on which the compliance suite will be run. Format - https://<url>/
-        version (str): The compliance suite will be run against this TES version. Example - "1.0.0"
+        version (str): The compliance suite will be run against this API version. Example - "1.0.0"
         include_tags (List[str]): The list of the tags for which the compliance suite will be run.
         exclude_tags (List[str]): The list of the tags for which the compliance suite will not be run.
         test_path: The list of absolute or relative paths from the project root of the test file/directory.
@@ -91,7 +119,7 @@ def report(server: str,
     include_tags = [val.lower() for val in include_tags]
     exclude_tags = [val.lower() for val in exclude_tags]
 
-    logger.info(f"Provided server: {server} version: {version}")
+    logger.info(f"Provided service: {service} server: {server} version: {version}")
     logger.info(f"Provided tags - include: {include_tags} exclude: {exclude_tags}")
     logger.info(f"Provided test path: {test_path}")
     job_runner = JobRunner(server, version)

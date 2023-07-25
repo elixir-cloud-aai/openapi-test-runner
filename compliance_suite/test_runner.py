@@ -16,7 +16,7 @@ from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
 
-from compliance_suite.constants.constants import ENDPOINT_TO_MODEL
+from compliance_suite.constants import constants
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
@@ -34,7 +34,7 @@ class TestRunner():
         """Initialize the Test Runner object
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
+            service (str): The API service name
             server (str): The server URL to send the request
             version (str): The version of the deployed server
         """
@@ -80,7 +80,7 @@ class TestRunner():
             json_data: Any,
             message: str
     ) -> None:
-        """ Validates if the response is in accordance with the TES API Specs and Models. Validation is done via
+        """ Validates if the response is in accordance with the API Specs and Models. Validation is done via
         Pydantic generated models
 
         Args:
@@ -96,8 +96,9 @@ class TestRunner():
 
         try:
             pydantic_module: Any = importlib.import_module(
-                "compliance_suite.models.v" + self.version.replace('.', '_') + "_specs")
-            pydantic_model_class: Any = getattr(pydantic_module, ENDPOINT_TO_MODEL[endpoint_model])
+                constants.SERVICE_CONSTANTS["DIR_NAME"] + ".models.v" + self.version.replace('.', '_') + "_specs")
+            pydantic_model_class: Any = getattr(pydantic_module,
+                                                constants.SERVICE_CONSTANTS["ENDPOINT_TO_MODEL"][endpoint_model])
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
@@ -365,14 +366,14 @@ class TestRunner():
             if "env_vars" in self.job_data.keys() and "check_cancel" in self.job_data["env_vars"].keys():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
-            response = client.poll_request(service=self.service, server=self.server, version=self.version,
+            response = client.poll_request(server=self.server, version=self.version,
                                            endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
-            response = client.send_request(service=self.service, server=self.server, version=self.version,
+            response = client.send_request(server=self.server, version=self.version,
                                            endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            request_body=request_body)
