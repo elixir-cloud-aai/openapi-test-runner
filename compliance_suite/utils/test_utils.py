@@ -5,7 +5,8 @@ This module contains the utility functions to perform actions on test files
 
 from typing import (
     Any,
-    List
+    List,
+    Union
 )
 
 
@@ -34,7 +35,7 @@ def tag_matcher(
     )
 
 
-def replace_string(data: Any, search_str: str, replace_str: str) -> Any:
+def replace_string(data: Any, search_str: str, replace_str: Union[str, int]) -> Any:
     """Replace all occurrences of `search_str` in `data` with `replace_str`.
 
     Args:
@@ -54,5 +55,5 @@ def replace_string(data: Any, search_str: str, replace_str: str) -> Any:
         for key, value in data.items():
             data[key] = replace_string(value, search_str, replace_str)
         return data
-    elif isinstance(data, str):
+    elif isinstance(data, str) or isinstance(data, int):
         return replace_str if data == search_str else data
