@@ -29,9 +29,8 @@ class BasicException(Exception):
 
 
 class TestFailureException(BasicException):
-    """ When a test fails due to incomplete/wrong implementation of a TES server. The exception
-    highlights the possible changes required by the TES server to follow the standard
-    TES API Specs"""
+    """ When a test fails due to incomplete/wrong implementation of an API server. The exception
+    highlights the possible changes required by the API server to follow the standard API Specs"""
 
     def __init__(self, name: str, message: str, details: Any):
         """Initialize Test Failure Exception object

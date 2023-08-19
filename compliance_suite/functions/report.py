@@ -22,9 +22,9 @@ class Report():
     def initialize_report(self) -> None:
         """Set Testbed Report details"""
 
-        self.report.set_testbed_name("TES Compliance Suite")
+        self.report.set_testbed_name("API Compliance Suite")
         self.report.set_testbed_version("0.1.0")
-        self.report.set_testbed_description("TES Compliance Suite tests the platform against the GA4GH TES API "
+        self.report.set_testbed_description("The compliance suite tests the platform against the GA4GH TES API "
                                             "specs. Its an automated tool system testing against YAML-based test "
                                             "files along with the ability to validate cloud service/functionality.")
 
@@ -37,7 +37,7 @@ class Report():
 
         self.platform_name = platform_server
         self.report.set_platform_name(platform_server)
-        self.report.set_platform_description(f"TES service deployed on the {platform_server}")
+        self.report.set_platform_description(f"API service deployed on the {platform_server}")
 
     def add_phase(self, filename: str, description: str) -> Any:
         """Add a phase which is individual YAML test file
