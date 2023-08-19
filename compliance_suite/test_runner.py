@@ -94,7 +94,7 @@ class TestRunner():
         try:
             constants = importlib.import_module("constants.constants")
             pydantic_module = importlib.import_module(
-                "compliance_suite.models.v" + self.version.replace('.', '_') + "_specs")
+                "models.v" + self.version.replace('.', '_') + "_specs")
             pydantic_model_class: Any = getattr(pydantic_module, constants.ENDPOINT_TO_MODEL[endpoint_model])
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
