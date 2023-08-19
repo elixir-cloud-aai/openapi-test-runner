@@ -50,7 +50,7 @@ class JobRunner:
 
         Args:
             server (str): The server URL on which the compliance suite will be run
-            version (str): The compliance suite will be run against this TES version
+            version (str): The compliance suite will be run against this API version
         """
 
         self.server: str = server
@@ -136,9 +136,9 @@ class JobRunner:
                                          details=err)
 
         # Validate YAML data with schema
-        schema_dir_path = Path("docs/test_config").absolute()
-        test_schema_path = Path("docs/test_config/test_schema.json")
-        template_schema_path = Path("docs/test_config/template_schema.json")
+        schema_dir_path = Path("test_config").absolute()
+        test_schema_path = Path("test_config/test_schema.json")
+        template_schema_path = Path("test_config/template_schema.json")
         schema_file_path = str(test_schema_path if _type == TEST else template_schema_path)
         json_schema = yaml.safe_load(open(schema_file_path, "r"))
 
@@ -183,7 +183,7 @@ class JobRunner:
 
             if (self.version in yaml_data["versions"]
                     and tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
-                test_runner = TestRunner(yaml_data["service"], self.server, self.version)
+                test_runner = TestRunner(self.server, self.version)
                 job_list: List[Dict] = []
                 for job in yaml_data["jobs"]:
                     if "$ref" in job:
