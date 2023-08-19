@@ -10,9 +10,9 @@ with open(req, 'r') as _file:
     install_requires: list = _file.read().splitlines()
 
 setup(
-    name='tes-compliance-suite',
+    name='api-compliance-suite',
     version='0.1.0',
-    description='TES Compliance Suite to perform conformance testing to API specs and functionality',
+    description='API Compliance Suite to perform conformance testing to API specs and functionality',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/elixir-cloud-aai/tes-compliance-suite',
@@ -36,11 +36,6 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Typing :: Typed',
     ],
-    entry_points={
-        'console_scripts': [
-            'tes-compliance-suite = compliance_suite.cli:main',
-        ],
-    },
     keywords=(
         'ga4gh tes elixir rest api app server openapi '
         'python compliance testing pydantic yaml '
@@ -52,7 +47,5 @@ setup(
     },
     license='Apache License 2.0',
     packages=find_packages(),
-    package_data={'': ['../tests/*', 'web/*/*']},
-    install_requires=install_requires,
-    include_package_data=True,
+    install_requires=install_requires
 )
