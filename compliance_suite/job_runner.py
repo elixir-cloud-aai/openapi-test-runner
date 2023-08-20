@@ -115,7 +115,7 @@ class JobRunner:
         logger.summary("", PATTERN_HASH_CENTERED)
         logger.summary("\n\n\n")
 
-    def load_and_validate_yaml_data(self, yaml_file: str, _type: str):
+    def load_and_validate_yaml_data(self, yaml_file: str, _type: str) -> Any:
         """
         Load and validate YAML data from the file with the provided schema type.
 

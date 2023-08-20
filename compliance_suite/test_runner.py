@@ -351,7 +351,7 @@ class TestRunner():
                 query_params.update(param)
         self.transform_parameters(query_params)
 
-        if self.job_data["name"] in ["create_task"]:
+        if "request_body" in self.job_data:
             request_body: str = self.job_data["request_body"]
             self.validate_request_body(request_body)
 
