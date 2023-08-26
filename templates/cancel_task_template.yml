@@ -1,8 +1,0 @@
-- name: cancel_task
-  description: Cancel a TES task
-  endpoint: /tasks/{id}:cancel
-  operation: POST
-  path_parameters:
-    id: "{id}"
-  response:
-    200:
