@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
         with:
 #          repository: ${{ github.event.inputs.test_repo_url }}
-          repository: https://github.com/ga4gh/compliance-tests-ga4gh-tes.git
+          repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
           path: tmp/testdir/
       - name: Checkout current repository
