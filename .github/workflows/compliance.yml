@@ -69,6 +69,10 @@ jobs:
           echo "GitHub Workspace: $GITHUB_WORKSPACE"
           echo "Listing Files and Folders:"
           ls -la
+          cd tmp
+          cd testdir
+          echo "Listing Files and Folders:"
+          ls -la
       - name: Run compliance tests
         run: compliance-suite report --server "https://csc-tesk-noauth.rahtiapp.fi/" --version "1.1.0" -tp "tmp/testdir/compliance-tests-ga4gh-tes/tests"
 #        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }}
