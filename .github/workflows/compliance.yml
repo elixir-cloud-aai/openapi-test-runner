@@ -26,6 +26,22 @@ jobs:
         python-version: [ "3.8" ]
 
     steps:
+      - name: Test
+        run: |
+          echo "Current Working Directory: $PWD"
+          echo "GitHub Workspace: $GITHUB_WORKSPACE"
+          echo "Listing Files and Folders:"
+          ls -la
+      - name: Checkout current repository
+        uses: actions/checkout@v3
+        with:
+          ref: feature/ci
+      - name: Test
+        run: |
+          echo "Current Working Directory: $PWD"
+          echo "GitHub Workspace: $GITHUB_WORKSPACE"
+          echo "Listing Files and Folders:"
+          ls -la
       - name: Checkout tests repository
         uses: actions/checkout@v3
         with:
@@ -33,10 +49,12 @@ jobs:
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
           path: tmp/testdir/
-      - name: Checkout current repository
-        uses: actions/checkout@v3
-        with:
-          ref: feature/ci
+      - name: Test
+        run: |
+          echo "Current Working Directory: $PWD"
+          echo "GitHub Workspace: $GITHUB_WORKSPACE"
+          echo "Listing Files and Folders:"
+          ls -la
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
