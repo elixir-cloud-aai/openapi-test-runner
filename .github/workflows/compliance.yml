@@ -29,10 +29,14 @@ jobs:
       - name: Checkout tests repository
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.event.inputs.test_repo_url }}
+#          repository: ${{ github.event.inputs.test_repo_url }}
+          repository: https://github.com/ga4gh/compliance-tests-ga4gh-tes.git
+          ref: feature/tests
           path: tmp/testdir/
       - name: Checkout current repository
         uses: actions/checkout@v3
+        with:
+          ref: feature/ci
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -42,4 +46,5 @@ jobs:
           python -m pip install -e .
           pip install -r requirements.txt
       - name: Run compliance tests
-        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }}
+        run: compliance-suite report --server "https://csc-tesk-noauth.rahtiapp.fi/" --version "1.1.0"
+#        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }}
