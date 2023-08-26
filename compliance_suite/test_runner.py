@@ -108,10 +108,11 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            model_dir = Path("tmp/testdir/models")
-            model_file_name = "models.v" + self.version.replace('.', '_') + "_specs.py"
+            model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
+            model_path = Path("tmp/testdir/models/"+model_file_name)
+            model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
             print(model_file_name)
-            spec = importlib.util.spec_from_file_location(model_file_name, str(model_dir))
+            spec = importlib.util.spec_from_file_location("models."+model_file_name, str(model_path))
             pydantic_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(pydantic_module)
             # pydantic_module_path = "tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs"
