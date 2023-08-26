@@ -53,7 +53,7 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
               help='skip tests for provided tags', callback=validate_regex)
 @click.option('--test-path', '-tp', 'test_path', multiple=True,
-              help='the absolute or relative path of the tests to be run', default=["tests"])
+              help='the absolute or relative path of the tests to be run', default=["tmp/testdir/tests"])
 @click.option('--output_path', '-o', help='the absolute directory path to store the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
