@@ -4,6 +4,7 @@ This module contains class definition for Test Runner to run the individual jobs
 """
 
 import importlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -107,9 +108,15 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            pydantic_module_path = ("tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs")
-            print(pydantic_module_path)
-            pydantic_module: Any = importlib.import_module(pydantic_module_path)
+            model_dir = Path("tmp/testdir/models")
+            model_file_name = "models.v" + self.version.replace('.', '_') + "_specs.py"
+            print(model_file_name)
+            spec = importlib.util.spec_from_file_location(model_file_name, str(model_dir))
+            pydantic_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(pydantic_module)
+            # pydantic_module_path = "tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs"
+            # print(pydantic_module_path)
+            # pydantic_module: Any = importlib.import_module(pydantic_module_path)
             pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
             pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
