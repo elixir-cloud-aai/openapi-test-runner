@@ -107,8 +107,7 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            pydantic_module_path = ("tmp.testdir." + self.tests_repo_name + ".models.v" +
-                                    self.version.replace('.', '_') + "_specs")
+            pydantic_module_path = ("tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs")
             pydantic_module: Any = importlib.import_module(pydantic_module_path)
             pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
             pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
