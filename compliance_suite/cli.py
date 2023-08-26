@@ -88,8 +88,10 @@ def report(server: str,
     print(Path(__file__).parent.resolve())
 
     print(Path("tmp").exists())
-    print(Path("../tmp").exists())
-    print(Path("../../tmp").exists())
+    print(Path("tmp/testdir").exists())
+    print(Path("tmp/testdir/compliance-tests-ga4gh-tes").exists())
+    print(Path("tmp/testdir/compliance-tests-ga4gh-tes/tests").exists())
+    print(Path("tmp/testdir/tests").exists())
     print(Path("/home/runner/work/tes-compliance-suite/tes-compliance-suite/tmp").exists())
 
     for path in test_path:
