@@ -83,6 +83,9 @@ def report(server: str,
         uptime (int): The local server duration in seconds. Default - 3600 seconds
     """
 
+    print(test_path)
+    print(Path(__file__).resolve())
+    
     for path in test_path:
         if not Path(path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
