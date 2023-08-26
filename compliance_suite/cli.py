@@ -85,7 +85,13 @@ def report(server: str,
 
     print(test_path)
     print(Path(__file__).resolve())
-    
+    print(Path(__file__).parent.resolve())
+
+    print(Path("tmp").exists())
+    print(Path("../tmp").exists())
+    print(Path("../../tmp").exists())
+    print(Path("/home/runner/work/tes-compliance-suite/tes-compliance-suite/tmp").exists())
+
     for path in test_path:
         if not Path(path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
