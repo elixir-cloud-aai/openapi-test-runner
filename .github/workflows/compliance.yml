@@ -1,6 +1,9 @@
 name: Run compliance tests
 
 on:
+  push:
+    branches:
+      - feature/ci
   workflow_dispatch:
     inputs:
       test_repo_url:
