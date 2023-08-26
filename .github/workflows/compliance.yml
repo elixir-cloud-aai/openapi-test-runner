@@ -71,6 +71,7 @@ jobs:
           ls -la
           cd tmp
           cd testdir
+          cd tests
           echo "Listing Files and Folders:"
           ls -la
       - name: Run compliance tests
