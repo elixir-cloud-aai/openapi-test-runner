@@ -1,13 +1,13 @@
 description: <Job Description>    # Optional
-service: <GA4GH Service Name>   # enum - [TES]
+service: <API Service Name>
 versions:
   - <Version>
 tags:
-  - <Tag Name>                # Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and "All" tag
+  - <Tag Name>
 jobs:
-  - name: <Sub job 1 to be run>   # enum - [service_info, list_tasks, create_task, get_task, cancel_task
+  - name: <Sub job 1 to be run>
     description: <individual job description>       # Optional
-    endpoint: <API endpoint>    # enum - [/service-info, /tasks, /tasks/{id}, /tasks/{id}:cancel]
+    endpoint: <API endpoint>
     operation: <HTTP operation>
     path_parameters:                                # Required when path parameter present in endpoint
       <Path Param name>: <value>

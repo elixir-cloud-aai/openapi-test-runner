@@ -10,10 +10,7 @@
     },
     "service": {
       "type": "string",
-      "description": "The GA4GH service name",
-      "enum": [
-        "TES"
-      ]
+      "description": "The API service name"
     },
     "versions": {
       "type": "array",
@@ -24,7 +21,7 @@
     },
     "tags": {
       "type": "array",
-      "description": "The list of tags which define the test file. Example. Logical - No Polling needed, Functional - Polling needed. Always add 3 tags - Individual tag based on test name, TES endpoint tag and All tag",
+      "description": "The list of tags which define the test file.",
       "items": {
         "type": "string"
       },
@@ -45,7 +42,7 @@
             "properties": {
               "$ref":{
                 "type": "string",
-                "description": "The relative path to a test template."
+                "description": "The relative path from tests repo root to a test template."
               },
               "args": {
                 "type": "object",
