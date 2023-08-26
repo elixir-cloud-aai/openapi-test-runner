@@ -46,7 +46,7 @@ class TestRunner():
         self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
         self.report_test: Any = None        # Test object to store the result
         self.api_config: Any = None         # Store API config from Tests Repository
-        self.tests_repo_name: str = next(Path("tmp/testdir").iterdir()).name
+        self.set_api_config()
 
     def set_job_data(self, job_data: Any) -> None:
         """Set the individual sub job data
@@ -118,6 +118,7 @@ class TestRunner():
             # pydantic_module_path = "tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs"
             # print(pydantic_module_path)
             # pydantic_module: Any = importlib.import_module(pydantic_module_path)
+            print(self.api_config)
             pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
             pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
