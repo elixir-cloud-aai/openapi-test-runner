@@ -83,8 +83,8 @@ class TestRunner():
         try:
             self.api_config = yaml.safe_load(open(api_config_path, "r"))
         except yaml.YAMLError as err:
-            raise JobValidationException(name="YAML Error",
-                                         message=f"Invalid YAML file {api_config_path}",
+            raise TestFailureException(name="YAML Error",
+                                         message=f"Invalid YAML file {api_config_path} inside tests repo",
                                          details=err)
 
     def validate_logic(
@@ -114,9 +114,7 @@ class TestRunner():
             spec = importlib.util.spec_from_file_location("models."+model_file_name, str(model_path))
             pydantic_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(pydantic_module)
-            # pydantic_module_path = "tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs"
-            # print(pydantic_module_path)
-            # pydantic_module: Any = importlib.import_module(pydantic_module_path)
+
             pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
             pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model

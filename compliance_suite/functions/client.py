@@ -30,7 +30,7 @@ class Client():
         self.request_headers: Dict = {}
 
     def set_request_headers(self, request_headers) -> None:
-        """ Sends the REST request to provided server
+        """ Set the request headers
 
             Args:
                 request_headers: The request headers extracted from Tests repo API config
