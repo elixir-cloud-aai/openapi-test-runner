@@ -32,10 +32,6 @@ jobs:
           echo "GitHub Workspace: $GITHUB_WORKSPACE"
           echo "Listing Files and Folders:"
           ls -la
-          sudo add-apt-repository -y ppa:git-core/ppa
-          sudo apt-get update
-          sudo apt-get install git -y
-          git config --global init.defaultBranch main
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
@@ -47,6 +43,7 @@ jobs:
           echo "GitHub Workspace: $GITHUB_WORKSPACE"
           echo "Listing Files and Folders:"
           ls -la
+          rm -rf .git
       - name: Checkout tests repository
         uses: actions/checkout@v3
         with:
