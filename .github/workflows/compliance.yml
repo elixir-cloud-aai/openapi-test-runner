@@ -46,7 +46,7 @@ jobs:
       - name: Checkout tests repository
         uses: actions/checkout@v2
         with:
-           clean: false
+          clean: false
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
