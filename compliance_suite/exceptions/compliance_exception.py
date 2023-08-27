@@ -29,7 +29,7 @@ class BasicException(Exception):
 
 
 class TestFailureException(BasicException):
-    """ When a test fails due to incomplete/wrong implementation of a TES server. The exception
+    """ When a test fails due to incomplete/wrong implementation of an API server. The exception
     highlights the possible changes required by the TES server to follow the standard
     TES API Specs"""
 

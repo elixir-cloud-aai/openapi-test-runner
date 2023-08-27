@@ -50,7 +50,7 @@ class JobRunner:
 
         Args:
             server (str): The server URL on which the compliance suite will be run
-            version (str): The compliance suite will be run against this TES version
+            version (str): The compliance suite will be run against this API version
         """
 
         self.server: str = server
@@ -115,7 +115,7 @@ class JobRunner:
         logger.summary("", PATTERN_HASH_CENTERED)
         logger.summary("\n\n\n")
 
-    def load_and_validate_yaml_data(self, yaml_file: str, _type: str):
+    def load_and_validate_yaml_data(self, yaml_file: str, _type: str) -> Any:
         """
         Load and validate YAML data from the file with the provided schema type.
 
@@ -129,16 +129,16 @@ class JobRunner:
 
         # Load YAML data
         try:
-            yaml_data = yaml.safe_load(open(yaml_file, "r"))
+            yaml_data = yaml.safe_load(open(yaml_file if _type == TEST else "tmp/testdir/"+yaml_file, "r"))
         except yaml.YAMLError as err:
             raise JobValidationException(name="YAML Error",
                                          message=f"Invalid YAML file {yaml_file}",
                                          details=err)
 
         # Validate YAML data with schema
-        schema_dir_path = Path("docs/test_config").absolute()
-        test_schema_path = Path("docs/test_config/test_schema.json")
-        template_schema_path = Path("docs/test_config/template_schema.json")
+        schema_dir_path = Path("compliance_suite/test_config").absolute()
+        test_schema_path = Path("compliance_suite/test_config/test_schema.json")
+        template_schema_path = Path("compliance_suite/test_config/template_schema.json")
         schema_file_path = str(test_schema_path if _type == TEST else template_schema_path)
         json_schema = yaml.safe_load(open(schema_file_path, "r"))
 
@@ -183,7 +183,7 @@ class JobRunner:
 
             if (self.version in yaml_data["versions"]
                     and tag_matcher(self.include_tags, self.exclude_tags, yaml_data["tags"])):
-                test_runner = TestRunner(yaml_data["service"], self.server, self.version)
+                test_runner = TestRunner(self.server, self.version)
                 job_list: List[Dict] = []
                 for job in yaml_data["jobs"]:
                     if "$ref" in job:
@@ -233,7 +233,7 @@ class JobRunner:
             if search_path.is_file() and search_path.match("*.yml"):
                 self.initialize_test(search_path)
             elif search_path.is_dir():
-                for yaml_file in search_path.glob("**/*.yml"):
+                for yaml_file in sorted(search_path.glob("**/*.yml")):
                     self.initialize_test(yaml_file)
 
         self.generate_summary()

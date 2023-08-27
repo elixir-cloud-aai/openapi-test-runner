@@ -4,19 +4,21 @@ This module contains class definition for Test Runner to run the individual jobs
 """
 
 import importlib
+import importlib.util
 import json
+from pathlib import Path
 import re
 from typing import (
     Any,
     Dict
 )
+import yaml
 
 from dotmap import DotMap
 from ga4gh.testbed.report.test import Test
 from pydantic import ValidationError
 from requests.models import Response
 
-from compliance_suite.constants.constants import ENDPOINT_TO_MODEL
 from compliance_suite.exceptions.compliance_exception import (
     JobValidationException,
     TestFailureException
@@ -30,21 +32,21 @@ class TestRunner():
     """Class to run individual jobs by sending requests to the server endpoints. It stores the data to be used by other
     jobs. It validates the request, response and their schemas"""
 
-    def __init__(self, service: str, server: str, version: str):
+    def __init__(self, server: str, version: str):
         """Initialize the Test Runner object
 
         Args:
-            service (str): The GA4GH service name (eg. TES)
             server (str): The server URL to send the request
             version (str): The version of the deployed server
         """
 
-        self.service: str = service
         self.server: str = server
         self.version: str = version
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
         self.report_test: Any = None        # Test object to store the result
+        self.api_config: Any = None         # Store API config from Tests Repository
+        self.set_api_config()
 
     def set_job_data(self, job_data: Any) -> None:
         """Set the individual sub job data
@@ -74,13 +76,24 @@ class TestRunner():
 
         self.report_test = report_test
 
+    def set_api_config(self) -> None:
+        """Retrieve the API config from Tests Repo and set the api_config"""
+
+        api_config_path = Path("tmp/testdir/api_config.yml")
+        try:
+            self.api_config = yaml.safe_load(open(api_config_path, "r"))
+        except yaml.YAMLError as err:
+            raise TestFailureException(name="YAML Error",
+                                       message=f"Invalid YAML file {api_config_path} inside tests repo",
+                                       details=err)
+
     def validate_logic(
             self,
             endpoint_model: str,
             json_data: Any,
             message: str
     ) -> None:
-        """ Validates if the response is in accordance with the TES API Specs and Models. Validation is done via
+        """ Validates if the response is in accordance with the API Specs and Models. Validation is done via
         Pydantic generated models
 
         Args:
@@ -95,9 +108,15 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            pydantic_module: Any = importlib.import_module(
-                "compliance_suite.models.v" + self.version.replace('.', '_') + "_specs")
-            pydantic_model_class: Any = getattr(pydantic_module, ENDPOINT_TO_MODEL[endpoint_model])
+            model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
+            model_path = Path("tmp/testdir/models/"+model_file_name)
+            model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
+            spec = importlib.util.spec_from_file_location("models."+model_file_name, str(model_path))
+            pydantic_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(pydantic_module)
+
+            pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
+            pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
@@ -353,11 +372,12 @@ class TestRunner():
                 query_params.update(param)
         self.transform_parameters(query_params)
 
-        if self.job_data["name"] in ["create_task"]:
+        if "request_body" in self.job_data:
             request_body: str = self.job_data["request_body"]
             self.validate_request_body(request_body)
 
         client = Client()
+        client.set_request_headers(self.api_config["REQUEST_HEADERS"])
 
         if "polling" in self.job_data.keys():
 
@@ -365,14 +385,14 @@ class TestRunner():
             if "env_vars" in self.job_data.keys() and "check_cancel" in self.job_data["env_vars"].keys():
                 check_cancel = self.job_data["env_vars"]["check_cancel"]
 
-            response = client.poll_request(service=self.service, server=self.server, version=self.version,
+            response = client.poll_request(server=self.server, version=self.version,
                                            endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            polling_interval=self.job_data["polling"]["interval"],
                                            polling_timeout=self.job_data["polling"]["timeout"],
                                            check_cancel_val=check_cancel)
         else:
-            response = client.send_request(service=self.service, server=self.server, version=self.version,
+            response = client.send_request(server=self.server, version=self.version,
                                            endpoint=self.job_data["endpoint"], path_params=path_params,
                                            query_params=query_params, operation=self.job_data["operation"],
                                            request_body=request_body)
