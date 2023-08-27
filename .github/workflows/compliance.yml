@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout tests repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           clean: false
 #          repository: ${{ github.event.inputs.test_repo_url }}
@@ -41,7 +41,7 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
       - name: Checkout current repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           clean: false
           ref: feature/ci
