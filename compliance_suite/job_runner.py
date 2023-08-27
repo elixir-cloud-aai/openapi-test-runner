@@ -129,7 +129,7 @@ class JobRunner:
 
         # Load YAML data
         try:
-            yaml_data = yaml.safe_load(open(yaml_file, "r"))
+            yaml_data = yaml.safe_load(open(yaml_file if _type == TEST else "tmp/testdir/"+yaml_file, "r"))
         except yaml.YAMLError as err:
             raise JobValidationException(name="YAML Error",
                                          message=f"Invalid YAML file {yaml_file}",
