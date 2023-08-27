@@ -95,7 +95,7 @@ def report(server: str,
     print(Path("/home/runner/work/tes-compliance-suite/tes-compliance-suite/tmp").exists())
 
     for path in test_path:
-        if not Path(path).exists():
+        if not Path("tmp/testdir/" + path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
 
     # Convert the tags into lowercase to allow case-insensitive tags
