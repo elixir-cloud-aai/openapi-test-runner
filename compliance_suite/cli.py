@@ -98,26 +98,10 @@ def report(server: str,
         uptime (int): The local server duration in seconds. Default - 3600 seconds
     """
 
-    print(test_path)
-    print(Path(__file__).resolve())
-    print(Path(__file__).parent.resolve())
 
-    print(Path("tmp").exists())
-    print(Path("tmp/testdir").exists())
-    print(Path("tmp/testdir/compliance-tests-ga4gh-tes").exists())
-    print(Path("tmp/testdir/compliance-tests-ga4gh-tes/tests").exists())
-    print(Path("tmp/testdir/tests").exists())
-    print(Path("/home/runner/work/tes-compliance-suite/tes-compliance-suite/tmp").exists())
-
-    print(test_path)
     for path in test_path:
-        # print(path)
-        # path = "tmp/testdir/" + path        # Correct path wrt to Github workspace
-        # print(path)
         if not Path(path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
-    print(test_path)
-    print(type(test_path))
 
     # Convert the tags into lowercase to allow case-insensitive tags
     include_tags = [val.lower() for val in include_tags]
