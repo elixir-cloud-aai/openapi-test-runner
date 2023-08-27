@@ -8,16 +8,17 @@ on:
     inputs:
       test_repo_url:
         description: 'Tests repository (format: owner/repo)'
-        required: True
-        example: 'elixir-cloud-aai/tes-compliance-suite'
+        required: true
+        default: 'elixir-cloud-aai/tes-compliance-suite'
       server:
         description: 'The API server URL'
-        required: True
+        required: true
       version:
         description: 'The API version'
-        required: True
+        required: true
       extra:
         description: 'Additional compliance parameters (format: --param1 value --param2 value')
+        required: false
 
 jobs:
   compliance:
