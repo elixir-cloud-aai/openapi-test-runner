@@ -16,7 +16,7 @@ on:
       version:
         description: 'The API version'
         required: true
-      extra:
+      extra_params:
         description: 'Additional compliance parameters (format: --param1 value --param2 value')
         required: false
 
@@ -36,7 +36,7 @@ jobs:
           echo "test_repo_url: ${{ github.event.inputs.test_repo_url }}"
           echo "server: ${{ github.event.inputs.server }}"
           echo "version: ${{ github.event.inputs.version }}"
-          echo "extra : ${{ github.event.inputs.extra }}"
+          echo "extra_params : ${{ github.event.inputs.extra_params }}"
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
