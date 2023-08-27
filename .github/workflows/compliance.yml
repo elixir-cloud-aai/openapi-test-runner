@@ -33,11 +33,10 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
       - name: Checkout current repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           clean: false
           ref: feature/ci
-          path: $GITHUB_WORKSPACE
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
@@ -45,13 +44,12 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
       - name: Checkout tests repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           clean: false
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
-          path: $GITHUB_WORKSPACE
 #          path: tmp/testdir/
       - name: Test
         run: |
