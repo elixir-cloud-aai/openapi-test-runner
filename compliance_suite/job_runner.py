@@ -230,7 +230,7 @@ class JobRunner:
         self.report.set_platform_details(self.server)
 
         for test_path in self.test_path:
-            search_path = Path(test_path)
+            search_path = Path("tmp/testdir/" + test_path)
             if search_path.is_file() and search_path.match("*.yml"):
                 self.initialize_test(search_path)
             elif search_path.is_dir():
