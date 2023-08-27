@@ -1,4 +1,4 @@
-name: 'Run compliance tests'
+name: Run compliance tests
 
 on:
 #  push:
@@ -17,7 +17,7 @@ on:
         description: 'The API version'
         required: true
       extra_params:
-        description: 'Additional compliance parameters (format: --param1 value --param2 value')
+        description: 'Additional compliance parameters (format: --param1 value --param2 value)'
         required: false
 
 jobs:
