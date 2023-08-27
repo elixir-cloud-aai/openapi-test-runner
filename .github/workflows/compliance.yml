@@ -48,7 +48,7 @@ jobs:
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
-          path: tmp/testdir/
+#          path: tmp/testdir/
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
@@ -63,17 +63,17 @@ jobs:
         run: |
           python -m pip install -e .
           pip install -r requirements.txt
-      - name: Test
-        run: |
-          echo "Current Working Directory: $PWD"
-          echo "GitHub Workspace: $GITHUB_WORKSPACE"
-          echo "Listing Files and Folders:"
-          ls -la
-          cd tmp
-          cd testdir
-          cd tests
-          echo "Listing Files and Folders:"
-          ls -la
+#      - name: Test
+#        run: |
+#          echo "Current Working Directory: $PWD"
+#          echo "GitHub Workspace: $GITHUB_WORKSPACE"
+#          echo "Listing Files and Folders:"
+#          ls -la
+#          cd tmp
+#          cd testdir
+#          cd tests
+#          echo "Listing Files and Folders:"
+#          ls -la
       - name: Run compliance tests
         run: compliance-suite report --server "https://csc-tesk-noauth.rahtiapp.fi/" --version "1.1.0" -tp "tmp"
 #        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }}
