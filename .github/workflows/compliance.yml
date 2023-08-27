@@ -33,7 +33,7 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
       - name: Checkout current repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           ref: feature/ci
       - name: Test
@@ -43,12 +43,12 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
       - name: Checkout tests repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
-          clean: false
+#          clean: false
 #          path: tmp/testdir/
       - name: Test
         run: |
