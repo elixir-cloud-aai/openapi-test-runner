@@ -26,6 +26,14 @@ jobs:
         python-version: [ "3.8" ]
 
     steps:
+      - name: Checkout tests repository
+        uses: actions/checkout@v2
+        with:
+          clean: false
+#          repository: ${{ github.event.inputs.test_repo_url }}
+          repository: ga4gh/compliance-tests-ga4gh-tes
+          ref: feature/tests
+#          path: tmp/testdir/
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
@@ -35,7 +43,7 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v2
         with:
-#          clean: false
+          clean: false
           ref: feature/ci
       - name: Test
         run: |
@@ -44,15 +52,6 @@ jobs:
           echo "Listing Files and Folders:"
           ls -la
 #          rm -rf .git
-      - name: Checkout tests repository
-        uses: actions/checkout@v2
-        with:
-#          clean: false
-#          repository: ${{ github.event.inputs.test_repo_url }}
-          repository: ga4gh/compliance-tests-ga4gh-tes
-          ref: feature/tests
-          shallow-clone: true
-#          path: tmp/testdir/
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
