@@ -53,7 +53,7 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
               help='skip tests for provided tags', callback=validate_regex)
 @click.option('--test-path', '-tp', 'test_path', multiple=True,
-              help='the absolute or relative path of the tests to be run', default=["tmp/testdir/tests"])
+              help='the absolute or relative path of the tests to be run', default=["tests"])
 @click.option('--output_path', '-o', help='the absolute directory path to store the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
@@ -95,7 +95,8 @@ def report(server: str,
     print(Path("/home/runner/work/tes-compliance-suite/tes-compliance-suite/tmp").exists())
 
     for path in test_path:
-        if not Path("tmp/testdir/" + path).exists():
+        path = "tmp/testdir/" + path        # Correct path wrt to Github workspace
+        if not Path(path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
 
     # Convert the tags into lowercase to allow case-insensitive tags
