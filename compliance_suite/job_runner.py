@@ -233,7 +233,7 @@ class JobRunner:
             if search_path.is_file() and search_path.match("*.yml"):
                 self.initialize_test(search_path)
             elif search_path.is_dir():
-                for yaml_file in search_path.glob("**/*.yml"):
+                for yaml_file in sorted(search_path.glob("**/*.yml")):
                     self.initialize_test(yaml_file)
 
         self.generate_summary()

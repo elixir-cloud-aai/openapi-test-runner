@@ -111,14 +111,12 @@ class TestRunner():
             model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
             model_path = Path("tmp/testdir/models/"+model_file_name)
             model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
-            print(model_file_name)
             spec = importlib.util.spec_from_file_location("models."+model_file_name, str(model_path))
             pydantic_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(pydantic_module)
             # pydantic_module_path = "tmp.testdir.models.v" + self.version.replace('.', '_') + "_specs"
             # print(pydantic_module_path)
             # pydantic_module: Any = importlib.import_module(pydantic_module_path)
-            print(self.api_config)
             pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
             pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
