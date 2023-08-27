@@ -33,19 +33,19 @@ jobs:
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
-          path: tmp
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
           echo "GitHub Workspace: $GITHUB_WORKSPACE"
           echo "Listing Files and Folders:"
           ls -la
+          cd ..
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
           clean: false
           ref: feature/ci
-          path: tmp
+          path: tes-compliance-suite
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
