@@ -7,17 +7,17 @@ on:
   workflow_dispatch:
     inputs:
       test_repo_url:
-        description: 'Tests repository (format: owner/repo)'
+        description: Tests repository (eg. owner/repo)
         required: true
-        default: 'elixir-cloud-aai/tes-compliance-suite'
+        default: elixir-cloud-aai/tes-compliance-suite
       server:
-        description: 'The API server URL'
+        description: The API server URL
         required: true
       version:
-        description: 'The API version'
+        description: The API version
         required: true
       extra_params:
-        description: 'Additional compliance parameters (format: --param1 value --param2 value)'
+        description: Additional compliance parameters (eg. --param1 value --param2 value)
         required: false
 
 jobs:
