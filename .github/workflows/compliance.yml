@@ -33,7 +33,7 @@ jobs:
 #          repository: ${{ github.event.inputs.test_repo_url }}
           repository: ga4gh/compliance-tests-ga4gh-tes
           ref: feature/tests
-#          path: tmp/testdir/
+          path: tmp
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
@@ -45,6 +45,7 @@ jobs:
         with:
           clean: false
           ref: feature/ci
+          path: tmp
       - name: Test
         run: |
           echo "Current Working Directory: $PWD"
