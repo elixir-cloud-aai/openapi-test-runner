@@ -7,15 +7,17 @@ on:
   workflow_dispatch:
     inputs:
       test_repo_url:
-        description: Tests repository (format - owner/repo)
+        description: 'Tests repository (format: owner/repo)'
         required: True
-        example: elixir-cloud-aai/tes-compliance-suite
+        example: 'elixir-cloud-aai/tes-compliance-suite'
       server:
-        description: The API server URL
+        description: 'The API server URL'
         required: True
       version:
-        description: The API version
+        description: 'The API version'
         required: True
+      extra:
+        description: 'Additional compliance parameters (format: --param1 value --param2 value')
 
 jobs:
   compliance:
@@ -33,6 +35,7 @@ jobs:
           echo "test_repo_url: ${{ github.event.inputs.test_repo_url }}"
           echo "server: ${{ github.event.inputs.server }}"
           echo "version: ${{ github.event.inputs.version }}"
+          echo "extra : ${{ github.event.inputs.extra }}"
       - name: Checkout current repository
         uses: actions/checkout@v3
         with:
@@ -54,4 +57,4 @@ jobs:
           pip install -r requirements.txt
       - name: Run compliance tests
 #        run: compliance-suite report --server "https://csc-tesk-noauth.rahtiapp.fi/" --version "1.1.0" -tp "tests/service_info.yml" -tp "tests/get_task_minimal.yml"
-        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }}
+        run: compliance-suite report --server ${{ github.event.inputs.server }} --version ${{ github.event.inputs.version }} ${{ github.event.inputs.extra }}
