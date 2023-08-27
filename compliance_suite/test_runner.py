@@ -84,8 +84,8 @@ class TestRunner():
             self.api_config = yaml.safe_load(open(api_config_path, "r"))
         except yaml.YAMLError as err:
             raise TestFailureException(name="YAML Error",
-                                         message=f"Invalid YAML file {api_config_path} inside tests repo",
-                                         details=err)
+                                       message=f"Invalid YAML file {api_config_path} inside tests repo",
+                                       details=err)
 
     def validate_logic(
             self,

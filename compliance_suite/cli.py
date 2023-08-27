@@ -42,6 +42,7 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
     else:
         raise click.BadParameter("Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.")
 
+
 def update_path(ctx: Any, param: Any, value: List[str]):
     """Update the test path wrt GitHub workspace
 
