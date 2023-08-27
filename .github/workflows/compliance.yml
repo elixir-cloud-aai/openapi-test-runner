@@ -1,4 +1,4 @@
-name: Run compliance tests
+name: 'Run compliance tests'
 
 on:
 #  push:
