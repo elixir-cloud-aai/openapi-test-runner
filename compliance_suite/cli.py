@@ -42,6 +42,21 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
     else:
         raise click.BadParameter("Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.")
 
+def update_path(ctx: Any, param: Any, value: List[str]):
+    """Update the test path wrt GitHub workspace
+
+    Args:
+        ctx: The current click context
+        param: The click parameter
+        value: The value to validate
+
+    Returns:
+        The updated value with correct file path inside GitHub workspace
+    """
+
+    modified_value = ["tmp/testdir/" + path for path in value]
+    return modified_value
+
 
 @main.command(help='Run API compliance tests against the servers')
 @click.option('--server', '-s', required=True, type=str, prompt="Enter server",
@@ -53,7 +68,7 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
               help='skip tests for provided tags', callback=validate_regex)
 @click.option('--test-path', '-tp', 'test_path', multiple=True,
-              help='the absolute or relative path of the tests to be run', default=["tests"])
+              help='the absolute or relative path of the tests to be run', default=["tests"], callback=update_path)
 @click.option('--output_path', '-o', help='the absolute directory path to store the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
@@ -96,9 +111,9 @@ def report(server: str,
 
     print(test_path)
     for path in test_path:
-        print(path)
-        path = "tmp/testdir/" + path        # Correct path wrt to Github workspace
-        print(path)
+        # print(path)
+        # path = "tmp/testdir/" + path        # Correct path wrt to Github workspace
+        # print(path)
         if not Path(path).exists():
             raise FileNotFoundError(f"Test path: {path} not found. Please provide a valid path.")
     print(test_path)
