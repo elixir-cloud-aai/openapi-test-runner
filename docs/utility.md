@@ -178,6 +178,6 @@ tespassword=$(jq -r '.TesPassword' TesCredentials.json)
 tes-compliance-suite report --server http://$tesuser:$tespassword@$teshostname/ --include-tags all --output_path results
 ```
 
-[res-test-syntax]: test_config/test_syntax.yml
+[res-test-syntax]: ../compliance_suite/test_config/test_syntax.yml
 [dockerfile]: ../docker/Dockerfile
 [entrypoint]: ../docker/entrypoint.sh

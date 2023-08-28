@@ -3,7 +3,6 @@
 This module contains class definition for client to send the requests to the server
 """
 
-import importlib
 import json
 from typing import (
     Any,
@@ -28,7 +27,14 @@ class Client():
         """ Initialize the Client object"""
 
         self.check_cancel = False   # Checks if the Cancel status is to be validated or not
-        self.request_headers: Dict = importlib.import_module("constants.constants").REQUEST_HEADERS
+        self.request_headers: Dict = {}
+
+    def set_request_headers(self, request_headers) -> None:
+        """ Set the request headers
+            Args:
+                request_headers: The request headers extracted from Tests repo API config
+        """
+        self.request_headers = request_headers
 
     def send_request(
             self,
@@ -90,7 +96,7 @@ class Client():
         if response.status_code != 200:
             logger.info("Unexpected response from Polling request. Retrying...")
             return False
-
+        # TODO
         response_json: Any = response.json()
         valid_states = ["CANCELED", "CANCELING"] if self.check_cancel else ["COMPLETE", "EXECUTOR_ERROR",
                                                                             "SYSTEM_ERROR", "PREEMPTED"]

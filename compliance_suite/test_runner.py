@@ -3,13 +3,15 @@
 This module contains class definition for Test Runner to run the individual jobs, validate them and store their result
 """
 
-import importlib
+import importlib.util
 import json
+from pathlib import Path
 import re
 from typing import (
     Any,
     Dict
 )
+import yaml
 
 from dotmap import DotMap
 from ga4gh.testbed.report.test import Test
@@ -42,6 +44,7 @@ class TestRunner():
         self.job_data: Any = None
         self.auxiliary_space: Dict = {}     # Dictionary to store the sub-job results
         self.report_test: Any = None        # Test object to store the result
+        self.api_config = self.get_api_config()
 
     def set_job_data(self, job_data: Any) -> None:
         """Set the individual sub job data
@@ -71,6 +74,17 @@ class TestRunner():
 
         self.report_test = report_test
 
+    def get_api_config(self) -> Any:
+        """Retrieve the API config from Tests Repo and set the api_config"""
+
+        api_config_path = Path("tmp/testdir/api_config.yml")
+        try:
+            return yaml.safe_load(open(api_config_path, "r"))
+        except yaml.YAMLError as err:
+            raise TestFailureException(name="YAML Error",
+                                       message=f"Invalid YAML file {api_config_path} inside tests repo",
+                                       details=err)
+
     def validate_logic(
             self,
             endpoint_model: str,
@@ -92,10 +106,14 @@ class TestRunner():
                                description="Check if response matches the model schema")
 
         try:
-            constants = importlib.import_module("constants.constants")
-            pydantic_module = importlib.import_module(
-                "models.v" + self.version.replace('.', '_') + "_specs")
-            pydantic_model_class: Any = getattr(pydantic_module, constants.ENDPOINT_TO_MODEL[endpoint_model])
+            model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
+            model_path = Path("tmp/testdir/models/" + model_file_name)
+            spec = importlib.util.spec_from_file_location("models." + model_file_name, str(model_path))
+            pydantic_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(pydantic_module)
+
+            pydantic_model_name: str = self.api_config["ENDPOINT_TO_MODEL"][endpoint_model]
+            pydantic_model_class: Any = getattr(pydantic_module, pydantic_model_name)
             pydantic_model_class(**json_data)  # JSON validation against Pydantic Model
             logger.info(f'{message} Schema validation successful for '
                         f'{self.job_data["operation"]} {self.job_data["endpoint"]}')
@@ -195,7 +213,7 @@ class TestRunner():
                 response_json: Any = {}          # Handle the Cancel Task Endpoint empty response
             else:
                 response_json: Any = response.json()
-
+            # TODO
             if self.job_data["name"] in ["list_tasks", "get_task"]:
                 view_query: str = ""
                 for query_param in self.job_data["query_parameters"]:
@@ -356,6 +374,7 @@ class TestRunner():
             self.validate_request_body(request_body)
 
         client = Client()
+        client.set_request_headers(self.api_config["REQUEST_HEADERS"])
 
         if "polling" in self.job_data.keys():
 
