@@ -1,17 +1,16 @@
 Invalid YAML
-description: Job to retrieve the service info
-service: TES
+description: test
+service: test
 versions:
   - 1.0.0
 tags:
-  - schema_validation_only
+  - test
 jobs:
-  - name: service_info
-    description: Retrieve the TES server info
-    endpoint: /service-info
+  - name: test
+    description: test
+    endpoint: test
     operation: GET
     response:
       200: |
         {
-          "id": "uk.ac.ebi.tsc.tesk"
         }

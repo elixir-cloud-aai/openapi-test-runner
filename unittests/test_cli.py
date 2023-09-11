@@ -35,7 +35,7 @@ class TestJobRunner:
             mock_run_jobs.return_value = {}
             mock_generate_reports.return_value = '{"test": "test"}'
             runner = CliRunner()
-            result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0'])
+            result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--test-path', 'unittests'])
             assert result.exit_code == 0
 
     @patch.object(ReportServer, 'serve_thread')
@@ -51,14 +51,15 @@ class TestJobRunner:
             runner = CliRunner()
             result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--include-tags', 'test',
                                             '--output_path', "path/to/output", '--serve', '--port', 9090,
-                                            '--uptime', 1000])
+                                            '--uptime', 1000, '--test-path', 'unittests'])
             assert result.exit_code == 0
 
     def test_validate_regex_failure(self):
         """Asserts if the application raises CLI error if invalid regex is provided for tags"""
 
         runner = CliRunner()
-        result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--exclude-tags', '%%INVALID%%'])
+        result = runner.invoke(report, ['--server', TEST_URL, '--version', '1.0.0', '--exclude-tags', '%%INVALID%%',
+                                        '--test-path', 'unittests'])
         assert result.exit_code == 2
         assert "Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed." in result.output
 

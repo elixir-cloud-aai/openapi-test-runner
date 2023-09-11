@@ -2,9 +2,9 @@
 [![Coverage][badge-coverage]][badge-url-coverage]
 [![Python 3.6][badge-python]](https://www.python.org)
 
-# TES Compliance Suite
+# API Compliance Suite
 
-The TES Compliance Suite determines a server's compliance with the [TES API specification][res-tes-spec]. The specification has been developed by the [Global Alliance for Genomics and Health][res-ga4gh], an international coalition, formed to enable the sharing of genomic and clinical data. It serves to provide a standardized API framework and data structure to allow for interoperability of datasets hosted at different institutions.
+The API Compliance Suite determines a server's compliance with the [TES API specification][res-tes-spec]. The specification has been developed by the [Global Alliance for Genomics and Health][res-ga4gh], an international coalition, formed to enable the sharing of genomic and clinical data. It serves to provide a standardized API framework and data structure to allow for interoperability of datasets hosted at different institutions.
 
 ## Description
 

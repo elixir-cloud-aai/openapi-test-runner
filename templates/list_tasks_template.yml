@@ -1,8 +1,0 @@
-- name: list_tasks
-  description: Retrieve the list of tasks tracked by the TES server
-  endpoint: /tasks
-  operation: GET
-  query_parameters:
-    - view: "{view_value}"
-  response:
-    200: {}

@@ -1,9 +1,0 @@
-description: Job to create a new TES Task
-service: TES
-versions:
-  - 1.0.0
-  - 1.1.0
-tags:
-  - schema_validation_only
-jobs:
-  - $ref: "./templates/create_task_template.yml"

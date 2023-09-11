@@ -8,7 +8,9 @@ from unittest.mock import (
     MagicMock,
     patch
 )
+import yaml
 
+from jsonschema import ValidationError
 import pytest
 
 from compliance_suite.exceptions.compliance_exception import (
@@ -27,6 +29,9 @@ YAML_TEST_PATH_INVALID = Path("unittests/data/run_job_tests/invalid_yaml.yml")
 YAML_TEST_PATH_SKIP = Path("unittests/data/run_job_tests/skip_01.yml")
 YAML_TEST_PATH_FAIL = Path("unittests/data/run_job_tests/fail_service_info.yml")
 YAML_WRONG_SCHEMA = Path("unittests/data/tests/wrong_schema_yaml.yml")
+TEST_CONFIG_DIR = Path("unittests/data/test_config")
+TEST_SCHEMA = Path("unittests/data/test_config/test_schema.json")
+TEMPLATE_SCHEMA = Path("unittests/data/test_config/template_schema.json")
 
 
 class TestJobRunner:
@@ -45,22 +50,33 @@ class TestJobRunner:
         job_runner_object.generate_report()
         assert True
 
-    def test_load_and_validate_yaml_data_test(self):
+    @patch("compliance_suite.job_runner.Path")
+    def test_load_and_validate_yaml_data_test(self, mock_path):
         """ Asserts validate job functions for proper YAML schema"""
+
+        mock_path.side_effect = [TEST_CONFIG_DIR, TEST_SCHEMA, TEMPLATE_SCHEMA]
 
         job_runner_object = JobRunner(TEST_URL, "1.0.0")
         yaml_data = job_runner_object.load_and_validate_yaml_data(str(YAML_TEST_PATH_SUCCESS), "Test")
         assert "service" in yaml_data
 
-    def test_load_and_validate_yaml_data_template(self):
+    @patch("compliance_suite.job_runner.Path")
+    def test_load_and_validate_yaml_data_template(self, mock_path):
         """ Asserts validate job functions for proper YAML schema"""
+
+        mock_path.side_effect = [TEST_CONFIG_DIR, TEST_SCHEMA, TEMPLATE_SCHEMA]
 
         job_runner_object = JobRunner(TEST_URL, "1.0.0")
         yaml_data = job_runner_object.load_and_validate_yaml_data(str(YAML_TEMPLATE_PATH_SUCCESS), "Template")
         assert "endpoint" in yaml_data[0]
 
-    def test_load_and_validate_yaml_data_failure(self):
+    @patch("compliance_suite.job_runner.validate")
+    @patch("compliance_suite.job_runner.Path")
+    def test_load_and_validate_yaml_data_failure(self, mock_path, mock_validate):
         """ Asserts validate_job() function for incorrect YAML schema"""
+
+        mock_path.side_effect = [TEST_CONFIG_DIR, TEST_SCHEMA, TEMPLATE_SCHEMA]
+        mock_validate.side_effect = ValidationError("Error")
 
         with pytest.raises(JobValidationException):
             job_runner_object = JobRunner(TEST_URL, "1.0.0")
@@ -80,10 +96,15 @@ class TestJobRunner:
         job_runner_object.run_jobs()
         assert mock_initialize_test.call_count == len(list(Path("unittests/data/run_job_tests").glob("**/*.yml")))
 
+    @patch('compliance_suite.job_runner.JobRunner.load_and_validate_yaml_data')
     @patch.object(TestRunner, 'run_tests')
-    def test_initialize_test(self, mock_run_tests):
+    def test_initialize_test(self, mock_run_tests, mock_fn):
+
         job_runner_object = JobRunner(TEST_URL, "1.0.0")
         job_runner_object.set_report(Report())
+
+        yaml_files = [YAML_TEST_PATH_SUCCESS, YAML_TEMPLATE_PATH_SUCCESS, YAML_TEST_PATH_SKIP, YAML_TEST_PATH_FAIL]
+        mock_fn.side_effect = [yaml.safe_load(open(file_path, "r")) for file_path in yaml_files]
 
         job_runner_object.initialize_test(YAML_TEST_PATH_SUCCESS)
         assert len(job_runner_object.test_status["passed"]) == 1

@@ -16,6 +16,7 @@ import click
 from compliance_suite.functions.log import logger
 from compliance_suite.job_runner import JobRunner
 from compliance_suite.report_server import ReportServer
+from compliance_suite.suite_validator import SuiteValidator
 
 
 @click.group()
@@ -43,18 +44,45 @@ def validate_regex(ctx: Any, param: Any, value: List[str]):
         raise click.BadParameter("Only letters (a-z, A-Z), digits (0-9) and underscores (_) are allowed.")
 
 
-@main.command(help='Run TES compliance tests against the servers')
+# def update_path(ctx: Any, param: Any, value: List[str]):
+#     """Update the test path wrt GitHub workspace
+#
+#     Args:
+#         ctx: The current click context
+#         param: The click parameter
+#         value: The value to validate
+#
+#     Returns:
+#         The updated value with correct file path inside GitHub workspace
+#     """
+#
+#     modified_value = ["tmp/testdir/" + path for path in value]
+#     return modified_value
+
+
+@main.command(help='Validate compliance tests')
+def validate() -> None:
+    """Validate the test suite"""
+
+    logger.info("Initiate test suite validation")
+    SuiteValidator.validate()
+    logger.info("Test suite validation finished")
+
+
+@main.command(help='Run API compliance tests against the servers')
 @click.option('--server', '-s', required=True, type=str, prompt="Enter server",
               help='server URL on which the compliance tests are run. Format - https://<url>/')
 @click.option('--version', '-v', required=True, type=str, prompt="Enter version",
-              help='TES version. Example - "1.0.0"')
+              help='API version. Example - "1.0.0"')
 @click.option('--include-tags', '-i', 'include_tags', multiple=True,
               help='run tests for provided tags', callback=validate_regex)
 @click.option('--exclude-tags', '-e', 'exclude_tags', multiple=True,
               help='skip tests for provided tags', callback=validate_regex)
 @click.option('--test-path', '-tp', 'test_path', multiple=True,
               help='the absolute or relative path of the tests to be run', default=["tests"])
-@click.option('--output_path', '-o', help='path to output the JSON report')
+# @click.option('--test-path', '-tp', 'test_path', multiple=True,
+#               help='the absolute or relative path of the tests to be run', default=["tests"], callback=update_path)
+@click.option('--output_path', '-o', help='the absolute directory path to store the JSON report')
 @click.option('--serve', default=False, is_flag=True, help='spin up a server')
 @click.option('--port', default=15800, help='port at which the compliance report is served')
 @click.option('--uptime', '-u', default=3600, help='time that server will remain up in seconds')
@@ -72,12 +100,12 @@ def report(server: str,
 
     Args:
         server (str): The server URL on which the compliance suite will be run. Format - https://<url>/
-        version (str): The compliance suite will be run against this TES version. Example - "1.0.0"
+        version (str): The compliance suite will be run against this API version. Example - "1.0.0"
         include_tags (List[str]): The list of the tags for which the compliance suite will be run.
         exclude_tags (List[str]): The list of the tags for which the compliance suite will not be run.
         test_path: The list of absolute or relative paths from the project root of the test file/directory.
             Default - ["tests"]
-        output_path (str): The output path to store the JSON compliance report
+        output_path (str): The absolute directory path to store the JSON compliance report
         serve (bool): If true, runs a local server and displays the JSON report in webview
         port (int): Set the local server port. Default - 16800
         uptime (int): The local server duration in seconds. Default - 3600 seconds
@@ -108,11 +136,11 @@ def report(server: str,
             output.write(json_report)
 
     # Writing a report copy to web dir for local server
-    with open(os.path.join(os.getcwd(), "compliance_suite", "web", "web_report.json"), "w+") as output:
+    with open(os.path.join(os.getcwd(), "web_report.json"), "w+") as output:
         output.write(json_report)
 
     if serve is True:
-        report_server = ReportServer(os.path.join(os.getcwd(), "compliance_suite", "web"))
+        report_server = ReportServer(os.getcwd())
         report_server.serve_thread(port, uptime)
 
 
