@@ -77,7 +77,7 @@ class TestRunner():
     def get_api_config(self) -> Any:
         """Retrieve the API config from Tests Repo and set the api_config"""
 
-        api_config_path = Path("tmp/testdir/api_config.yml")
+        api_config_path = Path("api_config.yml")
         try:
             return yaml.safe_load(open(api_config_path, "r"))
         except yaml.YAMLError as err:
@@ -107,7 +107,7 @@ class TestRunner():
 
         try:
             model_file_name = "v" + self.version.replace('.', '_') + "_specs.py"
-            model_path = Path("tmp/testdir/models/" + model_file_name)
+            model_path = Path("models/" + model_file_name)
             spec = importlib.util.spec_from_file_location("models." + model_file_name, str(model_path))
             pydantic_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(pydantic_module)

@@ -5,8 +5,10 @@ a webview via a local server
 """
 
 import http.server
+import importlib.resources
 import json
 import os
+from pathlib import Path
 import socketserver
 import threading
 import time
@@ -38,9 +40,23 @@ class ReportServer():
         with open(os.path.join(self.web_dir, "web_report.json"), "r") as f:
             report_data = json.load(f)
 
+        with importlib.resources.path("compliance_suite", "web") as dir_path:
+            web_dir_path = dir_path.resolve()
+
+        header_data = {
+            "path_jquery": str(web_dir_path) + "/public/jquery.jsonPresenter.css",
+            "path_index_css": str(web_dir_path) + "/public/index.css",
+            "path_report_js": str(web_dir_path) + "/views/report.js"
+        }
+
         # Render the HTML via Jinja templates
-        view_loader = j2.FileSystemLoader(searchpath=self.web_dir)
+        view_loader = j2.FileSystemLoader(searchpath=web_dir_path)
         view_env = j2.Environment(loader=view_loader)
+        header_template = view_env.get_template("partials/header.html")
+        header_rendered = header_template.render(data=header_data)
+        with open(str(web_dir_path) + "/partials/header.html", "w+") as output:
+            output.write(header_rendered)
+
         report_template = view_env.get_template("views/report.html")
         report_rendered = report_template.render(data=report_data)
 
