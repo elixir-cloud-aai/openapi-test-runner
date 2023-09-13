@@ -10,7 +10,7 @@ with open(req, 'r') as _file:
     install_requires: list = _file.read().splitlines()
 
 setup(
-    name='openapi-compliance-suite',
+    name='openapi-test-runner',
     version='0.1.0',
     description='OpenAPI test runner to perform conformance testing to API specs and functionality',
     long_description=long_description,
