@@ -10,17 +10,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
 RUN apt -y install git jq
 
-RUN git clone https://github.com/elixir-cloud-aai/tes-compliance-suite.git
+RUN git clone https://github.com/elixir-cloud-aai/openapi-test-runner.git
 
 # Install TES Compliance suite
-WORKDIR /app/tes-compliance-suite
+WORKDIR /app/openapi-test-runner
 RUN python3.8 setup.py install
 
 # Precreate results directory
 RUN mkdir results
 
 # Copy over specific instructions around how to run the tests
-COPY entrypoint.sh /app/tes-compliance-suite/entrypoint.sh
+COPY entrypoint.sh /app/openapi-test-runner/entrypoint.sh
 
 # If using entrpyoint script with no edits, set TES endpoint url here
 ENV TES_ENDPOINT_URL=http://localhost/
