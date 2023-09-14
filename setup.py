@@ -10,12 +10,12 @@ with open(req, 'r') as _file:
     install_requires: list = _file.read().splitlines()
 
 setup(
-    name='tes-compliance-suite',
+    name='openapi-test-runner',
     version='0.1.0',
-    description='TES Compliance Suite to perform conformance testing to API specs and functionality',
+    description='OpenAPI test runner to perform conformance testing to API specs and functionality',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/elixir-cloud-aai/tes-compliance-suite',
+    url='https://github.com/elixir-cloud-aai/openapi-test-runner',
     author='Lakshya Garg',
     author_email='garg.lakshya@gmail.com',
     maintainer='ELIXIR Cloud & AAI',
@@ -38,7 +38,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'tes-compliance-suite = compliance_suite.cli:main',
+            'openapi-test-runner = compliance_suite.cli:main',
         ],
     },
     keywords=(
@@ -46,13 +46,15 @@ setup(
         'python compliance testing pydantic yaml '
     ),
     project_urls={
-        'Repository': 'https://github.com/elixir-cloud-aai/tes-compliance-suite',
+        'Repository': 'https://github.com/elixir-cloud-aai/openapi-test-runner',
         'ELIXIR Cloud & AAI': 'https://elixir-europe.github.io/cloud/',
-        'Tracker': 'https://github.com/elixir-cloud-aai/tes-compliance-suite/issues',
+        'Tracker': 'https://github.com/elixir-cloud-aai/openapi-test-runner/issues',
     },
     license='Apache License 2.0',
-    packages=find_packages(),
-    package_data={'': ['../tests/*', 'web/*/*']},
-    install_requires=install_requires,
-    include_package_data=True,
+    packages=find_packages(exclude=[
+        'unittests',
+        'unittests.*'
+    ]),
+    package_data={'': ['../tests/*', '../docs/test_config/*', 'web/*/*']},
+    install_requires=install_requires
 )
