@@ -22,7 +22,7 @@ jobs:
             ]
           }
         ],
-        "input": [
+        "inputs": [
           {
             "name": "access-file",
             "description": "Access file resource via streaming",
