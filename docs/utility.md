@@ -33,7 +33,7 @@ openapi-test-runner report --help
 
 Verify or modify the YAML test files according to the requirements.
 The YAML files are present at the `/tests` directory. 
-The template and JSON schema can be found at `/tests/template`.
+The template and JSON schema can be found at `/templates`.
 
 The package needs to be updated everytime the files are updated, run the setup command again.
 ```base  
