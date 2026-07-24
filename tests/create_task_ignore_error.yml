@@ -20,13 +20,6 @@ jobs:
               "ERROR"
             ],
             "ignore_error": false
-          },
-          {
-            "image": "alpine",
-            "command": [
-              "echo",
-              "hello"
-            ]
           }
         ]
       }
